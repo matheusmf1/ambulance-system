@@ -70,6 +70,9 @@ export default function Sidebar() {
 							</a>
 						
 							<ul id="product" className="sidebar__submenu">
+							
+								{/* <span className="sidebar__menu--title">Clientes</span> */}
+								<span className="sidebar__menu--closed-Title">Clientes</span>
 						
 								<li>
 									<a href="/novocliente">								
@@ -122,7 +125,10 @@ export default function Sidebar() {
 
 							</a>
 						
-							<ul id="product" className="sidebar__submenu">          
+							<ul id="product" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Ordem de Serviço</span>        
+								
 								<li>
 									<a href="">								
 
