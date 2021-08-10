@@ -46,12 +46,12 @@ export default function CustomerAdd() {
             </div>
 
             <div class="form__input--halfWidth">
-              <label class="form__input--label">Outras caracteristicas</label>
+              <label class="form__input--label">Empresa</label>
               <input class="form__input" type="text" placeholder="Nome do produto"/>
             </div>
 
             <div class="form__input--fullWidth">            
-              <label class="form__input--label">Anotações Adicionais</label>
+              <label class="form__input--label"></label>
               <textarea class="form__input" rows="4"></textarea>          
             </div>
 

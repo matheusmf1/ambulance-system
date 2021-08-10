@@ -16,6 +16,7 @@ const tableHead = {
   name: "Nome",
   email: "Email",
   phone: "Telefone",
+  company: "Empresa",
   action: "Opções"
 };
 

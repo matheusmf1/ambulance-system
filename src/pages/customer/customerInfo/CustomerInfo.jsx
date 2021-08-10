@@ -102,7 +102,7 @@ export default function CustomerInfo(props) {
               </div>
 
               <div className="userUpdateItem">
-                <label>Phone</label>
+                <label>Telefone</label>
                 <input
                   type="text"
                   placeholder={ userData.phone }

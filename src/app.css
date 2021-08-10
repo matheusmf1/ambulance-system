@@ -57,11 +57,10 @@ a {
 }
 
 main {
-  background: #fff;
+  /* background: #fff; */
   grid-area: main;
   /* border-radius: var(--main-radius); */
   padding: 15px 20px 10px 20px;
-
   overflow-y: auto;
 }
 
