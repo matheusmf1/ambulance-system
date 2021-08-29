@@ -1,6 +1,7 @@
 import React from 'react'
 import './sidebar.css'
 import logo from '../../assets/images/logo.png';
+import DashboardIcon from "@material-ui/icons/Dashboard";
 
 
 export default function Sidebar() {
@@ -32,7 +33,8 @@ export default function Sidebar() {
 						{/* DASHBOARD */}
 						<li className="sidebar__menu--listItens">
 							<a href="/">
-								<svg className="sidebar__menu--icons" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+								
+								{/* <svg className="sidebar__menu--icons" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
 									stroke-linejoin="round">
 									<path
@@ -40,7 +42,10 @@ export default function Sidebar() {
 									</path>
 									<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
 									<line x1="12" y1="22.08" x2="12" y2="12"></line>
-								</svg>
+								</svg> */}
+
+								<DashboardIcon /> 
+								
 
 								<span className="sidebar__menu--title">Home</span>
 							</a>

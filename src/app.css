@@ -29,7 +29,8 @@ h5 {
   margin: 0px;
   line-height: 1.5;
   color: #110A57;
-  font-size: 1.2em;
+  /* font-size: 1.2em; */
+  font-size: 20px;
 }
 
 a {
@@ -51,17 +52,16 @@ a {
     "sidebar nav nav nav"
     "sidebar main main main";
     
-  grid-gap: 0.2rem;
-
+  /* grid-gap: 0.2rem; */
   /* overflow-y: auto; */
 }
 
 main {
-  /* background: #fff; */
   grid-area: main;
-  /* border-radius: var(--main-radius); */
   padding: 15px 20px 10px 20px;
   overflow-y: auto;
+  /* background: #f3f4f6; */
+  /* margin: 15px 5vw */
 }
 
 

@@ -18,7 +18,7 @@ export default function Topbar() {
             </svg>
           </div>
 
-          <span className="logo">lamaadmin</span>
+          <span className="logo"></span>
         </div>
 
         <div className="topRight">
