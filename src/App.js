@@ -10,8 +10,8 @@ import CustomerInfo from "./pages/customer/customerInfo/CustomerInfo";
 import CustomerList from "./pages/customer/customerList/CustomerList";
 
 
-
 function App() {
+  
   return (
 
     <div className="container">

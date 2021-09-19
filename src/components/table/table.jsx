@@ -16,8 +16,10 @@ const tableHead = {
   name: "Nome",
   email: "Email",
   phone: "Telefone",
-  company: "Empresa",
-  action: "Opções"
+  company_name: "Empresa",
+  cnpj_cpf: "CPNJ/CPF",
+  city: "Cidade",
+  action: "Opções",
 };
 
 const Table = (props) => {

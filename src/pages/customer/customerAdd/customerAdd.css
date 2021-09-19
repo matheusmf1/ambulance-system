@@ -75,6 +75,9 @@ h4 {
   margin-bottom: 5px;
 }
 
+select {
+  height: 48px;
+}
 
 /* EFFECTS */
 .form__input:focus {

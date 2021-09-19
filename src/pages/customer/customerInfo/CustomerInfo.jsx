@@ -33,9 +33,10 @@ export default function CustomerInfo(props) {
 
       <div className="userTitleContainer">
         <h1 className="userTitle">Editar Cliente</h1>
-        <Link to="/newUser">
+        {/* <Link to="/newUser">
           <button className="userAddButton">Novo</button>
-        </Link>
+        </Link> */}
+        <button className="userUpdateButton">Atualizar</button>
       </div>
 
       <div className="userContainer">
@@ -50,13 +51,13 @@ export default function CustomerInfo(props) {
             />
             <div className="userShowTopTitle">
               <span className="userShowUsername"> { userData.name } </span>
-              <span className="userShowUserTitle">{ userData.company }</span>
+              <span className="userShowUserTitle">{ userData.company_name }</span>
             </div>
           </div>
           
           <div className="userShowBottom">
 
-            <span className="userShowTitle">Informações de Contato</span>
+            <span className="userShowTitle">Informações do Responsável</span>
 
             <div className="userShowInfo">
               <PhoneAndroid className="userShowIcon" />
@@ -69,13 +70,34 @@ export default function CustomerInfo(props) {
             </div>
 
             <div className="userShowInfo">
-              <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.company }</span>
+              <MailOutline className="userShowIcon" />
+              <span className="userShowInfoTitle">{ userData.cnpj_cpf }</span>
             </div>
+
+            <span className="userShowTitle">Endereço</span>
+
+            <div className="userShowInfo">
+              <BusinessIcon className="userShowIcon" />
+              <span className="userShowInfoTitle">{ userData.address }</span>
+            </div>
+
+            <div className="userShowInfo">
+              <BusinessIcon className="userShowIcon" />
+              <span className="userShowInfoTitle">{ userData.city } - { userData.state }</span>
+            </div>
+
+            <span className="userShowTitle">Informações Adicionais</span>
+
+            <div className="userShowInfo">
+              <BusinessIcon className="userShowIcon" />
+              <span className="userShowInfoTitle">{ userData.moreInfo } </span>
+            </div>
+
+
         </div>
       </div>
       
-        <div className="userUpdate">
+      <div className="userUpdate">
 
           <span className="userUpdateTitle">Editar</span>
           
@@ -93,6 +115,15 @@ export default function CustomerInfo(props) {
               </div>
 
               <div className="userUpdateItem">
+                <label>Nome da empresa</label>
+                <input
+                  type="text"
+                  placeholder={ userData.company_name }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
                 <label>Email</label>
                 <input
                   type="text"
@@ -104,43 +135,65 @@ export default function CustomerInfo(props) {
               <div className="userUpdateItem">
                 <label>Telefone</label>
                 <input
-                  type="text"
+                  type="tel"
                   placeholder={ userData.phone }
                   className="userUpdateInput"
                 />
               </div>
 
-              <div className="userUpdateItem">
-                <label>Nome da empresa</label>
+
+            </div>
+
+            <div className="userUpdateRight--singleItem">
+
+            <div className="userUpdateItem">
+                <label>CNPJ/CPF</label>
                 <input
                   type="text"
-                  placeholder={ userData.company }
+                  placeholder={ userData.cnpj_cpf }
                   className="userUpdateInput"
                 />
               </div>
 
+              <div className="userUpdateItem">
+                <label>Endereço</label>
+                <input
+                  type="text"
+                  placeholder={ userData.address }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Cidade</label>
+                <input
+                  type="text"
+                  placeholder={ userData.city }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Estado</label>
+                <input
+                  type="text"
+                  placeholder={ userData.state }
+                  className="userUpdateInput"
+                />
+              </div>
+                         
             </div>
 
-            <div className="userUpdateRight--singleItem ">
-              
-              {/* <div className="userUpdateUpload">
-                <img
-                  className="userUpdateImg"
-                  src="https://images.pexels.com/photos/1152994/pexels-photo-1152994.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-                  alt=""
-                />
-                <label htmlFor="file">
-                  <Publish className="userUpdateIcon" />
-                </label>
-                <input type="file" id="file" style={{ display: "none" }} />
+              <div class="userUpdateItem--textArea">            
+                <label class="form__input--label">Informações adicionais</label>
+                <textarea class="form__input" rows="2" placeholder={ userData.moreInfo }></textarea>          
               </div>
-               */}
-              <button className="userUpdateButton">Atualizar</button>
-              
-            </div>
 
           </form> 
+
+
         </div>
+    
     </div>
  
   </main>
