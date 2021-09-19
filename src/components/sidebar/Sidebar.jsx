@@ -1,6 +1,6 @@
 import React from 'react'
 import './sidebar.css'
-import logo from '../../assets/images/logo.png';
+import logoRescue from '../../assets/images/logo-rescue.png';
 import DashboardIcon from "@material-ui/icons/Dashboard";
 
 
@@ -11,10 +11,14 @@ export default function Sidebar() {
 			
 			<div className="sidebar__logo">
 				<a href="" className="sidebar__logo--anchor">
-        	<img src={logo} className="sidebar__logo--image" alt="logo"/>
+        	<img src={logoRescue} className="sidebar__logo--image" alt="logo"/>
 				</a>
 
-				<h5 className="sidebar__logo--title">Ambulância</h5>
+				<div className="container__title">
+					<h5 className="sidebar__logo--title">Rescue</h5>
+					<p className="sidebar__logo--Subtitle">Veículos Especiais</p>
+				</div>
+
 
 				<div className="sidebar__menu--barIcon">
 					<svg fill="#000000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 25 25" 
