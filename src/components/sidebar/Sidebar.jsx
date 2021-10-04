@@ -139,7 +139,7 @@ export default function Sidebar() {
 								<span className="sidebar__menu--closed-Title">Ordem de Serviço</span>        
 								
 								<li>
-									<a href="">								
+									<a href="nova-os">								
 
 										<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" 
 											viewBox="0 0 20 20" stroke="currentColor" stroke-width="2" 

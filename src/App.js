@@ -8,6 +8,7 @@ import Home from "./pages/home/Home"
 import CustomerAdd from "./pages/customer/customerAdd/CustomerAdd"
 import CustomerInfo from "./pages/customer/customerInfo/CustomerInfo";
 import CustomerList from "./pages/customer/customerList/CustomerList";
+import NewServiceOrder from "./pages/service_order/newServiceOrder/NewServiceOrder";
 
 
 function App() {
@@ -36,6 +37,10 @@ function App() {
 
           <Route path="/novocliente">
             <CustomerAdd/>
+          </Route>
+
+          <Route exact path="/nova-os">
+            <NewServiceOrder/>
           </Route>
 
         </Switch>

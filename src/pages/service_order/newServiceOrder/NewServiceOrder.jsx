@@ -1,15 +1,53 @@
 import React from 'react'
 
-import './customerAdd.css'
+import './newServiceOrder.css'
 
-export default function CustomerAdd() {
+import logoRescue from '../../../assets/images/logo-rescue.png';
+
+export default function NewServiceOrder() {
   return (
   
     <main class="form__container">
+      
+      <h4 className="os__container--title">Nova Ordem de Serviço</h4>
 
-      <div class="form__title">
-        <h4>Cadastrar Cliente</h4>
+      <div className="os__header--container">
+
+        <div class="os__header--containerImage">
+          <img src={logoRescue} alt="" class="os__header--image" />
+
+          <div class="os__header--content">
+
+            <h6>Rescue Transformação de veículos especiais Eireli</h6>
+
+            <h6 class="info">CNPJ: 33.972.355/0001-00</h6>
+            <h6 class="info">Rua Machado, 55 Vila Sorocabana</h6>
+            <h6 class="info">Guarulhos/SP - CEP: 07025-210</h6>
+
+          </div>
+
+        </div>
+
+        
+        {/* <div class="os__header--content">
+
+          <h6>Rescue Transformação de veículos especiais Eireli</h6>
+
+          <h6 class="info">CNPJ: 33.972.355/0001-00</h6>
+          <h6 class="info">Rua Machado, 55 Vila Sorocabana</h6>
+          <h6 class="info">Guarulhos/SP - CEP: 07025-210</h6>
+
+        </div> */}
+
+        <div class="os__header--content">
+
+          <h6 class="info">(11) 2847-0356 - (11) 95651-2030</h6>
+          <h6 class="info">adm@rescueveiculosespeciais.com.br</h6>
+          <h6 class="info">www.rescueveiculosespeciais.com.br</h6>
+          <h6 class="info">Responsável:</h6>
+        </div>
       </div>
+
 
       <div class="form__content">
         <form action="page-list-product.html">
@@ -41,9 +79,11 @@ export default function CustomerAdd() {
               <input class="form__input" type="text" placeholder="Informe o endereço" required/>
             </div>
 
+
             <div class="form__input--halfWidth">
               <label class="form__input--label">Estado*</label>
-                <select name="estados-brasil" class="form__input">
+    
+                  <select name="estados-brasil" class="form__input">
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -73,6 +113,7 @@ export default function CustomerAdd() {
                     <option value="TO">Tocantins</option>
                   </select>              
             </div>
+
 
             <div class="form__input--halfWidth">
               <label class="form__input--label">Email*</label>

@@ -22,7 +22,15 @@ h4 {
   border: 1px solid rgba(0,0,0,.125);
   border-radius: 10px;
   /* margin: 5px 10px 30px 10px; */
-  margin: 15px 5vw
+  /* margin: 15px 5vw; */
+  margin: 15px 10vw;
+}
+
+.form__container::-webkit-scrollbar {
+  display: block;
+  width: 2px;
+  background: #dcdfe8;
+  border-radius: 10px;
 }
 
 .form__title {
@@ -97,7 +105,6 @@ select {
 } */
 
 
-
 @media (max-width: 583.98px) {
 
   /* .form__content--inputs {
@@ -112,6 +119,12 @@ select {
   .form__content--inputs::-webkit-scrollbar {
     width: 5px;
   }
+
+  .form__container {
+    /* margin: 15px 5vw; */
+    margin: 15px 0vw 0px 0vw;
+  }
+  
 
 }
 
