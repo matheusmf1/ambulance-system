@@ -1,0 +1,95 @@
+.form__input--table {
+  line-height: 30px;
+  background: #fff;
+  border: 0px solid #dcdfe8;
+  font-size: 14px;
+  display: block;
+  width: -webkit-fill-available;
+  padding: .375rem .75rem;
+  background-color: #fff;
+  text-align: center;
+}
+
+.tableOS {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tableOS__header {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: .35em;
+}
+
+.tableOS tr {
+  border: 1px solid lightgray;
+  padding: .35em;
+}
+
+.tableOS th,
+.tableOS td {
+  padding: .625em 5px;
+  text-align: center;
+  border: 1px solid lightgray;
+}
+
+.tableOS th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+@media screen and (max-width: 980px) {
+  .tableOS {
+    border: 0;
+  }
+  
+  .tableOS thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  
+  .tableOS tr {
+    border: 0;
+    border-bottom: 2px solid #ddddddf5;
+    display: block;
+    margin-bottom: .625em;
+  }
+  
+  .tableOS td {
+    border: 0;
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: .8em;
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .tableOS td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: uppercase;
+    align-self: center;
+    margin: 0px 5px;
+  }
+  
+  .tableOS td:last-child {
+    border-bottom: 0;
+  }
+
+
+  .form__input--table {
+    width: auto;
+  }
+}
