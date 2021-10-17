@@ -23,7 +23,8 @@ h4 {
   border-radius: 10px;
   /* margin: 5px 10px 30px 10px; */
   /* margin: 15px 5vw; */
-  margin: 15px 10vw;
+  /* margin: 15px 10vw; */
+  margin: 15px 7.5vw;
 }
 
 .form__container::-webkit-scrollbar {
@@ -146,6 +147,7 @@ select {
   line-height: 1.5;
   border-radius: 10px;
   cursor: pointer;
+  max-height: 38px;
   /* transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out; */
 
   margin: 0px 10px 0px 0px;

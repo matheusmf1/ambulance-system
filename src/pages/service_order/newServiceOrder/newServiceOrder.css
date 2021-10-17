@@ -17,12 +17,6 @@
   align-items: center;
 }
 
-.os__header--containerImage .os__header--content {
-  /* width: 100%; */
-  
-}
-
-
 .os__header--content {
   /* width: calc( 100% / 2 - 20px ); */
   padding: 15px 0px;
@@ -45,9 +39,94 @@
 }
 
 
+.os__content--container {
+  width: 100%;
+  /* padding: 15px 0px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border-bottom: 1px solid #dcdfe8; */
+}
+
+.os__content--title {
+  /* width: 90%; */
+  width: 100%;
+  text-align: center;
+  font-size: 1.2em;
+  border: 1px solid #dcdfe8;
+  border-radius: 5px;
+  margin: 10px 0px;
+  height: 40px;
+  padding: 5px 0;
+  background-color: #f8f8f8;
+}
+
+.os__content--datePicker {
+  width: 15%;
+  font-size: 1.2em;
+}
+
+
+.osForm__content--container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
+  overflow-x: auto;
+}
+
+.osForm__input {
+  /* flex: 1 1 32%; */
+  flex: 1 1 auto;
+  width: auto;
+  margin: 5px;
+}
+
+
+.os__signatureField--container {
+  align-self: end;
+  border-top: 4px solid black;
+  width: 40%;
+  text-align: center;
+}
+.os__signatureBankInfo--content {
+  padding: 15px 0px;
+  font-size: 24px;
+  text-align: end;
+}
+.os__signatureBankInfo--content .info {
+  font-weight: 200;
+ }
+
+
+.footer__button--container {
+  /* display: inline-flex; */
+  display: flex;
+  align-items: center;
+}
+
+.footer__button--buttons {
+
+}
+
+.footer__button--status {
+  /* width: max-content; */
+  display: contents;
+  margin: auto;
+}
+
+.footer__button--status .form__input {
+  width: max-content;
+}
+
+
 @media (max-width: 583.98px) {
 
   .os__header--content {
       width: 100%;
+  }
+
+  .os__signatureBankInfo--content {
+    width: 100%;
   }
 }

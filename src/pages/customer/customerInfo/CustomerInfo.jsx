@@ -1,13 +1,13 @@
 import React from 'react'
 import {
-  CalendarToday,
-  LocationSearching,
+  // CalendarToday,
+  // LocationSearching,
   MailOutline,
-  PermIdentity,
+  // PermIdentity,
   PhoneAndroid,
-  Publish,
+  // Publish,
 } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import "./customerInfo.css";
 
 import { allData } from '../../../assets/mock/tableData'
