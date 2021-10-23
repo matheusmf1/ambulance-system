@@ -28,6 +28,7 @@
 .tableOS tr {
   border: 1px solid lightgray;
   padding: .35em;
+  overflow-wrap: break-word;
 }
 
 .tableOS th,
@@ -43,7 +44,38 @@
   text-transform: uppercase;
 }
 
-@media screen and (max-width: 980px) {
+.tableOS__button--container {
+  width: 100%;
+  text-align: end;
+}
+
+.tableOS__button--container button {
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  padding: .375rem .5rem;
+
+  line-height: 1.5;
+  border-radius: 10px;
+  cursor: pointer;
+  max-height: 38px;
+}
+
+
+.tableOS__button--add {
+  background-color: #32b7e2;
+  border-color: #32b7e2;
+  margin: 5px 10px 0px 0px;
+}
+
+.tableOS__button--reset {
+  background-color: #f53d93;
+  border-color: #f53d93;
+  margin: 5px 0px 0px 0px;
+}
+
+@media screen and (max-width: 780px) {
   .tableOS {
     border: 0;
   }
@@ -92,4 +124,12 @@
   .form__input--table {
     width: auto;
   }
+}
+
+
+@media screen and (max-width: 400px) {
+  .tableOS__button--container {
+    text-align: center;
+  }
+  
 }

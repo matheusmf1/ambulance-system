@@ -205,16 +205,6 @@ export default function NewServiceOrder() {
         </div>
 
         
-        {/* <div class="os__header--content">
-
-          <h6>Rescue Transformação de veículos especiais Eireli</h6>
-
-          <h6 class="info">CNPJ: 33.972.355/0001-00</h6>
-          <h6 class="info">Rua Machado, 55 Vila Sorocabana</h6>
-          <h6 class="info">Guarulhos/SP - CEP: 07025-210</h6>
-
-        </div> */}
-
         <div class="os__header--content">
 
           <h6 class="info">(11) 2847-0356 - (11) 95651-2030</h6>
@@ -232,10 +222,17 @@ export default function NewServiceOrder() {
             {/* INFO INICIAL */}
             <div className="osForm__content--container">
 
-              <div className="os__content--container">
-                <h6 className="os__content--title">Ordem de Serviço Nº</h6>
-                <h6 className="os__content--datePicker">Data Picker</h6>
+              <div className="osForm__titleWithDate--container">
+
+                <div className="osForm__titleWithDate--title">
+                  <label className="form__input--labelInLine" htmlFor="os-number">Ordem de Serviço Nº</label>
+                  <input className="osForm__input--OSnumber" id="os-number" type="number" required/>
+                </div>
+
+                <input class="osForm__input--date" type="date" required/>
+
               </div>
+
 
               <div class="form__input--halfWidth">
                 <label class="form__input--label">Código do Cliente*</label>
@@ -325,28 +322,28 @@ export default function NewServiceOrder() {
 
               <div class="osForm__input">
                 <label class="form__input--label">Veículo*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+                <input class="form__input" type="text" placeholder="Veículo" required/>
               </div>
 
               <div class="osForm__input">
                 <label class="form__input--label">Marca*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+                <input class="form__input" type="text" placeholder="Marca" required/>
               </div>
 
 
               <div class="osForm__input">
                 <label class="form__input--label">Modelo*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+                <input class="form__input" type="text" placeholder="Modelo" required/>
               </div>
 
               <div class="osForm__input">
                 <label class="form__input--label">Placa*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+                <input class="form__input" type="text" placeholder="Placa" required/>
               </div>
 
               <div class="osForm__input">
                 <label class="form__input--label">Prefixo*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+                <input class="form__input" type="text" placeholder="Prefixo" required/>
               </div>
 
             </div>
@@ -363,7 +360,7 @@ export default function NewServiceOrder() {
               <h6 className="os__content--title">Serviços</h6>
               <TableOS tableData={tableDataServicos} setValorTotal={setValorTotalServico}/>
               
-              <h3>Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
+              <h3 className="os__content--sumTableTitle">Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
             </div>
 
             {/* DADOS PAGAMENTO */}
@@ -406,11 +403,12 @@ export default function NewServiceOrder() {
 
             </div>
            
-
+            {/* ASSINATURA E DADOS BANCARIOS */}
 
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
+                <input type="text"/>
                 <h3>Solicitado por:</h3>
               </div>
 
@@ -440,14 +438,13 @@ export default function NewServiceOrder() {
             </div>
 
             <div className="footer__button--status">
-              <label class="form__input--label">STATUS</label>
+              <label>STATUS</label>
               <select name="forma-pagamento" class="form__input">
                 <option value="Cancelado">Cancelado</option>
                 <option value="Em Andamento">Em Andamento</option>
                 <option value="Concluído">Concluído</option>
               </select> 
-            </div>
-          
+            </div>       
 
           </div>
 

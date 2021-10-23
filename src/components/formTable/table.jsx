@@ -308,9 +308,9 @@ const ReactTable = React.memo( props => {
       
       </table>
 
-      <div>
-        <button type="button" onClick={addRow}>Adicionar Linha</button>
-        <button type="button" onClick={resetData}>Resetar Tabela</button>
+      <div className="tableOS__button--container">
+        <button type="button" className="tableOS__button--add" onClick={addRow}>Adicionar Linha</button>
+        <button type="button" className="tableOS__button--reset" onClick={resetData}>Resetar Tabela</button>
       </div>
     </>
   );
