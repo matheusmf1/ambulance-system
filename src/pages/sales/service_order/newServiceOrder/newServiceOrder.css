@@ -78,6 +78,7 @@
   display: flex;
   justify-content: space-between;
   flex-flow: row wrap;
+  padding: 15px 5px;
   /* overflow-x: auto; */
 }
 
@@ -92,7 +93,8 @@
   align-self: flex-end;
   flex: 1;
   text-align: center;
-  margin: 15px 0 20px 0;
+  /* margin: 15px 0 20px 0; */
+  padding: 15px 5px;
 }
 
 
@@ -111,7 +113,8 @@
 }
 
 .os__signatureBankInfo--content {
-  padding: 15px 0px;
+  /* padding: 15px 0px; */
+  padding: 15px 5px;
   font-size: 24px;
   text-align: end;
   flex: 1;
@@ -185,6 +188,9 @@
 
 .osForm__titleWithDate--title label {
   padding: 5px 10px 5px 0px;
+  vertical-align: bottom;
+  text-transform: uppercase;
+  font-size: 16px;
 }
 
 .osForm__input--OSnumber {
@@ -233,6 +239,14 @@
     width: 105px;
   }
 
+  .os__signatureBankInfo--content{
+    text-align: start;
+  }
+
+  .osForm__titleWithDate--title {
+    padding: 5px 0px;
+}
+
   
 }
 
@@ -247,12 +261,7 @@
   }
 
   .osForm__titleWithDate--container {
-    justify-content: center;
     height: auto;
-  }
-
-  .osForm__input--date {
-    width: -webkit-fill-available;
   }
 
 }

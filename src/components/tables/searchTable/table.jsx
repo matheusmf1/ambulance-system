@@ -6,41 +6,28 @@ import "rc-pagination/assets/index.css";
 import './table.css';
 
 import { DeleteOutline } from "@material-ui/icons";
-
-import { allData } from "../../assets/mock/tableData";
 import { Link } from "react-router-dom";
 
+export default function Table( props ) {
 
-const tableHead = {
-  id: "ID",
-  name: "Nome",
-  email: "Email",
-  phone: "Telefone",
-  company_name: "Empresa",
-  cnpj_cpf: "CPNJ/CPF",
-  city: "Cidade",
-  action: "Opções",
-};
-
-const Table = (props) => {
+  const { tableName, columns, data, link } = props;
 
   const countPerPage = 10;
   const [value, setValue] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [collection, setCollection] = React.useState(
-    cloneDeep(allData.slice(0, countPerPage))
+    cloneDeep(data.slice(0, countPerPage))
   );
 
-  const searchData = React.useRef(
-    throttle(val => {
-
-      const query = val.toLowerCase();
-      setCurrentPage(1);
+  const searchData = React.useRef( throttle(val => { 
+    
+    const query = val.toLowerCase();
+    setCurrentPage(1);
   
-      const data = cloneDeep(
-        allData
-          .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.email.toLowerCase().indexOf(query) > -1 || item.phone.toLowerCase().indexOf(query) > -1 )
-          .slice(0, countPerPage)
+    const data = cloneDeep( 
+      data
+        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.email.toLowerCase().indexOf(query) > -1 || item.phone.toLowerCase().indexOf(query) > -1 )
+        .slice(0, countPerPage)
       );
       setCollection(data);
     }, 400)
@@ -58,12 +45,17 @@ const Table = (props) => {
     setCurrentPage(p);
     const to = countPerPage * p;
     const from = to - countPerPage;
-    setCollection(cloneDeep(allData.slice(from, to)));
+    setCollection(cloneDeep(data.slice(from, to)));
   };
 
   const tableRows = rowData => {
     const { key, index } = rowData;
-    const tableCell = Object.keys(tableHead);
+
+    const tableCell = Object.keys( columns );
+
+    console.log('tableCell')
+    console.log(tableCell)
+    
     const columnData = tableCell.map((keyD, i) => {
 
       if ( keyD === 'action' ) {
@@ -81,7 +73,7 @@ const Table = (props) => {
   };
 
   const headRow = () => {
-    return Object.values(tableHead).map((title, index) => (
+    return Object.values( columns ).map((title, index) => (
       <td key={index}>{title}</td>
     ));
   };
@@ -94,7 +86,7 @@ const Table = (props) => {
 
   const createActionButtons = ( i, key ) => {
     return <td key={i}>
-      <Link to={"/cliente/" + key } className="link">
+      <Link to={`/${link}/` + key } className="link">
         <button className="userListEdit">Editar</button>
       </Link>
 
@@ -110,7 +102,7 @@ const Table = (props) => {
     <main>
       <div class="table__titleAndSearch--container">
 
-        <h3 className="table__titleAndSearch--title">{props.tableName}</h3>
+        <h3 className="table__titleAndSearch--title">{ tableName }</h3>
 
         <input
           className="table__titleAndSearch--search"
@@ -131,7 +123,7 @@ const Table = (props) => {
         pageSize={countPerPage}
         onChange={updatePage}
         current={currentPage}
-        total={allData.length}
+        total={data.length}
         className="table__pagination"
       />
 
@@ -139,4 +131,3 @@ const Table = (props) => {
       
   );
 };
-export default Table;

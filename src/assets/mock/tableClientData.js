@@ -1,15 +1,23 @@
-export const allData = [
+export const tableClientData = [
 
   {
     id: "1",
     name: "Matheus",
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
+    
     address: "Rua xxxx",
+    cep: "00000-000",
+    addressNumber: "665",
+    aditionalInformation: "apto 1064",
+    neighborhood: "Macedo",
     city: "Guarulhos",
     state: "SP",
+
+    telephone: "(11)97570-7752",
+    mobile: "(11)97570-7752",
+
     email: "mathew.mfranco@gmail.com",
-    phone: "(11)97570-7752",
     moreInfo: "xxxxx",
   },
 
@@ -19,10 +27,15 @@ export const allData = [
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
     address: "Rua xxxx",
+    cep: "00000-000",
+    addressNumber: "665",
+    aditionalInformation: "apto 1064",
+    neighborhood: "Macedo",
     city: "Guarulhos",
     state: "SP",
+    telephone: "(11)97570-7752",
+    mobile: "(11)97570-7752",
     email: "test23@test.com",
-    phone: "(11)11111-1111",
     moreInfo: "xxxxx",
   },
   {
@@ -31,10 +44,15 @@ export const allData = [
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
     address: "Rua xxxx",
+    cep: "00000-000",
+    addressNumber: "665",
+    aditionalInformation: "apto 1064",
+    neighborhood: "Macedo",
     city: "Guarulhos",
     state: "SP",
+    telephone: "(11)97570-7752",
+    mobile: "(11)97570-7752",
     email: "test32@test.com",
-    phone: "(11)11111-1111",
     moreInfo: "xxxxx",
   },
   {
@@ -43,34 +61,15 @@ export const allData = [
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
     address: "Rua xxxx",
+    cep: "00000-000",
+    addressNumber: "665",
+    aditionalInformation: "apto 1064",
+    neighborhood: "Macedo",
     city: "Guarulhos",
     state: "SP",
+    telephone: "(11)97570-7752",
+    mobile: "(11)11111-1111",
     email: "test456@test.com",
-    phone: "(11)11111-1111",
-    moreInfo: "xxxxx"
-  },
-  {
-    id: "5",
-    name: "test5",
-    company_name: "Empresa LTDA",
-    cnpj_cpf: "000.000.000-00",
-    address: "Rua xxxx",
-    city: "Guarulhos",
-    state: "SP",
-    email: "test53@test.com",
-    phone: "(11)11111-1111",
-    moreInfo: "xxxxx"
-  },
-  {
-    id: "6",
-    name: "test6",
-    company_name: "Empresa LTDA",
-    cnpj_cpf: "000.000.000-00",
-    address: "Rua xxxx",
-    city: "Guarulhos",
-    state: "SP",
-    email: "test67@test.com",
-    phone: "(11)11111-1111",
-    moreInfo: "xxxxx"
-  },
+    moreInfo: "xxxxx",
+  }
 ];

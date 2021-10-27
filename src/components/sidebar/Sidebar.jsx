@@ -2,6 +2,11 @@ import React from 'react'
 import './sidebar.css'
 import logoRescue from '../../assets/images/logo-rescue.png';
 import DashboardIcon from "@material-ui/icons/Dashboard";
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
+import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 
 export default function Sidebar() {
@@ -56,17 +61,11 @@ export default function Sidebar() {
 						</li>
 
 
-						{/* PRODUCTS */}
+						{/* CLIENTES */}
 						<li className="sidebar__menu--listItens">		
-							<a>	
-								<svg className="sidebar__menu--icons" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-									stroke-linejoin="round">
-									<circle cx="9" cy="21" r="1"></circle>
-									<circle cx="20" cy="21" r="1"></circle>
-									<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-								</svg>
-								
+							<a>
+
+								<PeopleAltOutlinedIcon/>
 								<span className="sidebar__menu--title">Clientes</span>
 							
 								<svg id="menu-arrow" className="sidebar__menu--arrow sidebar__menu--icons" width="20" height="20"
@@ -80,30 +79,102 @@ export default function Sidebar() {
 						
 							<ul id="product" className="sidebar__submenu">
 							
-								{/* <span className="sidebar__menu--title">Clientes</span> */}
 								<span className="sidebar__menu--closed-Title">Clientes</span>
 						
 								<li>
 									<a href="/novocliente">								
-										<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" 
+										{/* <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" 
 											viewBox="0 0 20 20" stroke="currentColor" stroke-width="2" 
 											stroke-linecap="round">
 											<line x1="1" y1="10" x2="16" y2="10" stroke-linecap="round"/>  
-										</svg>
+										</svg> */}
 
-										<span className="sidebar__submenu--title">Novo Cliente</span>
+										<RemoveOutlinedIcon/>
+
+										<span className="sidebar__submenu--title">Cadastrar</span>
 									</a>
 								</li>
 						
 								<li>
 									<a href="/cliente">
-										<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" 
-											viewBox="0 0 20 20" stroke="currentColor" stroke-width="2" 
-											stroke-linecap="round">
-											<line x1="1" y1="10" x2="16" y2="10" stroke-linecap="round"/>  
-										</svg>
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar</span>            
+									</a>
+								</li>
+						
+							</ul>
+						</li>
 
-										<span className="sidebar__submenu--title">Lista de Clientes</span>            
+						{/* FORNECEDORES */}
+						<li className="sidebar__menu--listItens">		
+							<a>	
+							
+								<Inventory2OutlinedIcon/>
+
+								<span className="sidebar__menu--title">Fornecedores</span>
+							
+								<svg id="menu-arrow" className="sidebar__menu--arrow sidebar__menu--icons" width="20" height="20"
+									xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+									stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="10 15 15 20 20 15"></polyline>
+									<path d="M4 4h7a4 4 0 0 1 4 4v12"></path>	
+								</svg>
+
+							</a>
+						
+							<ul id="product" className="sidebar__submenu">
+
+								<span className="sidebar__menu--closed-Title">Fornecedores</span>
+						
+								<li>
+									<a href="/novofornecedor">								
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastrar</span>
+									</a>
+								</li>
+						
+								<li>
+									<a href="/fornecedor">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar</span>            
+									</a>
+								</li>
+						
+							</ul>
+						</li>
+
+						{/* FUNCIONARIOS */}
+						<li className="sidebar__menu--listItens">		
+							<a>	
+
+								<BadgeOutlinedIcon/>
+								
+								<span className="sidebar__menu--title">Funcionarios</span>
+							
+								<svg id="menu-arrow" className="sidebar__menu--arrow sidebar__menu--icons" width="20" height="20"
+									xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+									stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="10 15 15 20 20 15"></polyline>
+									<path d="M4 4h7a4 4 0 0 1 4 4v12"></path>	
+								</svg>
+
+							</a>
+						
+							<ul id="product" className="sidebar__submenu">
+
+								<span className="sidebar__menu--closed-Title">Funcionarios</span>
+						
+								<li>
+									<a href="/novofuncionario">								
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastrar</span>
+									</a>
+								</li>
+						
+								<li>
+									<a href="/funcionario">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar</span>            
 									</a>
 								</li>
 						
@@ -111,19 +182,12 @@ export default function Sidebar() {
 						</li>
 
 
-						{/* ORDEM DE SERVIÇO */}
+						{/* VENDAS */}
 						<li className="sidebar__menu--listItens">
 							<a>
-
-								<svg className="sidebar__menu--icons" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-									stroke-linejoin="round">
-									<circle cx="9" cy="21" r="1"></circle>
-									<circle cx="20" cy="21" r="1"></circle>
-									<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-								</svg>
+								<ShoppingCartOutlinedIcon/>
 								
-								<span className="sidebar__menu--title">Ordem de Serviço</span>
+								<span className="sidebar__menu--title">Vendas</span>
 							
 								<svg id="menu-arrow" className="sidebar__menu--arrow sidebar__menu--icons" width="20" height="20"
 									xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -136,36 +200,35 @@ export default function Sidebar() {
 						
 							<ul id="product" className="sidebar__submenu">  
 
-								<span className="sidebar__menu--closed-Title">Ordem de Serviço</span>        
+								<span className="sidebar__menu--closed-Title">Vendas</span>        
 								
 								<li>
-									<a href="nova-os">								
-
-										<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" 
-											viewBox="0 0 20 20" stroke="currentColor" stroke-width="2" 
-											stroke-linecap="round">
-											<line x1="1" y1="10" x2="16" y2="10" stroke-linecap="round"/>  
-										</svg>
-
-										<span className="sidebar__submenu--title">Nova OS</span>
-
+									<a href="nova-os">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Ordem de Serviço</span>
 									</a>
+								</li>
 
+								<li>
+									<a href="nova-venda">								
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Venda de Produto</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="nova-transformacao">								
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Transformação</span>
+									</a>
 								</li>
 						
-								<li className="">
+								{/* <li className="">
 									<a href="">
-
-										<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" 
-											viewBox="0 0 20 20" stroke="currentColor" stroke-width="2" 
-											stroke-linecap="round">
-											<line x1="1" y1="10" x2="16" y2="10" stroke-linecap="round"/>  
-										</svg>
-
+										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Lista de OS</span>
-										
 									</a>
-								</li>
+								</li> */}
 						
 							</ul>
 						</li>

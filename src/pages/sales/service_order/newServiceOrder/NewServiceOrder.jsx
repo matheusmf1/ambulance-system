@@ -2,8 +2,8 @@ import React from 'react'
 
 import './newServiceOrder.css'
 
-import logoRescue from '../../../assets/images/logo-rescue.png';
-import { TableOS } from '../../../components/formTable/table';
+import logoRescue from '../../../../assets/images/logo-rescue.png';
+import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
 export default function NewServiceOrder() {
 
@@ -229,7 +229,10 @@ export default function NewServiceOrder() {
                   <input className="osForm__input--OSnumber" id="os-number" type="number" required/>
                 </div>
 
-                <input class="osForm__input--date" type="date" required/>
+                <div className="osForm__titleWithDate--title">
+                  <label className="form__input--labelInLine">Data Entrada</label>
+                  <input className="osForm__input--date" type="date" required/>   
+                </div>
 
               </div>
 
@@ -420,6 +423,13 @@ export default function NewServiceOrder() {
                 <h6 class="info">C/C: 20.867-1</h6>
                 <h6 class="info">Rescue Transformação de veículos especiais Eireli</h6>
                 <h6 class="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
+
+
+                <div className="osForm__titleWithDate--title">
+                  <label className="form__input--labelInLine">Data Saída</label>
+                  <input className="osForm__input--date" type="date" required/>   
+                </div>
+
 
               </div>
 

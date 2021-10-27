@@ -22,7 +22,7 @@ const TableText = props => {
   // console.log("TableInputText", props);
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
-  return <h5 onChange={onChange}>R$ {cell.value}</h5>;
+  return <h5 onChange={onChange} className="tableOS__subTotal">R$ {cell.value}</h5>;
 };
 
 const ReactTable2 = React.memo( props => {
@@ -297,7 +297,7 @@ const ReactTable = React.memo( props => {
             { somaTotalTextAndItens.map( cell => {
               return (
                 <td colSpan={ cell.colSpan }>
-                  <h5> { cell.text } { somaTotalRowData[ cell.variable ] } </h5>                 
+                  <h5 className="tableOS__subTotal"> { cell.text } { somaTotalRowData[ cell.variable ] } </h5>                 
                 </td>
               );
             })}

@@ -75,6 +75,10 @@
   margin: 5px 0px 0px 0px;
 }
 
+.tableOS__subTotal {
+  font-size: 17px;
+}
+
 @media screen and (max-width: 780px) {
   .tableOS {
     border: 0;

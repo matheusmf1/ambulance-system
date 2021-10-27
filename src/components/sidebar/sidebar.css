@@ -141,6 +141,10 @@ li {
   width: max-content;
 }
 
+.sidebar__menu--ImgIcon {
+  width: 35px;
+}
+
 
 
 /* --- SIDEBAR LIST ITEM --- */

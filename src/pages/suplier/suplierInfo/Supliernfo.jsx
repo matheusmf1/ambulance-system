@@ -6,36 +6,35 @@ import {
   PhoneAndroid,
 } from "@material-ui/icons";
 
-// import { Link } from "react-router-dom";
-import "./customerInfo.css";
-
-import { tableClientData } from '../../../assets/mock/tableClientData'
+import { tableProviderData } from '../../../assets/mock/tableProviderData.js';
 
 import BusinessIcon from '@material-ui/icons/Business';
-
 import userImage from '../../../assets/images/user.png'
 
 const fetchUserData = ( id ) => {
 
-  return tableClientData.filter( user => user.id === id )[0] 
+  return tableProviderData.filter( user => user.id === id )[0] 
 
 }
 
-export default function CustomerInfo(props) {
+export default function SuplierInfo( props ) {
+
+
+  console.log( props )
 
   let userID = props.match.params.id;
   let userData = fetchUserData( userID )
-  console.log( userData )
+  // console.log( userData )
 
   return (
     <main className="user">
 
       <div className="userTitleContainer">
-        <h1 className="userTitle">Editar Cliente</h1>
-        {/* <Link to="/newUser">
-          <button className="userAddButton">Novo</button>
-        </Link> */}
+
+        <h1 className="userTitle">Editar Fornecedor</h1>
+        
         <button className="userUpdateButton">Atualizar</button>
+
       </div>
 
       <div className="userContainer">
@@ -59,14 +58,10 @@ export default function CustomerInfo(props) {
             <span className="userShowTitle">Informações do Responsável</span>
 
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Empresa</h6> 
-              <span className="userShowInfoTitle">{ userData.company_name }</span>
-            </div>
-
-            <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">CNPJ</h6> 
               <span className="userShowInfoTitle">{ userData.cnpj_cpf }</span>
             </div>
+
 
             <div className="userShowInfo">
               <LocalPhone className="userShowIcon" />
@@ -139,10 +134,60 @@ export default function CustomerInfo(props) {
                   className="userUpdateInput"
                 />
               </div>
-              
 
               <div className="userUpdateItem">
-                <label>CNPJ/CPF</label>
+                <label>Email</label>
+                <input
+                  type="text"
+                  placeholder={ userData.email }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Celular</label>
+                <input
+                  type="tel"
+                  placeholder={ userData.mobile }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Endereço</label>
+                <input
+                  type="text"
+                  placeholder={ userData.address }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Complemento</label>
+                <input
+                  type="text"
+                  placeholder={ userData.aditionalInformation }
+                  className="userUpdateInput"
+                />
+              </div>
+
+
+              <div className="userUpdateItem">
+                <label>Cidade</label>
+                <input
+                  type="text"
+                  placeholder={ userData.city }
+                  className="userUpdateInput"
+                />
+              </div>
+
+
+            </div>
+
+            <div className="userUpdateRight--singleItem">
+
+            <div className="userUpdateItem">
+                <label>CPF</label>
                 <input
                   type="text"
                   placeholder={ userData.cnpj_cpf }
@@ -168,7 +213,6 @@ export default function CustomerInfo(props) {
                 />
               </div>
 
-
               <div className="userUpdateItem">
                 <label>Número</label>
                 <input
@@ -177,7 +221,6 @@ export default function CustomerInfo(props) {
                   className="userUpdateInput"
                 />
               </div>
-
 
               <div className="userUpdateItem">
                 <label>Bairro</label>
@@ -196,71 +239,6 @@ export default function CustomerInfo(props) {
                   className="userUpdateInput"
                 />
               </div>
-
-            </div>
-
-            <div className="userUpdateRight--singleItem">
-              
-              <div className="userUpdateItem">
-                <label>Empresa</label>
-                <input
-                type="text"
-                placeholder={ userData.company_name }
-                className="userUpdateInput"
-                />
-              </div>
-
-              <div className="userUpdateItem">
-                <label>Email</label>
-                <input
-                  type="text"
-                  placeholder={ userData.email }
-                  className="userUpdateInput"
-                />
-              </div>
-
-              <div className="userUpdateItem">
-                <label>Celular</label>
-                <input
-                  type="tel"
-                  placeholder={ userData.mobile }
-                  className="userUpdateInput"
-                />
-              </div>
-
-              
-
-              <div className="userUpdateItem">
-                <label>Endereço</label>
-                <input
-                  type="text"
-                  placeholder={ userData.address }
-                  className="userUpdateInput"
-                />
-              </div>
-
-
-
-              <div className="userUpdateItem">
-                <label>Complemento</label>
-                <input
-                  type="text"
-                  placeholder={ userData.aditionalInformation }
-                  className="userUpdateInput"
-                />
-              </div>
-
-
-              <div className="userUpdateItem">
-                <label>Cidade</label>
-                <input
-                  type="text"
-                  placeholder={ userData.city }
-                  className="userUpdateInput"
-                />
-              </div>
-
-
                  
             </div>
 
@@ -270,7 +248,6 @@ export default function CustomerInfo(props) {
               </div>
 
           </form> 
-
 
 
         </div>
