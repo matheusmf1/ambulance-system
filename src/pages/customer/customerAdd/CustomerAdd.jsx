@@ -16,13 +16,18 @@ export default function CustomerAdd() {
           <div className="form__content--inputs">
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Cliente*</label>
+              <label className="form__input--label">Resposável*</label>
               <input className="form__input" type="text" placeholder="Nome do responsável" required/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Empresa*</label>
-              <input className="form__input" type="text" placeholder="Nome da empresa" required/>
+              <label className="form__input--label">Razão Social*</label>
+              <input className="form__input" type="text" placeholder="Razão social" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Nome Fantasia*</label>
+              <input className="form__input" type="text" placeholder="Nome fantasia" required/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -30,10 +35,44 @@ export default function CustomerAdd() {
               <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
             </div>
 
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Email*</label>
+              <input className="form__input" type="email" placeholder="Endereço de email"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Telefone*</label>
+              <input className="form__input" type="text" placeholder="Número de telefone" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Celular*</label>
+              <input className="form__input" type="text" placeholder="Número de celular" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">CEP*</label>
+              <input className="form__input" type="text" placeholder="Informe o CEP" required/>
+            </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Endereço*</label>
               <input className="form__input" type="text" placeholder="Informe o endereço" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Número*</label>
+              <input className="form__input" type="text" placeholder="Informe o número" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Complemento</label>
+              <input className="form__input" type="text" placeholder="Apartamento, sala, edifício, andar, etc."/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Bairro*</label>
+              <input className="form__input" type="text" placeholder="Informe o bairro" required/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -68,20 +107,10 @@ export default function CustomerAdd() {
                     <option value="RO">Rondônia</option>
                     <option value="RR">Roraima</option>
                     <option value="SC">Santa Catarina</option>
-                    <option value="SP">São Paulo</option>
+                    <option value="SP" selected>São Paulo</option>
                     <option value="SE">Sergipe</option>
                     <option value="TO">Tocantins</option>
                   </select>              
-            </div>
-
-            <div className="form__input--halfWidth">
-              <label className="form__input--label">Email*</label>
-              <input className="form__input" type="email" placeholder="Endereço de email"/>
-            </div>
-
-            <div className="form__input--halfWidth">
-              <label className="form__input--label">Telefone*</label>
-              <input className="form__input" type="text" placeholder="Número de telefone" required/>
             </div>
 
             <div className="form__input--fullWidth">            

@@ -12,7 +12,7 @@ import NewServiceOrder from "./pages/sales/service_order/newServiceOrder/NewServ
 import NewProductsSale from "./pages/sales/products_sale/newProductsSale/NewProductsSale";
 import NewTransformationProposal from "./pages/sales/transformation_proposal/NewTransformationProposal";
 import SupplierAdd from "./pages/supplier/supplierAdd/SupplierAdd";
-import SupplierInfo from "./pages/supplier/supplierInfo/Suppliernfo";
+import SupplierInfo from "./pages/supplier/supplierInfo/SupplierInfo";
 import SupplierList from "./pages/supplier/supplierList/SupplierList";
 import EmployeeAdd from "./pages/employee/employeeAdd/EmployeeAdd";
 import EmployeeList from "./pages/employee/employeeList/EmployeeList";

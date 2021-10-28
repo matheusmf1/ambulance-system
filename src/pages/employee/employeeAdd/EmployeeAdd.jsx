@@ -6,7 +6,7 @@ export default function EmployeeAdd() {
     <main className="form__container">
 
       <div className="form__title">
-        <h4>Cadastrar Fornecedor</h4>
+        <h4>Cadastrar Funcionário</h4>
       </div>
 
       <div className="form__content">
@@ -14,24 +14,85 @@ export default function EmployeeAdd() {
           <div className="form__content--inputs">
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Cliente*</label>
-              <input className="form__input" type="text" placeholder="Nome do responsável" required/>
+              <label className="form__input--label">Nome*</label>
+              <input className="form__input" type="text" placeholder="Nome do funcionário" required/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Empresa*</label>
-              <input className="form__input" type="text" placeholder="Nome da empresa" required/>
+              <label className="form__input--label">Data de Nascimento*</label>
+              <input className="form__input" type="date" required/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">CNPJ/CPF*</label>
-              <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
+              <label className="form__input--label">Gênero*</label>
+                <select name="estados-brasil" className="form__input">
+                    <option value="masculino">Masculino</option>
+                    <option value="feminino">Feminino</option>
+                    <option value="outro">Outro</option>
+                </select>              
             </div>
 
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Estado Civil</label>
+                <select name="estados-brasil" className="form__input">
+                  <option value="solteiro">Solteiro(a)</option>
+                  <option value="casado">Casado(a)</option>
+                  <option value="separado">Divorciado(a)</option>
+                  <option value="viuvo">Viúvo(a)</option>
+                  <option value="outro">Outro</option>
+                </select>              
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">RG*</label>
+              <input className="form__input" type="email" placeholder="Informe o nº do RG"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">CPF*</label>
+              <input className="form__input" type="email" placeholder="Informe o nº do CPF"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Email*</label>
+              <input className="form__input" type="email" placeholder="Endereço de email"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Telefone*</label>
+              <input className="form__input" type="text" placeholder="Número de telefone" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Celular*</label>
+              <input className="form__input" type="text" placeholder="Número de celular" required/>
+            </div>
+
+
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">CEP*</label>
+              <input className="form__input" type="text" placeholder="Informe o CEP" required/>
+            </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Endereço*</label>
               <input className="form__input" type="text" placeholder="Informe o endereço" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Número*</label>
+              <input className="form__input" type="text" placeholder="Informe o número" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Complemento</label>
+              <input className="form__input" type="text" placeholder="Apartamento, sala, edifício, andar, etc."/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Bairro*</label>
+              <input className="form__input" type="text" placeholder="Informe o bairro" required/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -66,20 +127,31 @@ export default function EmployeeAdd() {
                     <option value="RO">Rondônia</option>
                     <option value="RR">Roraima</option>
                     <option value="SC">Santa Catarina</option>
-                    <option value="SP">São Paulo</option>
+                    <option value="SP" selected>São Paulo</option>
                     <option value="SE">Sergipe</option>
                     <option value="TO">Tocantins</option>
                   </select>              
             </div>
 
+
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Email*</label>
-              <input className="form__input" type="email" placeholder="Endereço de email"/>
+              <label className="form__input--label">Cargo*</label>
+              <input className="form__input" type="email" placeholder="Informe o cargo"/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Telefone*</label>
-              <input className="form__input" type="text" placeholder="Número de telefone" required/>
+              <label className="form__input--label">Salário*</label>
+              <input className="form__input" type="email" placeholder="Informe o valor do salário"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Vale Transporte(Total por dia)*</label>
+              <input className="form__input" type="email" placeholder="Informe o valor gasto por dia"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Dados Bancários*</label>
+              <input className="form__input" type="email" placeholder="Dados Bancários"/>
             </div>
 
             <div className="form__input--fullWidth">            
