@@ -1,5 +1,5 @@
 import React from 'react'
-import Table from '../../../components/tables/searchTable/table';
+import { Table } from '../../../components/tables/searchTable/table';
 
 import { tableProviderData } from "../../../assets/mock/tableProviderData";
 

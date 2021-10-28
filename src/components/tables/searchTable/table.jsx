@@ -8,7 +8,7 @@ import './table.css';
 import { DeleteOutline } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 
-export default function Table( props ) {
+export const Table = ( props ) => {
 
   const { tableName, columns, data, link } = props;
 

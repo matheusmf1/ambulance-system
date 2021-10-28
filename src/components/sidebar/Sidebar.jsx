@@ -155,21 +155,21 @@ export default function Sidebar() {
 								<span className="sidebar__menu--closed-Title">Vendas</span>        
 								
 								<li>
-									<a href="nova-os">
+									<a href="/nova-os">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Ordem de Serviço</span>
 									</a>
 								</li>
 
 								<li>
-									<a href="nova-venda">								
+									<a href="/nova-venda">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Venda de Produto</span>
 									</a>
 								</li>
 
 								<li>
-									<a href="nova-transformacao">								
+									<a href="/nova-transformacao">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Transformação</span>
 									</a>
