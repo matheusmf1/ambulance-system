@@ -3,7 +3,7 @@ import { Table } from '../../../components/tables/searchTable/table';
 
 import { tableProviderData } from "../../../assets/mock/tableProviderData";
 
-export default function SuplierList() {
+export default function SupplierList() {
 
   const tableColumns = {
     id: "Código",

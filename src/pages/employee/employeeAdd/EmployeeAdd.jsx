@@ -3,45 +3,45 @@ import React from 'react'
 export default function EmployeeAdd() {
   return (
   
-    <main class="form__container">
+    <main className="form__container">
 
-      <div class="form__title">
+      <div className="form__title">
         <h4>Cadastrar Fornecedor</h4>
       </div>
 
-      <div class="form__content">
+      <div className="form__content">
         <form action="page-list-product.html">
-          <div class="form__content--inputs">
+          <div className="form__content--inputs">
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Cliente*</label>
-              <input class="form__input" type="text" placeholder="Nome do responsável" required/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Cliente*</label>
+              <input className="form__input" type="text" placeholder="Nome do responsável" required/>
             </div>
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Empresa*</label>
-              <input class="form__input" type="text" placeholder="Nome da empresa" required/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Empresa*</label>
+              <input className="form__input" type="text" placeholder="Nome da empresa" required/>
             </div>
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">CNPJ/CPF*</label>
-              <input class="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">CNPJ/CPF*</label>
+              <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
             </div>
 
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Endereço*</label>
-              <input class="form__input" type="text" placeholder="Informe o endereço" required/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Endereço*</label>
+              <input className="form__input" type="text" placeholder="Informe o endereço" required/>
             </div>
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Cidade*</label>
-              <input class="form__input" type="text" placeholder="Informe o endereço" required/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Cidade*</label>
+              <input className="form__input" type="text" placeholder="Informe o endereço" required/>
             </div>
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Estado*</label>
-                <select name="estados-brasil" class="form__input">
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Estado*</label>
+                <select name="estados-brasil" className="form__input">
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -72,25 +72,25 @@ export default function EmployeeAdd() {
                   </select>              
             </div>
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Email*</label>
-              <input class="form__input" type="email" placeholder="Endereço de email"/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Email*</label>
+              <input className="form__input" type="email" placeholder="Endereço de email"/>
             </div>
 
-            <div class="form__input--halfWidth">
-              <label class="form__input--label">Telefone*</label>
-              <input class="form__input" type="text" placeholder="Número de telefone" required/>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Telefone*</label>
+              <input className="form__input" type="text" placeholder="Número de telefone" required/>
             </div>
 
-            <div class="form__input--fullWidth">            
-              <label class="form__input--label">Informações adicionais</label>
-              <textarea class="form__input" rows="4"></textarea>          
+            <div className="form__input--fullWidth">            
+              <label className="form__input--label">Informações adicionais</label>
+              <textarea className="form__input" rows="4"></textarea>          
             </div>
 
           </div>
 
-          <button type="submit" class="form__button form__button--add">Adicionar</button>
-          <button type="reset" class="form__button form__button--calcel">Corrigir</button>
+          <button type="submit" className="form__button form__button--add">Adicionar</button>
+          <button type="reset" className="form__button form__button--calcel">Corrigir</button>
 
         </form>
 

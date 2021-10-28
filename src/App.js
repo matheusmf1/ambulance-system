@@ -11,9 +11,9 @@ import CustomerList from "./pages/customer/customerList/CustomerList";
 import NewServiceOrder from "./pages/sales/service_order/newServiceOrder/NewServiceOrder";
 import NewProductsSale from "./pages/sales/products_sale/newProductsSale/NewProductsSale";
 import NewTransformationProposal from "./pages/sales/transformation_proposal/NewTransformationProposal";
-import SuplierAdd from "./pages/suplier/suplierAdd/SuplierAdd";
-import SuplierInfo from "./pages/suplier/suplierInfo/Supliernfo";
-import SuplierList from "./pages/suplier/suplierList/SuplierList";
+import SupplierAdd from "./pages/supplier/supplierAdd/SupplierAdd";
+import SupplierInfo from "./pages/supplier/supplierInfo/Suppliernfo";
+import SupplierList from "./pages/supplier/supplierList/SupplierList";
 import EmployeeAdd from "./pages/employee/employeeAdd/EmployeeAdd";
 import EmployeeList from "./pages/employee/employeeList/EmployeeList";
 import EmployeeInfo from "./pages/employee/employeeInfo/EmployeeInfo";
@@ -60,13 +60,13 @@ function App() {
           </Route>
 
           <Route exact path="/fornecedor">
-            <SuplierList/>
+            <SupplierList/>
           </Route>
 
-          <Route path="/fornecedor/:id" component={SuplierInfo}/>
+          <Route path="/fornecedor/:id" component={SupplierInfo}/>
 
           <Route path="/novofornecedor">
-            <SuplierAdd/>
+            <SupplierAdd/>
           </Route>
 
           <Route exact path="/funcionario">

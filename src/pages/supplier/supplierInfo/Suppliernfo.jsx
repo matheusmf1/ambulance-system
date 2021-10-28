@@ -17,7 +17,7 @@ const fetchUserData = ( id ) => {
 
 }
 
-export default function SuplierInfo( props ) {
+export default function SupplierInfo( props ) {
 
 
   console.log( props )

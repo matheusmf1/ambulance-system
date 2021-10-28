@@ -1,14 +1,12 @@
 import React from 'react'
 
-import './customerAdd.css'
-
-export default function CustomerAdd() {
+export default function SupplierAdd() {
   return (
   
     <main className="form__container">
 
       <div className="form__title">
-        <h4>Cadastrar Cliente</h4>
+        <h4>Cadastrar Fornecedor</h4>
       </div>
 
       <div className="form__content">
