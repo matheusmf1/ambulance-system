@@ -49,9 +49,9 @@ a {
   grid-template-columns: min-content 1fr 1fr 1fr;
   grid-template-rows: 0.2fr 3fr;
   grid-template-areas:
-    "sidebar nav nav nav"
-    "sidebar main main main";
-    
+  "sidebar nav nav nav"
+  "sidebar main main main";
+
   /* grid-gap: 0.2rem; */
   /* overflow-y: auto; */
 }
@@ -60,6 +60,7 @@ main {
   grid-area: main;
   padding: 15px 20px 10px 20px;
   overflow-y: auto;
+  
   /* background: #f3f4f6; */
   /* margin: 15px 5vw */
 }
@@ -77,8 +78,18 @@ footer {
   .container {
     grid-template-columns: 1fr;
     grid-template-rows: 0.2fr 3fr;
+    /* grid-template-rows: 0.2fr auto; */
     grid-template-areas:
       "nav"
       "main";
+  }
+
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  main {    
+    overflow-y: unset;
   }
 }
