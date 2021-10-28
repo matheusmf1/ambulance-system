@@ -19,10 +19,10 @@ export default function EmployeeList() {
   return (
     <>
       <Table
-        tableName="Lista de Forncedores"
+        tableName="Lista de Funcionários"
         columns={tableColumns}
         data={tableProviderData}
-        link="fornecedor"
+        link="funcionario"
       />
 
     </>

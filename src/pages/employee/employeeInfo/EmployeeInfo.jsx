@@ -6,19 +6,20 @@ import {
   PhoneAndroid,
 } from "@material-ui/icons";
 
-import { tableProviderData } from '../../../assets/mock/tableProviderData.js';
+
+import WcOutlinedIcon from '@mui/icons-material/WcOutlined';
 
 import BusinessIcon from '@material-ui/icons/Business';
 import userImage from '../../../assets/images/user.png'
+import { tableEmployeeData } from '../../../assets/mock/tableEmployeeData';
 
 const fetchUserData = ( id ) => {
 
-  return tableProviderData.filter( user => user.id === id )[0] 
+  return tableEmployeeData.filter( user => user.id === id )[0] 
 
 }
 
 export default function EmployeeInfo( props ) {
-
 
   console.log( props )
 
@@ -31,7 +32,7 @@ export default function EmployeeInfo( props ) {
 
       <div className="userTitleContainer">
 
-        <h1 className="userTitle">Editar Fornecedor</h1>
+        <h1 className="userTitle">Editar Funcionário</h1>
         
         <button className="userUpdateButton">Atualizar</button>
 
@@ -55,19 +56,40 @@ export default function EmployeeInfo( props ) {
           
           <div className="userShowBottom">
 
-            <span className="userShowTitle">Informações do Responsável</span>
+            <span className="userShowTitle">Informações do Funcionário</span>
 
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">CNPJ</h6> 
-              <span className="userShowInfoTitle">{ userData.cnpj_cpf }</span>
+              <h6 className="userShowInfoTitle--Subtitle">Nascimento</h6> 
+              <span className="userShowInfoTitle">{ userData.birthday }</span>
+            </div>
+
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Gênero</h6> 
+              <span className="userShowInfoTitle">{ userData.gender }</span>
+            </div>
+            
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Estado Civil</h6> 
+              <span className="userShowInfoTitle">{ userData.estado_civil }</span>
+            </div>
+
+            <div className="userShowInfo">           
+              <h6 className="userShowInfoTitle--Subtitle">RG</h6> 
+              <span className="userShowInfoTitle">{ userData.rg }</span>
+            </div>
+
+            <div className="userShowInfo">           
+              <h6 className="userShowInfoTitle--Subtitle">CPF</h6> 
+              <span className="userShowInfoTitle">{ userData.cpf }</span>
             </div>
 
 
             <div className="userShowInfo">
               <LocalPhone className="userShowIcon" />
               <span className="userShowInfoTitle">{ userData.telephone }</span>
-            </div>
-            
+            </div>     
+
             <div className="userShowInfo">
               <PhoneAndroid className="userShowIcon" />
               <span className="userShowInfoTitle">{ userData.mobile }</span>
@@ -76,6 +98,28 @@ export default function EmployeeInfo( props ) {
             <div className="userShowInfo">
               <MailOutline className="userShowIcon" />
               <span className="userShowInfoTitle">{ userData.email }</span>
+            </div>
+
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Cargo</h6> 
+              <span className="userShowInfoTitle">{ userData.cargo }</span>
+            </div>
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Salário</h6> 
+              <span className="userShowInfoTitle"> R$ { userData.salary }</span>
+            </div>
+
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Vale Tranporte (total por dia)</h6> 
+              <span className="userShowInfoTitle">R$ { userData.vale_transporte }</span>
+            </div>
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Dados Bancários</h6> 
+              <span className="userShowInfoTitle">{ userData.bank }</span>
             </div>
 
 
@@ -136,6 +180,33 @@ export default function EmployeeInfo( props ) {
               </div>
 
               <div className="userUpdateItem">
+                <label>RG</label>
+                <input
+                  type="text"
+                  placeholder={ userData.rg }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Gênero</label>
+                <input
+                  type="text"
+                  placeholder={ userData.gender }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Telefone</label>
+                <input
+                  type="text"
+                  placeholder={ userData.telephone }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
                 <label>Email</label>
                 <input
                   type="text"
@@ -144,14 +215,6 @@ export default function EmployeeInfo( props ) {
                 />
               </div>
 
-              <div className="userUpdateItem">
-                <label>Celular</label>
-                <input
-                  type="tel"
-                  placeholder={ userData.mobile }
-                  className="userUpdateInput"
-                />
-              </div>
 
               <div className="userUpdateItem">
                 <label>Endereço</label>
@@ -171,7 +234,6 @@ export default function EmployeeInfo( props ) {
                 />
               </div>
 
-
               <div className="userUpdateItem">
                 <label>Cidade</label>
                 <input
@@ -181,25 +243,60 @@ export default function EmployeeInfo( props ) {
                 />
               </div>
 
+              <div className="userUpdateItem">
+                <label>Cargo</label>
+                <input
+                  type="text"
+                  placeholder={ userData.cargo }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Vale Transporte</label>
+                <input
+                  type="text"
+                  placeholder={ userData.vale_transporte }
+                  className="userUpdateInput"
+                />
+              </div>
 
             </div>
 
             <div className="userUpdateRight--singleItem">
 
             <div className="userUpdateItem">
-                <label>CPF</label>
+                <label>Nascimento</label>
                 <input
                   type="text"
-                  placeholder={ userData.cnpj_cpf }
+                  placeholder={ userData.birthday }
                   className="userUpdateInput"
                 />
               </div>
 
               <div className="userUpdateItem">
-                <label>Telefone</label>
+                <label>CPF</label>
                 <input
                   type="tel"
-                  placeholder={ userData.telephone }
+                  placeholder={ userData.cpf }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Estado Civil</label>
+                <input
+                  type="text"
+                  placeholder={ userData.estado_civil }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Celular</label>
+                <input
+                  type="text"
+                  placeholder={ userData.mobile }
                   className="userUpdateInput"
                 />
               </div>
@@ -236,6 +333,24 @@ export default function EmployeeInfo( props ) {
                 <input
                   type="text"
                   placeholder={ userData.state }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Salário</label>
+                <input
+                  type="text"
+                  placeholder={ userData.salary }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Dados Bancários</label>
+                <input
+                  type="text"
+                  placeholder={ userData.bank }
                   className="userUpdateInput"
                 />
               </div>
