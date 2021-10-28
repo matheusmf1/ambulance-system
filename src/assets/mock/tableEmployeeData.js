@@ -10,15 +10,15 @@ export const tableEmployeeData = [
     
     address: "Rua xxxx",
     cep: "00000-000",
-    addressNumber: "665",
-    aditionalInformation: "apto 1064",
-    neighborhood: "Macedo",
+    addressNumber: "000",
+    aditionalInformation: "apto xxx",
+    neighborhood: "xxxx",
     city: "Guarulhos",
     state: "SP",
-
-    telephone: "(11)97570-7752",
-    mobile: "(11)97570-7752",
-    email: "mathew.mfranco@gmail.com",
+  
+    telephone: "(11)0000-0000",
+    mobile: "(11)00000-0000",
+    email: "xxxx@gmail.com",
 
     rg: "00.000.000-0",
     cpf: "000.000.000-00",
@@ -39,15 +39,15 @@ export const tableEmployeeData = [
     
     address: "Rua xxxx",
     cep: "00000-000",
-    addressNumber: "665",
-    aditionalInformation: "apto 1064",
-    neighborhood: "Macedo",
+    addressNumber: "000",
+    aditionalInformation: "apto xxx",
+    neighborhood: "xxxx",
     city: "Guarulhos",
     state: "SP",
-
-    telephone: "(11)1111-1111",
+  
+    telephone: "(11)0000-0000",
     mobile: "(11)00000-0000",
-    email: "mathew.mfranco@gmail.com",
+    email: "xxxx@gmail.com",
 
     rg: "00.000.000-0",
     cpf: "000.000.000-00",

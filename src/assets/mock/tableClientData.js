@@ -8,68 +8,80 @@ export const tableClientData = [
     
     address: "Rua xxxx",
     cep: "00000-000",
-    addressNumber: "665",
-    aditionalInformation: "apto 1064",
-    neighborhood: "Macedo",
+    addressNumber: "000",
+    aditionalInformation: "apto xxx",
+    neighborhood: "xxxx",
     city: "Guarulhos",
     state: "SP",
 
-    telephone: "(11)97570-7752",
-    mobile: "(11)97570-7752",
+    telephone: "(11)0000-0000",
+    mobile: "(11)00000-0000",
 
-    email: "mathew.mfranco@gmail.com",
+    email: "xxxx@gmail.com",
     moreInfo: "xxxxx",
   },
 
   {
     id: "2",
-    name: "test2",
+    name: "Matheus 2",
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
+    
     address: "Rua xxxx",
     cep: "00000-000",
-    addressNumber: "665",
-    aditionalInformation: "apto 1064",
-    neighborhood: "Macedo",
+    addressNumber: "000",
+    aditionalInformation: "apto xxx",
+    neighborhood: "xxxx",
     city: "Guarulhos",
     state: "SP",
-    telephone: "(11)97570-7752",
-    mobile: "(11)97570-7752",
-    email: "test23@test.com",
+
+    telephone: "(11)0000-0000",
+    mobile: "(11)00000-0000",
+
+    email: "xxxx@gmail.com",
     moreInfo: "xxxxx",
   },
+
   {
     id: "3",
-    name: "test3",
+    name: "Matheus 3",
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
+    
     address: "Rua xxxx",
     cep: "00000-000",
-    addressNumber: "665",
-    aditionalInformation: "apto 1064",
-    neighborhood: "Macedo",
+    addressNumber: "000",
+    aditionalInformation: "apto xxx",
+    neighborhood: "xxxx",
     city: "Guarulhos",
     state: "SP",
-    telephone: "(11)97570-7752",
-    mobile: "(11)97570-7752",
-    email: "test32@test.com",
+
+    telephone: "(11)0000-0000",
+    mobile: "(11)00000-0000",
+
+    email: "xxxx@gmail.com",
     moreInfo: "xxxxx",
   },
+
   {
     id: "4",
-    name: "test4",
+    name: "Matheus 4",
     company_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
+    
     address: "Rua xxxx",
     cep: "00000-000",
-    addressNumber: "665",
-    aditionalInformation: "apto 1064",
-    neighborhood: "Macedo",
+    addressNumber: "000",
+    aditionalInformation: "apto xxx",
+    neighborhood: "xxxx",
     city: "Guarulhos",
     state: "SP",
-    telephone: "(11)97570-7752",
-    mobile: "(11)11111-1111",
-    email: "test456@test.com",
+
+    telephone: "(11)0000-0000",
+    mobile: "(11)00000-0000",
+
+    email: "xxxx@gmail.com",
     moreInfo: "xxxxx",
-  }
+  },
+
 ];
