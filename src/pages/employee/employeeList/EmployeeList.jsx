@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table } from '../../../components/tables/searchTable/table';
 
-import { tableProviderData } from "../../../assets/mock/tableProviderData";
+import { tableEmployeeData } from "../../../assets/mock/tableEmployeeData";
 
 export default function EmployeeList() {
 
@@ -11,7 +11,7 @@ export default function EmployeeList() {
     email: "Email",
     telephone: "Telefone",
     mobile: "Celular",
-    cnpj_cpf: "CPNJ/CPF",
+    cpf: "CPF",
     city: "Cidade",
     action: "Opções",
   };
@@ -21,7 +21,7 @@ export default function EmployeeList() {
       <Table
         tableName="Lista de Funcionários"
         columns={tableColumns}
-        data={tableProviderData}
+        data={tableEmployeeData}
         link="funcionario"
       />
 

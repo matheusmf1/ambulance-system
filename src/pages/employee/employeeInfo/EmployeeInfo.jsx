@@ -6,9 +6,6 @@ import {
   PhoneAndroid,
 } from "@material-ui/icons";
 
-
-import WcOutlinedIcon from '@mui/icons-material/WcOutlined';
-
 import BusinessIcon from '@material-ui/icons/Business';
 import userImage from '../../../assets/images/user.png'
 import { tableEmployeeData } from '../../../assets/mock/tableEmployeeData';
@@ -50,6 +47,7 @@ export default function EmployeeInfo( props ) {
             />
             <div className="userShowTopTitle">
               <span className="userShowUsername"> { userData.name } </span>
+              <span className="userShowUserTitle">Cargo: { userData.cargo }</span>
               <span className="userShowUserTitle">Código: { userData.id }</span>
             </div>
           </div>
@@ -59,28 +57,27 @@ export default function EmployeeInfo( props ) {
             <span className="userShowTitle">Informações do Funcionário</span>
 
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Nascimento</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">Nascimento:</h6> 
               <span className="userShowInfoTitle">{ userData.birthday }</span>
             </div>
 
-
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Gênero</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">Gênero:</h6> 
               <span className="userShowInfoTitle">{ userData.gender }</span>
             </div>
             
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Estado Civil</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">Estado Civil:</h6> 
               <span className="userShowInfoTitle">{ userData.estado_civil }</span>
             </div>
 
             <div className="userShowInfo">           
-              <h6 className="userShowInfoTitle--Subtitle">RG</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">RG:</h6> 
               <span className="userShowInfoTitle">{ userData.rg }</span>
             </div>
 
             <div className="userShowInfo">           
-              <h6 className="userShowInfoTitle--Subtitle">CPF</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">CPF:</h6> 
               <span className="userShowInfoTitle">{ userData.cpf }</span>
             </div>
 
@@ -100,30 +97,44 @@ export default function EmployeeInfo( props ) {
               <span className="userShowInfoTitle">{ userData.email }</span>
             </div>
 
+            <span className="userShowTitle">Informações Financeiras</span>
 
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Cargo</h6> 
-              <span className="userShowInfoTitle">{ userData.cargo }</span>
-            </div>
-
-            <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Salário</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">Salário:</h6> 
               <span className="userShowInfoTitle"> R$ { userData.salary }</span>
             </div>
 
-
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Vale Tranporte (total por dia)</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">Vale Tranporte (total por dia):</h6> 
               <span className="userShowInfoTitle">R$ { userData.vale_transporte }</span>
             </div>
 
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">Dados Bancários</h6> 
-              <span className="userShowInfoTitle">{ userData.bank }</span>
+              <h6 className="userShowInfoTitle--Subtitle">Instituição Financeira:</h6> 
+              <span className="userShowInfoTitle">{ userData.bank_number }</span>
             </div>
 
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Agência:</h6> 
+              <span className="userShowInfoTitle">{ userData.bank_agency }</span>
+            </div>
 
-            <span className="userShowTitle">Endereço</span>
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Tipo de Conta:</h6> 
+              <span className="userShowInfoTitle">{ userData.bank_accountType }</span>
+            </div>
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Número da Conta:</h6> 
+              <span className="userShowInfoTitle">{ userData.bank_accountNumber }</span>
+            </div>
+
+            <div className="userShowInfo">
+              <h6 className="userShowInfoTitle--Subtitle">Chave PIX:</h6> 
+              <span className="userShowInfoTitle">{ userData.bank_pix }</span>
+            </div>
+
+            <span className="userShowTitle">Endereço:</span>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
@@ -145,7 +156,6 @@ export default function EmployeeInfo( props ) {
               <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Bairro:</h6> { userData.neighborhood }</span>
             </div>
 
-
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
               <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Cidade/Estado:</h6> { userData.city } - { userData.state }</span>
@@ -157,7 +167,6 @@ export default function EmployeeInfo( props ) {
               <Info className="userShowIcon" />
               <span className="userShowInfoTitle">{ userData.moreInfo } </span>
             </div>
-
 
         </div>
       </div>
@@ -261,6 +270,24 @@ export default function EmployeeInfo( props ) {
                 />
               </div>
 
+              <div className="userUpdateItem">
+                <label>Tipo de Conta</label>
+                <input
+                  type="text"
+                  placeholder={ userData.bank_accountType }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Número da Conta</label>
+                <input
+                  type="text"
+                  placeholder={ userData.bank_accountNumber }
+                  className="userUpdateInput"
+                />
+              </div>
+
             </div>
 
             <div className="userUpdateRight--singleItem">
@@ -347,10 +374,28 @@ export default function EmployeeInfo( props ) {
               </div>
 
               <div className="userUpdateItem">
-                <label>Dados Bancários</label>
+                <label>Instituição Financeira</label>
                 <input
                   type="text"
-                  placeholder={ userData.bank }
+                  placeholder={ userData.bank_number }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Agência</label>
+                <input
+                  type="text"
+                  placeholder={ userData.bank_agency }
+                  className="userUpdateInput"
+                />
+              </div>
+
+              <div className="userUpdateItem">
+                <label>Chave PIX</label>
+                <input
+                  type="text"
+                  placeholder={ userData.bank_pix }
                   className="userUpdateInput"
                 />
               </div>
@@ -364,11 +409,8 @@ export default function EmployeeInfo( props ) {
 
           </form> 
 
-
-        </div>
-    
+        </div> 
     </div>
- 
   </main>
 
   )

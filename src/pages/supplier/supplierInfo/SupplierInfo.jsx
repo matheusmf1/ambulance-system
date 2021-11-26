@@ -4,6 +4,7 @@ import {
   LocalPhone,
   Info,
   PhoneAndroid,
+  Web
 } from "@material-ui/icons";
 
 import { tableProviderData } from '../../../assets/mock/tableProviderData.js';
@@ -48,17 +49,18 @@ export default function SupplierInfo( props ) {
               className="userShowImg"
             />
             <div className="userShowTopTitle">
-              <span className="userShowUsername"> { userData.name } </span>
+              <span className="userShowUsername">Contato: { userData.contato } </span>
+              <span className="userShowUsername">Responsável: { userData.responsavel } </span>
               <span className="userShowUserTitle">Código: { userData.id }</span>
             </div>
           </div>
           
           <div className="userShowBottom">
 
-            <span className="userShowTitle">Informações do Responsável</span>
+            <span className="userShowTitle">Informações do Fornecedor</span>
 
             <div className="userShowInfo">
-              <h6 className="userShowInfoTitle--Subtitle">CNPJ</h6> 
+              <h6 className="userShowInfoTitle--Subtitle">CNPJ:</h6> 
               <span className="userShowInfoTitle">{ userData.cnpj_cpf }</span>
             </div>
 
@@ -76,6 +78,15 @@ export default function SupplierInfo( props ) {
             <div className="userShowInfo">
               <MailOutline className="userShowIcon" />
               <span className="userShowInfoTitle">{ userData.email }</span>
+            </div>
+
+            <div className="userShowInfo">
+              <Web className="userShowIcon" />
+          
+              <a className="userShowInfoTitle" href={`http://${userData.site}`} target="_blank" rel="noopener noreferrer">
+                {/* { userData.site != "" ? userData.site : 'Campo não informado' } */}
+                { userData.site }
+              </a>
             </div>
 
 
@@ -127,19 +138,19 @@ export default function SupplierInfo( props ) {
             <div className="userUpdateLeft">
               
               <div className="userUpdateItem">
-                <label>Nome</label>
+                <label>Responsável</label>
                 <input
                   type="text"
-                  placeholder={ userData.name }
+                  placeholder={ userData.responsavel }
                   className="userUpdateInput"
                 />
               </div>
 
               <div className="userUpdateItem">
-                <label>Email</label>
+                <label>CPF/CNPJ</label>
                 <input
                   type="text"
-                  placeholder={ userData.email }
+                  placeholder={ userData.cnpj_cpf }
                   className="userUpdateInput"
                 />
               </div>
@@ -154,10 +165,10 @@ export default function SupplierInfo( props ) {
               </div>
 
               <div className="userUpdateItem">
-                <label>Endereço</label>
+                <label>CEP</label>
                 <input
                   type="text"
-                  placeholder={ userData.address }
+                  placeholder={ userData.cep }
                   className="userUpdateInput"
                 />
               </div>
@@ -181,19 +192,35 @@ export default function SupplierInfo( props ) {
                 />
               </div>
 
-
+              <div className="userUpdateItem">
+                <label>Estado</label>
+                <input
+                  type="text"
+                  placeholder={ userData.state }
+                  className="userUpdateInput"
+                />
+              </div>
             </div>
 
             <div className="userUpdateRight--singleItem">
 
             <div className="userUpdateItem">
-                <label>CPF</label>
-                <input
-                  type="text"
-                  placeholder={ userData.cnpj_cpf }
-                  className="userUpdateInput"
-                />
-              </div>
+              <label>Contato</label>
+              <input
+                type="text"
+                placeholder={ userData.contato }
+                className="userUpdateInput"
+              />
+            </div>
+
+            <div className="userUpdateItem">
+              <label>Email</label>
+              <input
+                type="text"
+                placeholder={ userData.email }
+                className="userUpdateInput"
+              />
+            </div>
 
               <div className="userUpdateItem">
                 <label>Telefone</label>
@@ -205,10 +232,10 @@ export default function SupplierInfo( props ) {
               </div>
 
               <div className="userUpdateItem">
-                <label>CEP</label>
+                <label>Endereço</label>
                 <input
                   type="text"
-                  placeholder={ userData.cep }
+                  placeholder={ userData.address }
                   className="userUpdateInput"
                 />
               </div>
@@ -230,16 +257,6 @@ export default function SupplierInfo( props ) {
                   className="userUpdateInput"
                 />
               </div>
-
-              <div className="userUpdateItem">
-                <label>Estado</label>
-                <input
-                  type="text"
-                  placeholder={ userData.state }
-                  className="userUpdateInput"
-                />
-              </div>
-                 
             </div>
 
               <div class="userUpdateItem--textArea">            

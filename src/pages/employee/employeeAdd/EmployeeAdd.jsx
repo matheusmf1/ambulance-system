@@ -1,6 +1,19 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 
 export default function EmployeeAdd() {
+
+  const [bankData, setBankData] = useState([])
+
+  useEffect( () => {
+    fetch('https://brasilapi.com.br/api/banks/v1')
+    .then( response => {
+      if (response.ok)
+        return response.json()
+    })
+    .then( data => setBankData( data.filter( item => item.name != null && item.code != null ) ) )
+    .catch( error => console.error( error ))
+  }, [])
+
   return (
   
     <main className="form__container">
@@ -25,7 +38,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Gênero*</label>
-                <select name="estados-brasil" className="form__input">
+                <select name="estados-brasil" className="form__input" required>
                     <option value="masculino">Masculino</option>
                     <option value="feminino">Feminino</option>
                     <option value="outro">Outro</option>
@@ -34,7 +47,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Estado Civil</label>
-                <select name="estados-brasil" className="form__input">
+                <select name="estados-brasil" className="form__input" required>
                   <option value="solteiro">Solteiro(a)</option>
                   <option value="casado">Casado(a)</option>
                   <option value="separado">Divorciado(a)</option>
@@ -45,17 +58,17 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">RG*</label>
-              <input className="form__input" type="email" placeholder="Informe o nº do RG"/>
+              <input className="form__input" type="email" placeholder="Informe o nº do RG" required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CPF*</label>
-              <input className="form__input" type="email" placeholder="Informe o nº do CPF"/>
+              <input className="form__input" type="email" placeholder="Informe o nº do CPF" required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Email*</label>
-              <input className="form__input" type="email" placeholder="Endereço de email"/>
+              <input className="form__input" type="email" placeholder="Endereço de email" required/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -102,7 +115,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input">
+                <select name="estados-brasil" className="form__input" required>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -130,28 +143,64 @@ export default function EmployeeAdd() {
                     <option value="SP" selected>São Paulo</option>
                     <option value="SE">Sergipe</option>
                     <option value="TO">Tocantins</option>
-                  </select>              
+                </select>              
             </div>
 
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Cargo*</label>
-              <input className="form__input" type="email" placeholder="Informe o cargo"/>
+              <input className="form__input" type="text" placeholder="Informe o cargo" required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Salário*</label>
-              <input className="form__input" type="email" placeholder="Informe o valor do salário"/>
+              <input className="form__input" type="text" placeholder="Informe o valor do salário" required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Vale Transporte(Total por dia)*</label>
-              <input className="form__input" type="email" placeholder="Informe o valor gasto por dia"/>
+              <input className="form__input" type="number" placeholder="Informe o valor gasto por dia" required/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Dados Bancários*</label>
-              <input className="form__input" type="email" placeholder="Dados Bancários"/>
+              <label className="form__input--label">Instituição Financeira*</label>
+              <select name="estados-brasil" className="form__input" required>
+
+              <option value="choose" selected>Escolha o banco</option>
+
+                {
+                  bankData.map( (data, key) => {
+                    let valueData = `${data['code']}-${data['name']}`
+
+                    return (<option value={data['code']} key={key}>{data['code']} - {data['name']}</option>);
+                  })
+                }
+
+                </select>    
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Agência*</label>
+              <input className="form__input" type="text" placeholder="Número da Agência"/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Tipo da Conta</label>
+                <select name="estados-brasil" className="form__input" required>
+                  <option value="corrente">Corrente</option>
+                  <option value="poupanca">Poupança</option>
+                  <option value="salario">Salário</option>
+                </select>              
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Número da Conta*</label>
+              <input className="form__input" type="text" placeholder="Informe o número da conta" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Chave PIX*</label>
+              <input className="form__input" type="text" placeholder="Informe o PIX" required/>
             </div>
 
             <div className="form__input--fullWidth">            

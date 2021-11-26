@@ -19,18 +19,18 @@ export default function SupplierAdd() {
             </div>
 
             <div className="form__input--halfWidth">
+              <label className="form__input--label">Contato</label>
+              <input className="form__input" type="text" placeholder="Nome do contato"/>
+            </div>
+
+            <div className="form__input--halfWidth">
               <label className="form__input--label">CNPJ/CPF*</label>
               <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Site</label>
-              <input className="form__input" type="text" placeholder="Endereço do site"/>
-            </div>
-
-            <div className="form__input--halfWidth">
-              <label className="form__input--label">Telefone*</label>
-              <input className="form__input" type="text" placeholder="Número de telefone" required/>
+              <label className="form__input--label">Telefone</label>
+              <input className="form__input" type="text" placeholder="Número de telefone"/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -38,6 +38,15 @@ export default function SupplierAdd() {
               <input className="form__input" type="text" placeholder="Número de celular" required/>
             </div>
 
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Email*</label>
+              <input className="form__input" type="text" placeholder="Informe o email" required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Site</label>
+              <input className="form__input" type="text" placeholder="Endereço do site"/>
+            </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>

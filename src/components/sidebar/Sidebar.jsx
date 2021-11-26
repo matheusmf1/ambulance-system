@@ -27,15 +27,6 @@ export default function Sidebar() {
 				</div>
 
 				<MenuOutlinedIcon className="sidebar__menu--barIcon"/>
-
-
-				{/* <div className="sidebar__menu--barIcon">
-					<svg fill="#000000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 25 25" 
-						width="25px" height="25px" stroke="black" stroke-width="0.1">
-						<path d="M 2 5 L 2 7 L 22 7 L 22 5 L 2 5 z M 2 11 L 2 13 L 22 13 L 22 11 L 2 11 z M 2 17 L 2 19 L 22 19 L 22 17 L 2 17 z"/>
-					</svg>        
-				</div> */}
-
 			</div>
 
 			<div className="sidebar__scrollbar">
@@ -116,13 +107,13 @@ export default function Sidebar() {
 							<a>	
 
 								<BadgeOutlinedIcon/>
-								<span className="sidebar__menu--title">Funcionarios</span>
+								<span className="sidebar__menu--title">Funcionários</span>
 								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
 							</a>
 						
 							<ul id="product" className="sidebar__submenu">
 
-								<span className="sidebar__menu--closed-Title">Funcionarios</span>
+								<span className="sidebar__menu--closed-Title">Funcionários</span>
 						
 								<li>
 									<a href="/novofuncionario">								

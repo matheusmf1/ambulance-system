@@ -8,8 +8,8 @@ export const tableEmployeeData = [
     gender: "masculino",
     estado_civil: "solteiro",
     
-    address: "Rua xxxx",
     cep: "00000-000",
+    address: "Rua xxxx",
     addressNumber: "000",
     aditionalInformation: "apto xxx",
     neighborhood: "xxxx",
@@ -25,10 +25,13 @@ export const tableEmployeeData = [
     cargo: "ceo",
     salary: "10000",
     vale_transporte: "100",
-    bank: "Itau - Agencia xxxxx",
+    bank_number: "341",
+    bank_agency: "5081",
+    bank_accountType: "corrente",
+    bank_accountNumber: "00000-0",
+    bank_pix: "pix",
     moreInfo: "xxxxx",
   },
-
   {
     id: "2",
     name: "Matheus2",
@@ -37,8 +40,8 @@ export const tableEmployeeData = [
     gender: "masculino",
     estado_civil: "solteiro",
     
-    address: "Rua xxxx",
     cep: "00000-000",
+    address: "Rua xxxx",
     addressNumber: "000",
     aditionalInformation: "apto xxx",
     neighborhood: "xxxx",
@@ -54,7 +57,11 @@ export const tableEmployeeData = [
     cargo: "ceo",
     salary: "10000",
     vale_transporte: "100",
-    bank: "Itau - Agencia xxxxx",
+    bank_number: "000",
+    bank_agency: "0000",
+    bank_accountType: "poupanca",
+    bank_accountNumber: "00000-0",
+    bank_pix: "pix",
     moreInfo: "xxxxx",
-  }
+  },
 ];

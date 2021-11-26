@@ -2,11 +2,12 @@ export const tableProviderData = [
 
   {
     id: "1",
-    name: "nome2123",
+    responsavel: "nome1",
+    contato: "nome1c",
     cnpj_cpf: "000.000.000-00",
 
-    address: "Rua xxxx",
     cep: "00000-000",
+    address: "Rua xxxx",
     addressNumber: "000",
     aditionalInformation: "apto xxx",
     neighborhood: "xxxx",
@@ -16,16 +17,19 @@ export const tableProviderData = [
     telephone: "(11)0000-0000",
     mobile: "(11)00000-0000",
     email: "xxxx@gmail.com",
+    site: "",
 
     moreInfo: "xxxxx",
   },
 
   {
     id: "2",
-    name: "nome543",
+    responsavel: "nome2",
+    contato: "nome2c",
     cnpj_cpf: "000.000.000-00",
-    address: "Rua xxxx",
+
     cep: "00000-000",
+    address: "Rua xxxx",
     addressNumber: "000",
     aditionalInformation: "apto xxx",
     neighborhood: "xxxx",
@@ -35,9 +39,9 @@ export const tableProviderData = [
     telephone: "(11)0000-0000",
     mobile: "(11)00000-0000",
     email: "xxxx@gmail.com",
+    site: "www.oi2.com.br",
 
     moreInfo: "xxxxx",
   },
-
  
 ];

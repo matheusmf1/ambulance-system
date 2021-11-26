@@ -21,6 +21,11 @@ export default function CustomerAdd() {
             </div>
 
             <div className="form__input--halfWidth">
+              <label className="form__input--label">Contato</label>
+              <input className="form__input" type="text" placeholder="Nome do contato"/>
+            </div>
+
+            <div className="form__input--halfWidth">
               <label className="form__input--label">Razão Social*</label>
               <input className="form__input" type="text" placeholder="Razão social" required/>
             </div>
@@ -37,7 +42,7 @@ export default function CustomerAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Email*</label>
-              <input className="form__input" type="email" placeholder="Endereço de email"/>
+              <input className="form__input" type="email" placeholder="Endereço de email" required/>
             </div>
 
             <div className="form__input--halfWidth">

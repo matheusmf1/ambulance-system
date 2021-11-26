@@ -7,7 +7,7 @@ export default function SupplierList() {
 
   const tableColumns = {
     id: "Código",
-    name: "Nome",
+    contato: "Contato",
     email: "Email",
     telephone: "Telefone",
     mobile: "Celular",
