@@ -184,7 +184,7 @@ export default function NewServiceOrder( props ) {
     
     if ( session === 'venda' ) {
       return (
-        <select name="forma-pagamento" class="form__input">
+        <select name="forma-pagamento" className="form__input">
           <option value="Cancelado">Cancelado</option>
           <option value="Em Andamento">Em Andamento</option>
           <option value="Concluído">Concluído</option>
@@ -194,7 +194,7 @@ export default function NewServiceOrder( props ) {
 
     else if ( session === 'orcamento' ) {
       return (
-        <select name="forma-pagamento" class="form__input">
+        <select name="forma-pagamento" className="form__input">
           <option value="Nao_Aprovado">Não Aprovado</option>
           <option value="Aprovado">Aprovado</option>
         </select>       
@@ -204,42 +204,42 @@ export default function NewServiceOrder( props ) {
 
   return (
   
-    <main class="form__container">
+    <main className="form__container">
       
       <h4 className="os__container--title">Nova Ordem de Serviço</h4>
 
       {/* HEADER */}
       <div className="os__header--container">
 
-        <div class="os__header--containerImage">
-          <img src={logoRescue} alt="" class="os__header--image" />
+        <div className="os__header--containerImage">
+          <img src={logoRescue} alt="" className="os__header--image" />
 
-          <div class="os__header--content">
+          <div className="os__header--content">
 
             <h6>Rescue Transformação de veículos especiais Eireli</h6>
 
-            <h6 class="info">CNPJ: 33.972.355/0001-00</h6>
-            <h6 class="info">Rua Machado, 55 Vila Sorocabana</h6>
-            <h6 class="info">Guarulhos/SP - CEP: 07025-210</h6>
+            <h6 className="info">CNPJ: 33.972.355/0001-00</h6>
+            <h6 className="info">Rua Machado, 55 Vila Sorocabana</h6>
+            <h6 className="info">Guarulhos/SP - CEP: 07025-210</h6>
 
           </div>
 
         </div>
 
         
-        <div class="os__header--content">
+        <div className="os__header--content">
 
-          <h6 class="info">(11) 2847-0356 - (11) 95651-2030</h6>
-          <h6 class="info">adm@rescueveiculosespeciais.com.br</h6>
-          <h6 class="info">www.rescueveiculosespeciais.com.br</h6>
-          <h6 class="info">Responsável:</h6>
+          <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
+          <h6 className="info">adm@rescueveiculosespeciais.com.br</h6>
+          <h6 className="info">www.rescueveiculosespeciais.com.br</h6>
+          <h6 className="info">Responsável:</h6>
         </div>
       </div>
 
 
-      <div class="form__content">
+      <div className="form__content">
         <form action="page-list-product.html">
-          <div class="form__content--inputs">
+          <div className="form__content--inputs">
 
             {/* INFO INICIAL */}
             <div className="osForm__content--container">
@@ -259,46 +259,46 @@ export default function NewServiceOrder( props ) {
               </div>
 
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Código do Cliente*</label>
-                <input class="form__input" type="text" placeholder="Nome do responsável" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Código do Cliente*</label>
+                <input className="form__input" type="text" placeholder="Nome do responsável" required/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input class="form__input" type="text" placeholder="Nome do responsável" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
+                <input className="form__input" type="text" placeholder="Nome do responsável" required/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Empresa*</label>
-                <input class="form__input" type="text" placeholder="Nome da empresa" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Empresa*</label>
+                <input className="form__input" type="text" placeholder="Nome da empresa" required/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">CNPJ/CPF*</label>
-                <input class="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
-              </div>
-
-
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Endereço*</label>
-                <input class="form__input" type="text" placeholder="Informe o endereço" required/>
-              </div>
-
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">CEP</label>
-                <input class="form__input" type="text" placeholder="Informe o endereço"/>
-              </div>
-
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Cidade*</label>
-                <input class="form__input" type="text" placeholder="Informe o endereço" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">CNPJ/CPF*</label>
+                <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
               </div>
 
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Estado*</label>
-                <select name="estados-brasil" class="form__input">
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Endereço*</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" required/>
+              </div>
+
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">CEP</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço"/>
+              </div>
+
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Cidade*</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" required/>
+              </div>
+
+
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Estado*</label>
+                <select name="estados-brasil" className="form__input">
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>
@@ -329,14 +329,14 @@ export default function NewServiceOrder( props ) {
                 </select>              
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Email*</label>
-                <input class="form__input" type="email" placeholder="Endereço de email"/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Email*</label>
+                <input className="form__input" type="email" placeholder="Endereço de email"/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Telefone*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Telefone*</label>
+                <input className="form__input" type="text" placeholder="Número de telefone" required/>
               </div>
             </div>
 
@@ -345,30 +345,30 @@ export default function NewServiceOrder( props ) {
               
               <h6 className="os__content--title">Equipamento</h6>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Veículo*</label>
-                <input class="form__input" type="text" placeholder="Veículo" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Veículo*</label>
+                <input className="form__input" type="text" placeholder="Veículo" required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Marca*</label>
-                <input class="form__input" type="text" placeholder="Marca" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Marca*</label>
+                <input className="form__input" type="text" placeholder="Marca" required/>
               </div>
 
 
-              <div class="osForm__input">
-                <label class="form__input--label">Modelo*</label>
-                <input class="form__input" type="text" placeholder="Modelo" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Modelo*</label>
+                <input className="form__input" type="text" placeholder="Modelo" required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Placa*</label>
-                <input class="form__input" type="text" placeholder="Placa" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Placa*</label>
+                <input className="form__input" type="text" placeholder="Placa" required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Prefixo*</label>
-                <input class="form__input" type="text" placeholder="Prefixo" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Prefixo*</label>
+                <input className="form__input" type="text" placeholder="Prefixo" required/>
               </div>
 
             </div>
@@ -394,23 +394,23 @@ export default function NewServiceOrder( props ) {
               {/* <TableOS tableData={tableDataServicos} setValorTotal={setValorTotalServico}/> */}
 
 
-              <div class="osForm__input">
-                <label class="form__input--label">Vencimento*</label>
-                <input class="form__input" type="text" placeholder="Vencimento" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Vencimento*</label>
+                <input className="form__input" type="text" placeholder="Vencimento" required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Valor*</label>
-                <input class="form__input" type="text" placeholder="Valor" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Valor*</label>
+                <input className="form__input" type="text" placeholder="Valor" required/>
               </div>
 
 
-              <div class="osForm__input">
-                {/* <label class="form__input--label">Formas de Pagamento*</label> */}
-                {/* <input class="form__input" type="text" placeholder="Boleto, PIX, transferência, depósito, cheque, dinheiro" required/> */}
+              <div className="osForm__input">
+                {/* <label className="form__input--label">Formas de Pagamento*</label> */}
+                {/* <input className="form__input" type="text" placeholder="Boleto, PIX, transferência, depósito, cheque, dinheiro" required/> */}
               
-                <label class="form__input--label">Formas de Pagamento*</label>
-                <select name="forma-pagamento" class="form__input">
+                <label className="form__input--label">Formas de Pagamento*</label>
+                <select name="forma-pagamento" className="form__input">
                   <option value="Boleto">Boleto</option>
                   <option value="Cheque">Cheque</option>
                   <option value="Depósito">Depósito</option>
@@ -421,9 +421,9 @@ export default function NewServiceOrder( props ) {
 
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Parcelas</label>
-                <input class="form__input" type="text" placeholder="nº parcelas ou não"/>
+              <div className="osForm__input">
+                <label className="form__input--label">Parcelas</label>
+                <input className="form__input" type="text" placeholder="nº parcelas ou não"/>
               </div>
 
             </div>
@@ -440,11 +440,11 @@ export default function NewServiceOrder( props ) {
               <div className="os__signatureBankInfo--content">
 
                 <h6>DADOS BANCÁRIOS</h6>
-                <h6 class="info">BANCO BRADESCO</h6>
-                <h6 class="info">AG: 0593</h6>
-                <h6 class="info">C/C: 20.867-1</h6>
-                <h6 class="info">Rescue Transformação de veículos especiais Eireli</h6>
-                <h6 class="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
+                <h6 className="info">BANCO BRADESCO</h6>
+                <h6 className="info">AG: 0593</h6>
+                <h6 className="info">C/C: 20.867-1</h6>
+                <h6 className="info">Rescue Transformação de veículos especiais Eireli</h6>
+                <h6 className="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
 
 
                 <div className="osForm__titleWithDate--title">
@@ -462,11 +462,11 @@ export default function NewServiceOrder( props ) {
 
           
          
-          <div class="footer__button--container">
+          <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" class="form__button form__button--add">Adicionar</button>
-              <button type="reset" class="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" className="form__button form__button--add">Adicionar</button>
+              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
             </div>
 
             <div className="footer__button--status">

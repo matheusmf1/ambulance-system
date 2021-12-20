@@ -1,4 +1,4 @@
-import React from 'react'
+import {React, useEffect } from 'react'
 import './sidebar.css'
 import logoRescue from '../../assets/images/logo-rescue.png';
 import DashboardIcon from "@material-ui/icons/Dashboard";
@@ -12,6 +12,58 @@ import { CurvedArrow } from './curvedArrow';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 
 export default function Sidebar() {
+
+	const menuListItemClick = (e) => {
+
+		const toggleSidebarMultiItem = document.querySelectorAll( ".sidebar__menu--listItens" )
+
+		toggleSidebarMultiItem.forEach( li => {
+
+  	li.addEventListener( "click", ( e ) => {
+
+    let currentActive = document.querySelector( ".sidebar__menu--listItens.active" )
+
+    if ( currentActive && currentActive !== li ) 
+      currentActive.classList.toggle( "active" )
+    
+    li.classList.toggle( "active" )
+  
+    let toggleSidebarArrow = li.querySelector( "#menu-arrow" )
+  
+    if (toggleSidebarArrow)
+      toggleSidebarArrow.classList.toggle( "active" )
+  } )
+})
+
+
+const toogleMenuBars = document.querySelectorAll( ".sidebar__menu--barIcon" )
+const navbarMenuIcon = document.querySelector( ".nav .sidebar__menu--barIcon" )
+
+toogleMenuBars.forEach( icon => {
+
+  icon.addEventListener( "click", ( e ) => {
+    
+    let containerSidebar = document.querySelector( ".container__sidebar" )
+
+    let initialWidth = document.body.clientWidth
+
+    if ( initialWidth <= 480 && containerSidebar.classList.contains( "active" ) ) {
+      containerSidebar.classList.toggle( "collapse" )  
+    }
+
+    else if ( initialWidth <= 480 && !containerSidebar.classList.contains( "active" )  ) {
+      containerSidebar.classList.toggle( "active" )
+      containerSidebar.classList.toggle( "collapse" )
+    }
+    else {
+      containerSidebar.classList.toggle( "active" )  
+    }
+
+  })
+})
+	}
+
+	useEffect( () => menuListItemClick() )
 	
   return (
 		<aside className="container__sidebar active">

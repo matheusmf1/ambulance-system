@@ -52,15 +52,15 @@ function App() {
           </Route>
 
           {/* VENDA */}
-          <Route exact path="/venda/nova-os">
+          <Route path="/venda/nova-os">
             <SalesServiceOrder/>
           </Route>
 
-          <Route exact path="/venda/nova-venda">
+          <Route path="/venda/nova-venda">
             <ProductSale/>
           </Route>
 
-          <Route exact path="/venda/nova-transformacao">
+          <Route path="/venda/nova-transformacao">
             <SalesTransformationProposal/>
           </Route>
 

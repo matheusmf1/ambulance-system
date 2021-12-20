@@ -6,7 +6,6 @@ import {
   PhoneAndroid,
 } from "@material-ui/icons";
 
-// import { Link } from "react-router-dom";
 import "./customerInfo.css";
 
 import { tableClientData } from '../../../assets/mock/tableClientData'
