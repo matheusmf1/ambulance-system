@@ -5,7 +5,7 @@ import '../../service_order/newServiceOrder/newServiceOrder.css';
 import logoRescue from '../../../../assets/images/logo-rescue.png';
 import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
-export default function NewProductsSale() {
+export default function NewProductsSale( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = React.useState(0);
 
@@ -99,6 +99,30 @@ export default function NewProductsSale() {
   
     ]
 
+  }
+  
+  const { session } = props
+
+  const defineStatusFieldOptions = ( session ) => {
+    
+    if ( session === 'venda' ) {
+      return (
+        <select name="forma-pagamento" class="form__input">
+          <option value="Cancelado">Cancelado</option>
+          <option value="Em Andamento">Em Andamento</option>
+          <option value="Concluído">Concluído</option>
+        </select>       
+      );
+    }
+
+    else if ( session === 'orcamento' ) {
+      return (
+        <select name="forma-pagamento" class="form__input">
+          <option value="Nao_Aprovado">Não Aprovado</option>
+          <option value="Aprovado">Aprovado</option>
+        </select>       
+      );
+    }
   }
 
   return (
@@ -329,11 +353,7 @@ export default function NewProductsSale() {
 
             <div className="footer__button--status">
               <label>STATUS</label>
-              <select name="forma-pagamento" class="form__input">
-                <option value="Cancelado">Cancelado</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Concluído">Concluído</option>
-              </select> 
+              { defineStatusFieldOptions( session ) }
             </div>       
 
           </div>

@@ -9,7 +9,7 @@ import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import { CurvedArrow } from './curvedArrow';
-
+import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 
 export default function Sidebar() {
 	
@@ -146,21 +146,64 @@ export default function Sidebar() {
 								<span className="sidebar__menu--closed-Title">Vendas</span>        
 								
 								<li>
-									<a href="/nova-os">
+									<a href="/venda/nova-os">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Ordem de Serviço</span>
 									</a>
 								</li>
 
 								<li>
-									<a href="/nova-venda">								
+									<a href="/venda/nova-venda">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Venda de Produto</span>
 									</a>
 								</li>
 
 								<li>
-									<a href="/nova-transformacao">								
+									<a href="/venda/nova-transformacao">								
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Transformação</span>
+									</a>
+								</li>
+						
+								{/* <li className="">
+									<a href="">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Lista de OS</span>
+									</a>
+								</li> */}
+						
+							</ul>
+						</li>
+
+						{/* ORCAMENTO */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<FeedOutlinedIcon/>
+								<span className="sidebar__menu--title">Orçamento</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+						
+							<ul id="product" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Orçamento</span>        
+								
+								<li>
+									<a href="/orcamento/nova-os">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Ordem de Serviço</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/orcamento/nova-venda">								
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Venda de Produto</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/orcamento/nova-transformacao">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Transformação</span>
 									</a>

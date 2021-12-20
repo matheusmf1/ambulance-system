@@ -5,7 +5,7 @@ import './newServiceOrder.css'
 import logoRescue from '../../../../assets/images/logo-rescue.png';
 import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
-export default function NewServiceOrder() {
+export default function NewServiceOrder( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = React.useState(0);
   const [valorTotalServico, setValorTotalServico] = React.useState(0);
@@ -178,7 +178,29 @@ export default function NewServiceOrder() {
 
   }
 
+  const { session } = props
 
+  const defineStatusFieldOptions = ( session ) => {
+    
+    if ( session === 'venda' ) {
+      return (
+        <select name="forma-pagamento" class="form__input">
+          <option value="Cancelado">Cancelado</option>
+          <option value="Em Andamento">Em Andamento</option>
+          <option value="Concluído">Concluído</option>
+        </select>       
+      );
+    }
+
+    else if ( session === 'orcamento' ) {
+      return (
+        <select name="forma-pagamento" class="form__input">
+          <option value="Nao_Aprovado">Não Aprovado</option>
+          <option value="Aprovado">Aprovado</option>
+        </select>       
+      );
+    }
+  }
 
   return (
   
@@ -449,12 +471,8 @@ export default function NewServiceOrder() {
 
             <div className="footer__button--status">
               <label>STATUS</label>
-              <select name="forma-pagamento" class="form__input">
-                <option value="Cancelado">Cancelado</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Concluído">Concluído</option>
-              </select> 
-            </div>       
+              { defineStatusFieldOptions( session ) }
+            </div>
 
           </div>
 
