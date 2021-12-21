@@ -20,6 +20,8 @@ import SalesTransformationProposal from "./pages/sales/transformation_proposal/S
 import GetQuoteProductSale from "./pages/getQuote/products_sale/ProductSale";
 import GetQuoteServiceOrder from "./pages/getQuote/service_order/GetQuoteServiceOrder";
 import GetQuoteTransformationProposal from "./pages/getQuote/transformation_proposal/GetQuoteTransformationProposal";
+import BillToPay from "./pages/financial/billsToPay/BillToPay";
+import BillToReceive from "./pages/financial/billsToReceive/BillToReceive";
 
 function App() {
   
@@ -97,6 +99,21 @@ function App() {
 
           <Route exact path="/orcamento/nova-transformacao">
             <GetQuoteTransformationProposal/>
+          </Route>
+
+          {/* FINANCEIRO */}
+          <Route exact path="/financeiro">
+            {/* <SupplierList/> */}
+          </Route>
+
+          {/* <Route path="/financeiro/:id" component={SupplierInfo}/> */}
+
+          <Route path="/financeiro/cadastro_conta/pagar">
+            <BillToPay/>
+          </Route>
+
+          <Route path="/financeiro/cadastro_conta/receber">
+            <BillToReceive/>
           </Route>
 
         </Switch>

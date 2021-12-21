@@ -10,6 +10,8 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import { CurvedArrow } from './curvedArrow';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
+// import { PaymentOutlined } from '@material-ui/icons';
+import { PaymentsOutlined } from '@mui/icons-material';
 
 export default function Sidebar() {
 
@@ -258,6 +260,42 @@ toogleMenuBars.forEach( icon => {
 									<a href="/orcamento/nova-transformacao">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Transformação</span>
+									</a>
+								</li>
+						
+								{/* <li className="">
+									<a href="">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Lista de OS</span>
+									</a>
+								</li> */}
+						
+							</ul>
+						</li>
+
+						{/* ORCAMENTO */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<PaymentsOutlined/>
+								<span className="sidebar__menu--title">Financeiro</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+						
+							<ul id="product" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Orçamento</span>        
+								
+								<li>
+									<a href="/financeiro/cadastro_conta/pagar">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Contas a Pagar</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/financeiro/cadastro_conta/receber">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Contas a Receber</span>
 									</a>
 								</li>
 						
