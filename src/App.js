@@ -20,7 +20,8 @@ import SalesTransformationProposal from "./pages/sales/transformation_proposal/S
 import GetQuoteProductSale from "./pages/getQuote/products_sale/ProductSale";
 import GetQuoteServiceOrder from "./pages/getQuote/service_order/GetQuoteServiceOrder";
 import GetQuoteTransformationProposal from "./pages/getQuote/transformation_proposal/GetQuoteTransformationProposal";
-import BillToPay from "./pages/financial/billsToPay/BillToPay";
+import BillToPayList from "./pages/financial/billsToPay/BillToPayList.jsx";
+import NewBillToPay from "./pages/financial/billsToPay/NewBillToPay";
 import BillToReceive from "./pages/financial/billsToReceive/BillToReceive";
 
 function App() {
@@ -108,8 +109,12 @@ function App() {
 
           {/* <Route path="/financeiro/:id" component={SupplierInfo}/> */}
 
-          <Route path="/financeiro/cadastro_conta/pagar">
-            <BillToPay/>
+          <Route path="/financeiro/pagar">
+            <BillToPayList/>
+          </Route>
+
+          <Route path="/financeiro/pagar/cadastro">
+            <NewBillToPay/>
           </Route>
 
           <Route path="/financeiro/cadastro_conta/receber">

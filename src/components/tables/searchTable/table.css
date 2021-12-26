@@ -119,3 +119,16 @@
 .link {
   display: contents;
 }
+
+@media (max-width: 599.98px) {
+  .table {
+    overflow-x: auto;
+    display: block;
+  }
+
+  .table__container {    
+    /* overflow-y: unset; */
+    overflow-x: auto;
+  }
+
+}

@@ -1,16 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 import cloneDeep from "lodash/cloneDeep";
 import throttle from "lodash/throttle";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
-import './table.css';
 
 import { DeleteOutline } from "@material-ui/icons";
-import { Link } from "react-router-dom";
 
 export const Table = ( props ) => {
 
-  const { tableName, columns, data, link } = props;
+  const { tableName, columns, data, editModal, baixaModal } = props;
 
   const countPerPage = 10;
   const [value, setValue] = React.useState("");
@@ -26,7 +24,7 @@ export const Table = ( props ) => {
   
     const data = cloneDeep( 
       data
-        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.email.toLowerCase().indexOf(query) > -1 || item.phone.toLowerCase().indexOf(query) > -1 )
+        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.vencimento.toLowerCase().indexOf(query) > -1 || item.valor.toLowerCase().indexOf(query) > -1 || item.pagamento.toLowerCase().indexOf(query) > -1 )
         .slice(0, countPerPage)
       );
       setCollection(data);
@@ -62,6 +60,10 @@ export const Table = ( props ) => {
         return createActionButtons( i,key["id"] );
       }
 
+      if ( keyD === 'baixa' ) {
+        return createDarBaixaButton( i,key["id"] );
+      }
+
       return <td key={i}>{key[keyD]}</td>;
     });
 
@@ -86,9 +88,8 @@ export const Table = ( props ) => {
 
   const createActionButtons = ( i, key ) => {
     return <td key={i}>
-      <Link to={`/${link}/` + key } className="link">
-        <button className="userListEdit">Editar</button>
-      </Link>
+      
+      {editModal}
 
       <DeleteOutline
         className="userListDelete"
@@ -96,6 +97,12 @@ export const Table = ( props ) => {
       />
 
     </td>;  
+  }
+
+  const createDarBaixaButton = ( i, key ) => {
+    return <td key={i}>
+      {baixaModal}
+    </td>; 
   }
 
   return (

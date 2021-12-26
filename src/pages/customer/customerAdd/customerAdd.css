@@ -69,14 +69,16 @@ h4 {
 
 .form__input--halfWidth {
   /* flex: 0 0 50%; */
-  width: calc( 100% / 2 - 20px );
-  padding: 15px 0px;
+  /* width: calc( 100% / 2 - 20px ); */
+  width: calc( 100% / 2);
+  padding: 15px 10px;
 }
 
 .form__input--fullWidth {
   /* flex: 0 0 100%; */
   width: 100%;
-  padding: 15px 0px;
+  /* width: calc( 100% - 20px ); */
+  padding: 15px 10px;
 }
 
 .form__input--label {
@@ -106,7 +108,7 @@ select {
 } */
 
 
-@media (max-width: 583.98px) {
+@media (max-width: 599.98px) {
 
   /* .form__content--inputs {
     max-height: 40vh;
@@ -115,6 +117,11 @@ select {
 
   .form__input--halfWidth {  
     width: 100%;
+    padding: 15px 5px;
+  }
+
+  .form__input--halfWidth {
+    padding: 15px 5px;
   }
 
   .form__content--inputs::-webkit-scrollbar {

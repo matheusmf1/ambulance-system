@@ -2,13 +2,13 @@ import React from 'react'
 
 import '../../customer/customerAdd/customerAdd.css'
 
-export default function BillToPay() {
+export default function NewBillToPay() {
   return (
   
     <main className="form__container">
 
       <div className="form__title">
-        <h4>Contas an Pagar</h4>
+        <h4>Contas a Pagar</h4>
       </div>
 
       <div className="form__content">

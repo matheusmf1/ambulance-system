@@ -283,17 +283,17 @@ toogleMenuBars.forEach( icon => {
 						
 							<ul id="product" className="sidebar__submenu">  
 
-								<span className="sidebar__menu--closed-Title">Orçamento</span>        
+								<span className="sidebar__menu--closed-Title">Financeiro</span>        
 								
 								<li>
-									<a href="/financeiro/cadastro_conta/pagar">
+									<a href="/financeiro/pagar">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Contas a Pagar</span>
 									</a>
 								</li>
 
 								<li>
-									<a href="/financeiro/cadastro_conta/receber">
+									<a href="/financeiro/receber">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Contas a Receber</span>
 									</a>
