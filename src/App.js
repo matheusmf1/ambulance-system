@@ -25,7 +25,6 @@ import NewBillToPay from "./pages/financial/billsToPay/NewBillToPay";
 import BillToReceive from "./pages/financial/billsToReceive/BillToReceive";
 
 function App() {
-  
   return (
 
     <div className="container">
@@ -104,7 +103,7 @@ function App() {
 
           {/* FINANCEIRO */}
           <Route exact path="/financeiro">
-            {/* <SupplierList/> */}
+            {/* <BillToPayList/> */}
           </Route>
 
           {/* <Route path="/financeiro/:id" component={SupplierInfo}/> */}

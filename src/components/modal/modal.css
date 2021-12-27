@@ -9,11 +9,6 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
   }
-
-
-  .css-1t1j96h-MuiPaper-root-MuiDialog-paper{
-    max-width: 720px !important;
-  }
   
 }
 
@@ -23,37 +18,6 @@
 
 .modal__description {
   padding: 15px 10px;
-}
-
-/* Date Picker */
-.css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
-  width: -webkit-fill-available !important;
-  border-radius: 10px !important;
-}
-.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
-  border-radius: 10px !important;
-}
-
-/* Select */
-
-.css-1nrlq1o-MuiFormControl-root {
-  width: -webkit-fill-available !important;
-  border-radius: 10px !important;
-  /* border: 1px solid #dcdfe8 !important; */
-}
-
-.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-  border-radius: 10px !important;
-}
-
-/* Amount paid input */
-.css-1q6at85-MuiInputBase-root-MuiOutlinedInput-root {
-  border-radius: 10px !important;
-}
-
-/* Multiline Input */
-.css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root {
-  border-radius: 10px !important;
 }
 
 /* File upload button */

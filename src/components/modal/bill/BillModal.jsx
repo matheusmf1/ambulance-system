@@ -17,7 +17,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
-
+import { styled } from "@mui/material/styles";
 
 import '../modal.css';
 
@@ -53,6 +53,24 @@ class BillModal extends Component {
       let value = e.target.value;
       this.setState( { [e.target.id]: value }, () => console.log( value ) )
     }
+
+    const CustomTextField = styled(TextField)
+      `
+      width: -webkit-fill-available !important;
+
+      .MuiOutlinedInput-root {
+        border-radius: 10px !important;
+      }
+      `;
+
+      const CustomFormControl = styled(FormControl)
+      `
+      width: -webkit-fill-available !important;
+
+      .MuiFormControl-root {
+        border-radius: 10px !important;
+      }
+      `;
   
     return (
       <>
@@ -61,14 +79,22 @@ class BillModal extends Component {
         </button>
 
   
-        <Dialog open={this.state.open} onClose={handleClose}>
+        <Dialog 
+          open={this.state.open}
+          onClose={handleClose}
+          PaperProps={{
+            style: {
+              maxWidth: "720px"
+            },
+          }}
+          >      
       
           <DialogTitle className="modal__title">Informe os seguintes dados de pagemento</DialogTitle>
 
           <div className='modal__container'>
             
             <div className="form__input--halfWidth">            
-              <TextField
+              <CustomTextField
                 disabled
                 id="outlined-disabled"
                 label="Empresa"
@@ -78,7 +104,7 @@ class BillModal extends Component {
             </div>
 
             <div className="form__input--halfWidth">
-              <TextField
+              <CustomTextField
                 disabled
                 id="outlined-disabled"
                 label="Vencimento"
@@ -88,7 +114,7 @@ class BillModal extends Component {
             </div>
 
             <div className="form__input--halfWidth">
-              <TextField
+              <CustomTextField
                 disabled
                 id="outlined-disabled"
                 label="Valor"
@@ -98,7 +124,7 @@ class BillModal extends Component {
             </div>
 
             <div className="form__input--halfWidth">
-              <TextField
+              <CustomTextField
                 disabled
                 id="outlined-disabled"
                 label="Categoria"
@@ -118,13 +144,13 @@ class BillModal extends Component {
                   onChange={(newValue) => {
                     this.setState( { date: newValue } )
                   }}
-                  renderInput={(params) => <TextField {...params}/>}
+                  renderInput={(params) => <CustomTextField {...params}/>}
                 />
               </LocalizationProvider>
             </div>
 
             <div className="form__input--halfWidth">
-              <TextField      
+              <CustomTextField      
                 id="valorPago"
                 label="Valor pago"
                 type="text"
@@ -135,7 +161,7 @@ class BillModal extends Component {
             </div>
 
             <div className="form__input--halfWidth">
-              <FormControl>
+              <CustomFormControl>
                   <InputLabel id="formaPagamento-label">Forma de Pagamento</InputLabel>
 
                   <Select
@@ -143,7 +169,6 @@ class BillModal extends Component {
                     id="formaPagamento"
                     value={this.state.formaPagamento}
                     label="Forma de Pagamento"
-                    // autoWidth
                     onChange={handleOnChangeInformation}
                   >
 
@@ -155,17 +180,10 @@ class BillModal extends Component {
                     <MenuItem value='dinheiro'>Dinheiro</MenuItem>
                   </Select>
 
-                </FormControl>
+                </CustomFormControl>
             </div>
 
             <div className="form__input--halfWidth">
-              {/* <TextField 
-                id="input_file"
-                label="Arquivo"
-                type="text"
-                variant="outlined" 
-                onChange={handleOnChangeInformation}/> */}
-
               <label htmlFor="upload-file">
                 <input
                   style={{ display: "none" }}
@@ -188,7 +206,7 @@ class BillModal extends Component {
             </div>
 
             <div className="form__input--fullWidth">
-              <TextField
+              <CustomTextField
                 id="observacao-input"
                 label="Observações"
                 multiline
