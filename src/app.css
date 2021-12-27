@@ -74,7 +74,7 @@ footer {
 }
 
 
-@media (max-width: 599.98px) {
+@media (max-width: 479.98px) {
   .container {
     grid-template-columns: 1fr;
     grid-template-rows: 0.2fr 3fr;

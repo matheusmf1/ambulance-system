@@ -1,15 +1,8 @@
 .modal__container {
   padding: 10px 15px;
-}
-
-@media  (min-width: 599.99px) {
-  .modal__container {
-    width: 720px !important;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-  }
-  
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .modal__title {
@@ -21,10 +14,8 @@
 }
 
 /* File upload button */
-
 .modal__upload--button {
   border-radius: 10px !important;
-  /* height: -webkit-fill-available !important; */
   background-color: #457ccede !important;
   color: white !important;
   width: -webkit-fill-available !important;
