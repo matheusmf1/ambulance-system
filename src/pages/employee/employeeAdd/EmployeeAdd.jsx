@@ -210,8 +210,11 @@ export default function EmployeeAdd() {
 
           </div>
 
-          <button type="submit" className="form__button form__button--add">Adicionar</button>
-          <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+          <div className="form__container--buttons">
+            <button type="submit" className="form__button form__button--add">Adicionar</button>
+            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+          </div>
+
 
         </form>
 

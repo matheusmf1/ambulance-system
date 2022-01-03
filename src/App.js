@@ -22,7 +22,8 @@ import GetQuoteServiceOrder from "./pages/getQuote/service_order/GetQuoteService
 import GetQuoteTransformationProposal from "./pages/getQuote/transformation_proposal/GetQuoteTransformationProposal";
 import BillToPayList from "./pages/financial/billsToPay/BillToPayList.jsx";
 import NewBillToPay from "./pages/financial/billsToPay/NewBillToPay";
-import BillToReceive from "./pages/financial/billsToReceive/BillToReceive";
+import BillToReceiveList from "./pages/financial/billsToReceive/BillToReceiveList.jsx";
+import NewBillToReceive from "./pages/financial/billsToReceive/NewBillToReceive";
 
 function App() {
   return (
@@ -102,22 +103,22 @@ function App() {
           </Route>
 
           {/* FINANCEIRO */}
-          <Route exact path="/financeiro">
-            {/* <BillToPayList/> */}
-          </Route>
-
           {/* <Route path="/financeiro/:id" component={SupplierInfo}/> */}
 
-          <Route path="/financeiro/pagar">
+          <Route exact path="/financeiro/pagar">
             <BillToPayList/>
           </Route>
 
-          <Route path="/financeiro/pagar/cadastro">
+          <Route exact path="/financeiro/pagar/cadastro">
             <NewBillToPay/>
           </Route>
 
-          <Route path="/financeiro/cadastro_conta/receber">
-            <BillToReceive/>
+          <Route exact path="/financeiro/receber">
+            <BillToReceiveList/>
+          </Route>
+
+          <Route exact path="/financeiro/receber/cadastro">
+            <NewBillToReceive/>
           </Route>
 
         </Switch>

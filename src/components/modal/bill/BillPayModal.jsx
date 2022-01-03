@@ -19,21 +19,37 @@ import { Fab } from "@material-ui/core";
 import CustomTextField from '../../CustomTextField';
 import CustomFormControl from '../../CustomFormControl'
 
+import ptBrLocate from "date-fns/locale/pt-BR"
+
 import '../modal.css';
 
-export default function BillModal() {
+export default function BillPayModal( props ) {
+
+  const { data } = props
+  const [ isOpenModal, setIsOpenModal  ] = useState( false );
 
   const [values, setValues] = useState({
-    open: false,
-    valorPago: '',
-    date: `${new Date()}`,
-    formaPagamento: '',
-    file: '',
-    observacao: ''
+    id: `${data.id}`,
+    billType: `${data.billType}`,
+    documentNumber: `${data.documentNumber}`,
+    installments: `${data.installments}`,
+    service: `${data.service}`,
+    serviceNumber: `${data.serviceNumber}`,
+    billFile: `${data.billFile}`,
+
+    name: `${data.name}`,
+    dueDate: `${data.dueDate}`,
+    amountPay: `${data.amountPay}`,
+    expenseType: `${data.expenseType}`,
+    receiptFile: `${data.receiptFile}`,
+    paymentDate: `${new Date()}`,
+    amountPaid: `${data.amountPaid}`,
+    paymentType: `${data.paymentType}`,
+    additionalInformation: `${data.additionalInformation}`,
   });
 
   const handleOpenCloseDialog = ( e ) => {
-    setValues( {...values, open: !values.open} )
+    setIsOpenModal( !isOpenModal )
   };
   
   
@@ -41,7 +57,7 @@ export default function BillModal() {
 
     console.log(values)
     
-    handleOpenCloseDialog()
+    // handleOpenCloseDialog()
   }
   
   const handleOnChangeInformation = (id) => (e) => {
@@ -56,7 +72,7 @@ export default function BillModal() {
 
 
       <Dialog 
-        open={values.open}
+        open={isOpenModal}
         onClose={handleOpenCloseDialog}
         PaperProps={{
           style: {
@@ -72,54 +88,68 @@ export default function BillModal() {
           <div className="form__input--halfWidth">            
             <CustomTextField
               disabled
-              id="outlined-disabled"
+              id="name-disabled"
               label="Empresa"
               variant="outlined" 
-              defaultValue="xx"
+              defaultValue={values.name}
             />
           </div>
 
           <div className="form__input--halfWidth">
             <CustomTextField
               disabled
-              id="outlined-disabled"
+              id="dueDate-disabled"
               label="Vencimento"
               variant="outlined" 
-              defaultValue="xx"
+              defaultValue={`${new Date( values.dueDate ).toLocaleDateString('pt-br')}`}
             />
           </div>
 
           <div className="form__input--halfWidth">
             <CustomTextField
               disabled
-              id="outlined-disabled"
-              label="Valor"
+              id="amountPay-disabled"
+              label="Valor da conta"
               variant="outlined" 
-              defaultValue="xx"
+              defaultValue={values.amountPay}
             />
           </div>
 
           <div className="form__input--halfWidth">
-            <CustomTextField
-              disabled
-              id="outlined-disabled"
-              label="Categoria"
-              variant="outlined" 
-              defaultValue="xx"
-            />
+            <CustomFormControl>
+              <InputLabel id="formaPagamento-label">Tipo de despesa</InputLabel>
+
+              <Select
+                disabled
+                labelId="formaPagamento-label"
+                id="expenseType"
+                value={values.expenseType}
+                label="Tipo de despesa"
+              >
+                
+                <MenuItem value="fixa">Fixa</MenuItem>
+                <MenuItem value="folhaPagamento">Folha de Pagamento</MenuItem>
+                <MenuItem value="impostos">Impostos</MenuItem>
+                <MenuItem value="bancaria">Bancária</MenuItem>
+                <MenuItem value="produto">Produto</MenuItem>
+                <MenuItem value="serviço">Serviço</MenuItem>   
+                <MenuItem value="alimentacao">Alimentação</MenuItem>   
+
+              </Select>
+
+            </CustomFormControl>
           </div>
 
           <div className="form__input--halfWidth">
 
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
               <DatePicker
                 label="Data de Pagamento"
                 id="date"
-                value={ values.date }
+                value={ values.paymentDate }
                 inputFormat="dd/MM/yyyy"      
                 onChange={ (newValue) => {
-                  // let date = `${newValue.getDate()}/${newValue.getMonth()}/${newValue.getFullYear()}`;
-                  setValues( {...values, date: newValue} )
+                  setValues( { ...values, paymentDate: `${new Date( newValue )}` } );
                 }}
                 renderInput={(params) => <CustomTextField {...params}/>}
               />
@@ -129,12 +159,12 @@ export default function BillModal() {
           <div className="form__input--halfWidth">
             
               <CustomTextField      
-                id="valorPago"
+                id="amountPaid"
                 label="Valor pago"
                 type="text"
                 variant="outlined"
-                value={values.valorPago}
-                onChange={handleOnChangeInformation('valorPago')}
+                value={values.amountPaid}
+                onChange={handleOnChangeInformation('amountPaid')}
                 InputProps={
                   {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
                 }
@@ -144,14 +174,14 @@ export default function BillModal() {
 
           <div className="form__input--halfWidth">
             <CustomFormControl>
-                <InputLabel id="formaPagamento-label">Forma de Pagamento</InputLabel>
+                <InputLabel id="formaPagamento-label">Forma de pagamento</InputLabel>
 
                 <Select
                   labelId="formaPagamento-label"
-                  id="formaPagamento"
-                  value={values.formaPagamento}
-                  label="Forma de Pagamento"
-                  onChange={handleOnChangeInformation('formaPagamento')}
+                  id="paymentType"
+                  value={values.paymentType}
+                  label="Forma de pagamento"
+                  onChange={handleOnChangeInformation('paymentType')}
                 >
 
                   <MenuItem value='boleto'>Boleto</MenuItem>
@@ -166,22 +196,22 @@ export default function BillModal() {
           </div>
 
           <div className="form__input--halfWidth">
-            <label htmlFor="upload-file">
+            <label htmlFor="receiptFile">
               <input
                 style={{ display: "none" }}
-                id="upload-file"
-                name="upload-file"
+                id="receiptFile"
+                name="receiptFile"
                 type="file"
+                onChange={handleOnChangeInformation('receiptFile')}
               />
               
               <Fab
                 className='modal__upload--button'
                 component="span"
                 aria-label="add"
-                variant="extended"
-              >
+                variant="extended">
 
-                <AddIcon /> Comprovante
+                <AddIcon/> Comprovante
               </Fab>
             </label>
 
@@ -189,12 +219,12 @@ export default function BillModal() {
 
           <div className="form__input--fullWidth">
             <CustomTextField
-              id="observacao"
-              label="Observações"
+              id="additionalInformation"
+              label="Informações adicionais"
               multiline
-              value={values.observacao}
+              value={values.additionalInformation}
               rows={4}
-              onChange={handleOnChangeInformation('observacao')}
+              onChange={handleOnChangeInformation('additionalInformation')}
             />
           </div>
 

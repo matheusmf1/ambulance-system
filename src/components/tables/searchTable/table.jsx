@@ -24,12 +24,12 @@ export const Table = ( props ) => {
     const query = val.toLowerCase();
     setCurrentPage(1);
   
-    const data = cloneDeep( 
+    const dataSearch = cloneDeep( 
       data
         .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.email.toLowerCase().indexOf(query) > -1 || item.phone.toLowerCase().indexOf(query) > -1 )
         .slice(0, countPerPage)
       );
-      setCollection(data);
+      setCollection(dataSearch);
     }, 400)
   );
 
@@ -100,7 +100,7 @@ export const Table = ( props ) => {
 
   return (
     <main className="table__container">
-      <div class="table__titleAndSearch--container">
+      <div className="table__titleAndSearch--container">
 
         <h3 className="table__titleAndSearch--title">{ tableName }</h3>
 
