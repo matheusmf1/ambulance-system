@@ -62,12 +62,13 @@
   border-spacing: 0;
   border-collapse: separate;
   vertical-align: middle;
+  text-align: center;
 }
 
 
 .table thead {
   background: #f4f5fa;
-  text-align: left;
+  /* text-align: left; */
   height: 60px;
 }
 
@@ -121,7 +122,7 @@
 .userListEdit{
   border: none;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 6.5px 10px;
   background-color: #3bb077;
   color: white;
   cursor: pointer;

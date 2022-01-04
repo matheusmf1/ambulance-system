@@ -51,14 +51,14 @@ export const Table = ( props ) => {
   );
 
   // AQUI ESTA O PROBLEMA DE DUPLA RENDERIRACAO
-  React.useEffect(() => {
-    if ( !searchValue ) {
-      updatePage(1);
-    } else {
-      searchData.current(searchValue);
-    }
+  // React.useEffect(() => {
+  //   if ( !searchValue ) {
+  //     updatePage(1);
+  //   } else {
+  //     searchData.current(searchValue);
+  //   }
 
-  }, [searchValue]);
+  // }, [searchValue]);
 
   const updatePage = (p) => {
     setCurrentPage(p);
@@ -79,29 +79,60 @@ export const Table = ( props ) => {
 
   const tableRows = (rowData) => {
 
-    let { key, index } = rowData;
+    let { index, key } = rowData;
 
-    let tableCell = Object.keys( columns );
+    let totalInstallments = key['paymentInfo']['installments']
+    let installmentsData = key['paymentInfo']['installmentsData']
 
-    let columnData = tableCell.map((keyD, i) => {
+    let installmentsToBePaid = installmentsData.filter( data => data['paymentStatus'] !== 'paid'  )
 
-      if ( keyD === 'action' ) {
-        return createActionButtons( i,key["id"] );
-      }
+    const installmentsRows = installmentsToBePaid.map( (data, index) => {
+        
+      let tableCell = Object.keys( columns );
 
-      if ( keyD === 'baixa' ) {
-        return createDarBaixaButton( i,key["id"] );
-      }
+      let rowData = tableCell.map( (keyD, i) => {
 
-      if ( keyD === 'dueDate' ) {
-        return <td key={i}>{ `${new Date( key[keyD] ).toLocaleDateString('pt-br')}` }</td>;
-      }
+        if ( keyD === 'dueDate' ) {
+          return <td key={i}>{ `${new Date( data['dueDate'] ).toLocaleDateString('pt-br')}` }</td>;
+        }
 
-      return <td key={i}>{key[keyD]}</td>;
-    });
+        if ( keyD === 'installments' ) {
+          let currentInstallment = data['installment']
+          return <td key={i}>{currentInstallment}/{totalInstallments}</td>;
+        }
 
-    return <tr key={index}>{columnData}</tr>;
-  };
+        if ( keyD === 'amountPay' ) {
+          return <td key={i}>R$ {key['amountPay']}</td>;
+        }
+
+        if ( keyD === 'installmentAmountPay' ) {
+          return <td key={i}>R$ {data['installmentAmountPay']}</td>;
+        }
+
+        if ( keyD === 'paymentType' ) {
+          return <td key={i}>{data['paymentType']}</td>;
+        }
+
+        if ( keyD === 'action' ) {
+          return createActionButtons( i,key["id"] );
+        }
+  
+        if ( keyD === 'baixa' ) {
+          return createDarBaixaButton( i,key["id"] );
+        }
+
+        return <td key={i}>{key[keyD]}</td>;
+
+      })
+
+      return <tr key={index}>{rowData}</tr>
+
+    })
+
+    return installmentsRows;
+  
+  }
+
 
   const handleDelete = ( key ) => {
     console.log('item to delete: ' + key );

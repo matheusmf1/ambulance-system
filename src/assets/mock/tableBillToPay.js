@@ -3,58 +3,85 @@ export const tableBillToPay = [
     id: "1",
     name: "Vivo",
     billType: "pay",
-    dueDate: 'Wed Jan 19 2022 20:11:49 GMT-0300 (Horário Padrão de Brasília)',
-    amountPay: "12",
-    paymentType: "boleto",
     documentNumber: "123 doc",
     billFile: "file",
-
-    receiptFile: "",
-    installments: "5",
-    installmentsDates: [],
-    expenseType: "impostos",
     additionalInformation: "hello",
-    paymentDate: "",
-    amountPaid: "",
+    expenseType: "impostos",
+    amountPay: "50",
 
+    paymentInfo: {
+      installments: "2",
+      installmentsData: [
+        {
+          installmentAmountPay: "25",
+          dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
+          receiptFile: "",
+          paymentDate: "",
+          amountPaid: "",
+          paymentType: "boleto",
+          installment: "1",
+          paymentStatus: "paid",
+          // paymentStatus: "toPay"
+        },
+        {
+          installmentAmountPay: "25",
+          dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+          receiptFile: "",
+          paymentDate: "",
+          amountPaid: "",
+          paymentType: "boleto",
+          installment: "2",
+          // paymentStatus: "paid",
+          paymentStatus: "toPay"
+        }
+      ]
+      
+    },
+    
     service: "VAZIO EM PAY",
     serviceNumber: "VAZIO EM PAY"
   },
+
   {
     id: "2",
-    name: "Oi",
-    billType: "receive",
-    dueDate: 'Sun Jan 02 2022 20:03:14 GMT-0300 (Horário Padrão de Brasília)',
-    amountPay: "12",
-    paymentType: "boleto",
-    documentNumber: "123 doc",
-    billFile: "file",
-    installments: "5",
-    expenseType: "produto",
-    additionalInformation: "",
-    paymentDate: "",
-    amountPaid: "",
-    service: "VAZIO EM PAY",
-    serviceNumber: "VAZIO EM PAY"
-  },
-  {
-
-    id: "3",
-    name: "Net",
-    dueDate: 'Sun Jan 30 2022 20:11:49 GMT-0300 (Horário Padrão de Brasília)',
-    amountPay: "12",
-    paymentType: "boleto",
-    documentNumber: "123 doc",
-    billFile: "file",
-    installments: "5",
-
-    expenseType: "fixa",
-    additionalInformation: "",
-    paymentDate: "",
-    amountPaid: "",
+    name: "NET",
     billType: "pay",
+    documentNumber: "net doc number",
+    billFile: "file",
+    additionalInformation: "Net",
+    expenseType: "impostos",
+    amountPay: "250",
 
+    paymentInfo: {
+      installments: "2",
+      installmentsData: [
+        {
+          installmentAmountPay: "125",
+          dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
+          receiptFile: "",
+          paymentDate: "",
+          amountPaid: "",
+          paymentType: "boleto",
+          installment: "1",
+          // paymentStatus: "paid",
+          paymentStatus: "toPay"
+        },
+        {
+          installmentAmountPay: "125",
+          dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+          receiptFile: "",
+          paymentDate: "",
+          amountPaid: "",
+          paymentType: "boleto",
+          installment: "2",
+          paymentStatus: "toPay"
+        }
+      ]
+      
+    },
+    
     service: "VAZIO EM PAY",
     serviceNumber: "VAZIO EM PAY"
   },
+
 ];

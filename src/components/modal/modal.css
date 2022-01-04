@@ -24,3 +24,7 @@
 .modal__upload--button:hover{
   background-color: #3d79d2 !important;
 }
+
+.modal__button {
+  margin: 0
+}

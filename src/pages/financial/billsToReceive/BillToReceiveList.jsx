@@ -26,7 +26,6 @@ export default function BillToPayList() {
         billModalEdit={editarModal}
         billModal={darBaixaModal}
         linkCadastro="/financeiro/receber/cadastro"
-        
       />  
     </>
   )

@@ -3,7 +3,9 @@ import TextField from '@mui/material/TextField';
 import { styled } from "@mui/material/styles";
 
 const CustomStyliedTextField = styled(TextField)`
-  width: -webkit-fill-available !important;
+  width: -webkit-fill-available;
+  width: -moz-available;
+  width: fill-available;
 
   .MuiOutlinedInput-root {
     border-radius: 10px !important;

@@ -66,7 +66,7 @@ export default function BillReceiveModal( props ) {
   
   return (
     <>
-      <button className="userListEdit" variant="outlined" onClick={handleOpenCloseDialog}>
+      <button className="userListEdit modal__button" variant="outlined" onClick={handleOpenCloseDialog}>
         Dar baixa
       </button>
 

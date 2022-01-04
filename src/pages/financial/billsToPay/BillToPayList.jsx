@@ -7,7 +7,9 @@ export default function BillToPayList() {
   const tableColumns = {
     name: "Empresa/Fornecedor",
     dueDate: "Vencimento",
-    amountPay: "Valor",
+    installments: "Parcelas",
+    amountPay: "Valor Total",
+    installmentAmountPay: "Valor da Parcela",
     paymentType: "Pagamento",
     baixa: "Dar Baixa",
     action: "Opções",
