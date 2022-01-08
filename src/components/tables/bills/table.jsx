@@ -16,21 +16,21 @@ export const Table = ( props ) => {
 
   const { tableName, columns, data, billModalEdit, billModal, linkCadastro } = props;
 
-  const chooseModal = ( modalName, data ) => {
+  const chooseModal = ( modalName, data, installment ) => {
 
     let modalNames = {
-      'BillPayModalEdit': <BillPayModalEdit data={data}/>,
-      'BillPayModal': <BillPayModal data={data}/>,
-      'BillReceiveModalEdit': <BillReceiveModalEdit data={data}/>,
-      'BillReceiveModal': <BillReceiveModal data={data}/>
+      'BillPayModalEdit': <BillPayModalEdit data={data} installment={installment}/>,
+      'BillPayModal': <BillPayModal data={data} installment={installment}/>,
+      'BillReceiveModalEdit': <BillReceiveModalEdit data={data} installment={installment}/>,
+      'BillReceiveModal': <BillReceiveModal data={data} installment={installment}/>
     }
 
     return modalNames[modalName]
   }
 
   const countPerPage = 5;
-  const [searchValue, setSearchValue] = React.useState("");
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [collection, setCollection] = React.useState(
     cloneDeep(data.slice(0, countPerPage))
@@ -43,22 +43,24 @@ export const Table = ( props ) => {
   
     const dataSearch = cloneDeep( 
       data
-        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.dueDate.toLowerCase().indexOf(query) > -1 || item.amountPay.toLowerCase().indexOf(query) > -1 || item.paymentType.toLowerCase().indexOf(query) > -1 )
+        // .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.dueDate.toLowerCase().indexOf(query) > -1 || item.amountPay.toLowerCase().indexOf(query) > -1 || item.paymentType.toLowerCase().indexOf(query) > -1 )
+        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.amountPay.toLowerCase().indexOf(query) > -1 )
         .slice(0, countPerPage)
       );
+
     setCollection(dataSearch);
     }, 400)
   );
 
   // AQUI ESTA O PROBLEMA DE DUPLA RENDERIRACAO
-  // React.useEffect(() => {
-  //   if ( !searchValue ) {
-  //     updatePage(1);
-  //   } else {
-  //     searchData.current(searchValue);
-  //   }
+  React.useEffect(() => {
+    if ( !searchValue ) {
+      updatePage(1);
+    } else {
+      searchData.current(searchValue);
+    }
 
-  // }, [searchValue]);
+  }, [searchValue]);
 
   const updatePage = (p) => {
     setCurrentPage(p);
@@ -87,9 +89,9 @@ export const Table = ( props ) => {
     let installmentsToBePaid = installmentsData.filter( data => data['paymentStatus'] !== 'paid'  )
 
     const installmentsRows = installmentsToBePaid.map( (data, index) => {
-        
-      let tableCell = Object.keys( columns );
 
+      let currentInstallment = data['installment']  
+      let tableCell = Object.keys( columns );
       let rowData = tableCell.map( (keyD, i) => {
 
         if ( keyD === 'dueDate' ) {
@@ -97,7 +99,6 @@ export const Table = ( props ) => {
         }
 
         if ( keyD === 'installments' ) {
-          let currentInstallment = data['installment']
           return <td key={i}>{currentInstallment}/{totalInstallments}</td>;
         }
 
@@ -114,11 +115,11 @@ export const Table = ( props ) => {
         }
 
         if ( keyD === 'action' ) {
-          return createActionButtons( i,key["id"] );
+          return createActionButtons( i, key, currentInstallment );
         }
   
         if ( keyD === 'baixa' ) {
-          return createDarBaixaButton( i,key["id"] );
+          return createDarBaixaButton( i,key, currentInstallment );
         }
 
         return <td key={i}>{key[keyD]}</td>;
@@ -139,13 +140,12 @@ export const Table = ( props ) => {
     setCollection( collection.filter( item => item.id !== key ) )   
   }
 
-  const createActionButtons = ( i, id ) => {
-
-    let data = collection.filter( item => item.id === id )[0]
-
+  const createActionButtons = ( i, rowData, installment ) => {
+    
+    let {id} = rowData
     return <td key={i}>
       
-      {chooseModal( billModalEdit, data )}
+      {chooseModal( billModalEdit, rowData, installment )}
 
       <DeleteOutline
         className="userListDelete"
@@ -155,10 +155,9 @@ export const Table = ( props ) => {
     </td>;  
   }
 
-  const createDarBaixaButton = ( i, id ) => {
-    let data = collection.filter( item => item.id === id )[0]
+  const createDarBaixaButton = ( i, rowData, installment ) => {
     return <td key={i}>
-      {chooseModal( billModal, data )}
+      {chooseModal( billModal, rowData, installment )}
     </td>; 
   }
 
@@ -172,7 +171,7 @@ export const Table = ( props ) => {
           
           <input
             className="table__titleAndSearch--search"
-            placeholder="Procurar cliente"
+            placeholder="Procurar empresa, valor total..."
             value={searchValue}
             onChange={e => setSearchValue(e.target.value)}
           />

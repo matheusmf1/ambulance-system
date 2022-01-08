@@ -24,40 +24,61 @@ import '../modal.css';
 
 export default function BillPayModalEdit( props ) {
 
-  const { data } = props
-  console.log('BillModalEdit')
-  console.log(data)
-
+  const { data,  installment } = props
   const [ isOpenModal, setIsOpenModal  ] = useState( false );
 
+  const installmentData = data['paymentInfo']['installmentsData'].filter( data => data[ 'installment' ] === `${installment}` )[0]
+  console.log('BillPayModalEdit')
+  console.log(data)
+  console.log(`${installment}`)
+  console.log(installmentData)
+
+  const [ valuesInstallmentData, setValuesInstallmentData ] = useState({
+    installmentAmountPay: `${installmentData.installmentAmountPay}`,
+    dueDate: `${installmentData.dueDate}`,
+    receiptFile: `${installmentData.receiptFile}`,
+    paymentDate: `${ new Date() }`,
+    amountPaid: `${installmentData.amountPaid}`,
+    paymentType: `${installmentData.paymentType}`,
+    installment: `${installmentData.installment}`,
+    paymentStatus: "paid",
+  });
+  
   const [values, setValues] = useState({
     id: `${data.id}`,
+    name: `${data.name}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
-    installments: `${data.installments}`,
+    billFile: `${data.billFile}`,
+    additionalInformation: `${data.additionalInformation}`,
+    expenseType: `${data.expenseType}`,
+    amountPay: `${data.amountPay}`,
+
     service: `${data.service}`,
     serviceNumber: `${data.serviceNumber}`,
-    billFile: `${data.billFile}`,
 
-    name: `${data.name}`,
-    dueDate: `${data.dueDate}`,
-    amountPay: `${data.amountPay}`,
-    expenseType: `${data.expenseType}`,
-    receiptFile: `${data.receiptFile}`,
-    paymentDate: `${data.paymentDate}`,
-    amountPaid: `${data.amountPaid}`,
-    paymentType: `${data.paymentType}`,
-    additionalInformation: `${data.additionalInformation}`,
+    paymentInfo: {
+      installments: `${data['paymentInfo'].installments}`,
+      installmentsData: data['paymentInfo'].installmentsData,
+    }
   });
-
 
   const handleOpenCloseDialog = ( e ) => {
     setIsOpenModal( !isOpenModal )
   };
 
+  const handleInstallmentInformation = ( id ) => ( e ) => {
+    setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
+  }
+
   const handleInformation = () => {
 
-    console.log(values)
+    let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
+    values['paymentInfo']['installmentsData'] = finalInstallmentData
+  
+
+    console.log( '------ Nova alteracao -------' )
+    console.log( values )
     
     // handleOpenCloseDialog()
   }
@@ -101,11 +122,11 @@ export default function BillPayModalEdit( props ) {
               <DatePicker
                 label="Data de vencimento"
                 id="dueDate"
-                value={ values.dueDate }
+                value={ valuesInstallmentData.dueDate }
                 inputFormat="dd/MM/yyyy"      
                 onChange={ (newValue) => {
-                  // setValues( {...values, dueDate: newValue} )
-                  setValues( { ...values, dueDate: `${new Date( newValue )}` } );
+                  setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
+                  // setValues( { ...values, dueDate: `${new Date( newValue )}` } );
                 }}
                 renderInput={(params) => <CustomTextField {...params}/>}
               />
@@ -115,10 +136,14 @@ export default function BillPayModalEdit( props ) {
           <div className="form__input--halfWidth">
             <CustomTextField  
               id="amountPay"
-              label="Valor da conta"
+              label={`Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments}`}
+              disabled
               variant="outlined" 
-              defaultValue={values.amountPay}
-              onChange={handleOnChangeInformation('amountPay')}
+              defaultValue={valuesInstallmentData.installmentAmountPay}
+              onChange={handleInstallmentInformation('amountPay')}
+              InputProps={
+                {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
+              }
             />
           </div>
 
@@ -129,9 +154,9 @@ export default function BillPayModalEdit( props ) {
               <Select
                 labelId="formaPagamento-label"
                 id="paymentType"
-                value={values.paymentType}
+                value={valuesInstallmentData.paymentType}
                 label="Formas de pagamento"
-                onChange={handleOnChangeInformation('paymentType')}
+                onChange={handleInstallmentInformation('paymentType')}
               >
 
                 <MenuItem value='boleto'>Boleto</MenuItem>
@@ -152,49 +177,6 @@ export default function BillPayModalEdit( props ) {
               variant="outlined" 
               defaultValue={values.documentNumber}
               onChange={handleOnChangeInformation('documentNumber')}
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              id="billFile"
-              label="Arquivo da conta"
-              variant="outlined" 
-              defaultValue={values.billFile}
-              onChange={handleOnChangeInformation('billFile')}
-            />
-          </div>
-
-          {/* <div className="form__input--halfWidth">
-            <label htmlFor="upload-file">
-              <input
-                style={{ display: "none" }}
-                id="upload-file"
-                name="upload-file"
-                type="file"
-              />
-              
-              <Fab
-                className='modal__upload--button'
-                component="span"
-                aria-label="add"
-                variant="extended"
-              >
-
-                <AddIcon /> Comprovante
-              </Fab>
-            </label>
-
-          </div> */}
-
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              id="installments"
-              label="Parcelas"
-              variant="outlined" 
-              defaultValue={values.installments}
-              onChange={handleOnChangeInformation('installments')}
-
             />
           </div>
 
@@ -222,6 +204,41 @@ export default function BillPayModalEdit( props ) {
 
             </CustomFormControl>
           </div>
+
+
+          <div className="form__input--halfWidth">
+            <CustomTextField
+              id="billFile"
+              label="Arquivo da conta"
+              variant="outlined" 
+              defaultValue={values.billFile}
+              onChange={handleOnChangeInformation('billFile')}
+            />
+          </div>
+
+          <div className="form__input--halfWidth">
+            <label htmlFor="upload-file">
+              <input
+                style={{ display: "none" }}
+                id="upload-file"
+                name="upload-file"
+                type="file"
+              />
+              
+              <Fab
+                className='modal__upload--button'
+                component="span"
+                aria-label="add"
+                variant="extended"
+              >
+
+                <AddIcon /> Novo arquivo
+              </Fab>
+            </label>
+
+          </div>
+
+
 
           <div className="form__input--fullWidth">
             <CustomTextField
