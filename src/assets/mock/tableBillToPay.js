@@ -84,4 +84,43 @@ export const tableBillToPay = [
     serviceNumber: "VAZIO EM PAY"
   },
 
+  {
+    id: "3",
+    name: "Oi",
+    billType: "pay",
+    documentNumber: "hgf2",
+    billFile: "",
+    additionalInformation: "more info",
+    expenseType: "fixa",
+    amountPay: "250.00",
+    paymentInfo: {
+        installments: "2",
+        installmentsData: [
+            {
+                installmentAmountPay: "125.00",
+                dueDate: "Tue Jan 11 2022 00:00:00 GMT-0300 (Horário Padrão de Brasília)",
+                receiptFile: "",
+                paymentDate: "",
+                amountPaid: "",
+                paymentType: "dinheiro",
+                installment: "1",
+                paymentStatus: "toPay"
+            },
+            {
+                installmentAmountPay: "125.00",
+                dueDate: "Fri Feb 11 2022 00:00:00 GMT-0300 (Horário Padrão de Brasília)",
+                receiptFile: "",
+                paymentDate: "",
+                amountPaid: "",
+                paymentType: "dinheiro",
+                installment: "2",
+                paymentStatus: "toPay"
+            }
+        ]
+    },
+    "service": "VAZIO EM PAY",
+    "serviceNumber": "VAZIO EM PAY"
+}
+  
+
 ];

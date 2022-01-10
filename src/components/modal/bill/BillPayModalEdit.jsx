@@ -20,8 +20,6 @@ import CustomTextField from '../../CustomTextField';
 import CustomFormControl from '../../CustomFormControl'
 import ptBrLocate from "date-fns/locale/pt-BR"
 
-import '../modal.css';
-
 export default function BillPayModalEdit( props ) {
 
   const { data,  installment } = props
@@ -30,8 +28,6 @@ export default function BillPayModalEdit( props ) {
   const installmentData = data['paymentInfo']['installmentsData'].filter( data => data[ 'installment' ] === `${installment}` )[0]
   console.log('BillPayModalEdit')
   console.log(data)
-  console.log(`${installment}`)
-  console.log(installmentData)
 
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState({
     installmentAmountPay: `${installmentData.installmentAmountPay}`,
@@ -118,25 +114,19 @@ export default function BillPayModalEdit( props ) {
           </div>
 
           <div className="form__input--halfWidth">
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
-              <DatePicker
-                label="Data de vencimento"
-                id="dueDate"
-                value={ valuesInstallmentData.dueDate }
-                inputFormat="dd/MM/yyyy"      
-                onChange={ (newValue) => {
-                  setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
-                  // setValues( { ...values, dueDate: `${new Date( newValue )}` } );
-                }}
-                renderInput={(params) => <CustomTextField {...params}/>}
-              />
-            </LocalizationProvider>
+            <CustomTextField
+              id="documentNumber"
+              label="Número do documento"
+              variant="outlined" 
+              defaultValue={values.documentNumber}
+              onChange={handleOnChangeInformation('documentNumber')}
+            />
           </div>
 
           <div className="form__input--halfWidth">
             <CustomTextField  
               id="amountPay"
-              label={`Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments}`}
+              label={`Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments} no total de R$ ${values.amountPay}`}
               disabled
               variant="outlined" 
               defaultValue={valuesInstallmentData.installmentAmountPay}
@@ -146,6 +136,22 @@ export default function BillPayModalEdit( props ) {
               }
             />
           </div>
+
+          <div className="form__input--halfWidth">
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
+              <DatePicker
+                label="Data de vencimento"
+                id="dueDate"
+                value={ valuesInstallmentData.dueDate }
+                inputFormat="dd/MM/yyyy"      
+                onChange={ (newValue) => {
+                  setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
+                }}
+                renderInput={(params) => <CustomTextField {...params}/>}
+              />
+            </LocalizationProvider>
+          </div>
+
 
           <div className="form__input--halfWidth">
             <CustomFormControl>
@@ -170,15 +176,6 @@ export default function BillPayModalEdit( props ) {
             </CustomFormControl>
           </div>
 
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              id="documentNumber"
-              label="Número do documento"
-              variant="outlined" 
-              defaultValue={values.documentNumber}
-              onChange={handleOnChangeInformation('documentNumber')}
-            />
-          </div>
 
           <div className="form__input--halfWidth">
             <CustomFormControl>

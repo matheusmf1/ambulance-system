@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Table } from '../../../components/tables/bills/table';
 import { tableBillToPay } from "../../../assets/mock/tableBillToPay";
 

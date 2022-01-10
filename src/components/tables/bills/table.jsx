@@ -10,6 +10,7 @@ import BillPayModal from "../../modal/bill/BillPayModal"
 import BillPayModalEdit from "../../modal/bill/BillPayModalEdit"
 import BillReceiveModal from "../../../components/modal/bill/BillReceiveModal"
 import BillReceiveModalEdit from "../../../components/modal/bill/BillReceiveModalEdit"
+import DeleteModal from "../../modal/deleteModal";
 
 
 export const Table = ( props ) => {
@@ -117,6 +118,15 @@ export const Table = ( props ) => {
         if ( keyD === 'action' ) {
           return createActionButtons( i, key, currentInstallment );
         }
+
+        // if ( keyD === 'action' && currentInstallment === "1" ) {
+        //   return createActionButtons( i, key, currentInstallment );
+        // }
+
+
+        // if ( keyD === 'action' && currentInstallment !== "1" ) {
+        //   return <td key={i}>----</td>;
+        // }
   
         if ( keyD === 'baixa' ) {
           return createDarBaixaButton( i,key, currentInstallment );
@@ -135,11 +145,6 @@ export const Table = ( props ) => {
   }
 
 
-  const handleDelete = ( key ) => {
-    console.log('item to delete: ' + key );
-    setCollection( collection.filter( item => item.id !== key ) )   
-  }
-
   const createActionButtons = ( i, rowData, installment ) => {
     
     let {id} = rowData
@@ -147,10 +152,7 @@ export const Table = ( props ) => {
       
       {chooseModal( billModalEdit, rowData, installment )}
 
-      <DeleteOutline
-        className="userListDelete"
-        onClick={() => handleDelete( id )}
-      />
+      <DeleteModal id={id}/>
 
     </td>;  
   }

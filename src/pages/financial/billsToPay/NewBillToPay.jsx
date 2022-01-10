@@ -21,7 +21,7 @@ export default function NewBillToPay() {
 
   const [ data, setData ] = useState(
     {
-      id: "1",
+      id: "",
       name: "",
       billType: "pay",
       documentNumber: "",
@@ -99,6 +99,11 @@ export default function NewBillToPay() {
       let month = parseInt(date.getMonth()) + 1
       let year = parseInt(date.getFullYear())
 
+      if ( month >= 12 ) {
+        month = 1
+        year = year + 1
+      }
+
       let installmentDate = new Date(`${year}/${month + i}/${day}`)
       installmentBody['dueDate'] = `${installmentDate}`
       installmentDataArray.push( installmentBody )
@@ -115,8 +120,10 @@ export default function NewBillToPay() {
   }
 
   const handleAddInformation = ( e ) => {
+    e.preventDefault()
 
     const finalData = unifyData()
+    finalData['id'] = '1'
     console.log( finalData )
     console.log( 'SAVE DATA FIREBASE' )
     
@@ -154,8 +161,6 @@ export default function NewBillToPay() {
 
   }
 
-  const preventSubmit = ( e ) => e.preventDefault()
-
   return (
   
     <main className="form__container">
@@ -165,7 +170,7 @@ export default function NewBillToPay() {
       </div>
 
       <div className="form__content">
-        <form onSubmit={preventSubmit}>
+        <form onSubmit={handleAddInformation}>
           <div className="form__content--inputs">
 
             <div className="form__input--halfWidth">
@@ -186,6 +191,7 @@ export default function NewBillToPay() {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Valor da Conta*</label>
               <input className="form__input" type="number" min="1" step=".01" placeholder="Informe o valor da conta" required onChange={handleOnChangeInformation('amountPay')}/>
+              {/* <input className="form__input" type="number" min="1" placeholder="Informe o valor da conta" required onChange={handleOnChangeInformation('amountPay')}/> */}
             </div>
 
             <div className="form__input--halfWidth">
@@ -242,7 +248,8 @@ export default function NewBillToPay() {
           </div>
 
           <div className="form__container--buttons">
-            <button className="form__button form__button--add" onClick={handleAddInformation}>Adicionar</button>
+            {/* <button className="form__button form__button--add" onClick={handleAddInformation}>Adicionar</button> */}
+            <button className="form__button form__button--add">Adicionar</button>
             <button type="reset" className="form__button form__button--calcel">Corrigir</button>
           </div>
 
