@@ -27,6 +27,7 @@ export default function BillToPayList() {
         tableName="Contas a Pagar"
         columns={tableColumns}
         data={tableData}
+        billPaymentStatus="toPay"
         billModalEdit={editarModal}
         billModal={darBaixaModal}
         linkCadastro="/financeiro/pagar/cadastro"

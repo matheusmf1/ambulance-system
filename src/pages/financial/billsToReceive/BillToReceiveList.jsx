@@ -28,6 +28,7 @@ export default function BillToPayList() {
         tableName="Contas a Receber"
         columns={tableColumns}
         data={tableData}
+        billPaymentStatus="toReceive"
         billModalEdit={editarModal}
         billModal={darBaixaModal}
         linkCadastro="/financeiro/receber/cadastro"

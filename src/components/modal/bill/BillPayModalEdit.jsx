@@ -26,8 +26,6 @@ export default function BillPayModalEdit( props ) {
   const [ isOpenModal, setIsOpenModal  ] = useState( false );
 
   const installmentData = data['paymentInfo']['installmentsData'].filter( data => data[ 'installment' ] === `${installment}` )[0]
-  console.log('BillPayModalEdit')
-  console.log(data)
 
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState({
     installmentAmountPay: `${installmentData.installmentAmountPay}`,
@@ -37,7 +35,7 @@ export default function BillPayModalEdit( props ) {
     amountPaid: `${installmentData.amountPaid}`,
     paymentType: `${installmentData.paymentType}`,
     installment: `${installmentData.installment}`,
-    paymentStatus: "paid",
+    paymentStatus: `${installmentData.paymentStatus}`
   });
   
   const [values, setValues] = useState({
@@ -126,7 +124,7 @@ export default function BillPayModalEdit( props ) {
           <div className="form__input--halfWidth">
             <CustomTextField  
               id="amountPay"
-              label={`Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments} no total de R$ ${values.amountPay}`}
+              label={ valuesInstallmentData.installment === "1" ? `Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments} no total de R$ ${values.amountPay}` : "Valor Total a Receber"}
               disabled
               variant="outlined" 
               defaultValue={valuesInstallmentData.installmentAmountPay}

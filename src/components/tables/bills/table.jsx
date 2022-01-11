@@ -4,8 +4,6 @@ import throttle from "lodash/throttle";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
 
-import { DeleteOutline } from "@material-ui/icons";
-
 import BillPayModal from "../../modal/bill/BillPayModal"
 import BillPayModalEdit from "../../modal/bill/BillPayModalEdit"
 import BillReceiveModal from "../../../components/modal/bill/BillReceiveModal"
@@ -15,7 +13,7 @@ import DeleteModal from "../../modal/deleteModal";
 
 export const Table = ( props ) => {
 
-  const { tableName, columns, data, billModalEdit, billModal, linkCadastro } = props;
+  const { tableName, columns, data, billPaymentStatus,billModalEdit, billModal, linkCadastro } = props;
 
   const chooseModal = ( modalName, data, installment ) => {
 
@@ -87,7 +85,7 @@ export const Table = ( props ) => {
     let totalInstallments = key['paymentInfo']['installments']
     let installmentsData = key['paymentInfo']['installmentsData']
 
-    let installmentsToBePaid = installmentsData.filter( data => data['paymentStatus'] !== 'paid'  )
+    let installmentsToBePaid = installmentsData.filter( data => data['paymentStatus'] === billPaymentStatus )
 
     const installmentsRows = installmentsToBePaid.map( (data, index) => {
 
@@ -122,21 +120,20 @@ export const Table = ( props ) => {
         }
 
         if ( keyD === 'paymentType' ) {
-          return <td key={i}>{data['paymentType']}</td>;
+          let paymentNames = {
+            'boleto': "Boleto",
+            'pix': "PIX",
+            'transferência': "Transferência",
+            'deposito': "Depósito",
+            'cheque': "Cheque",
+            'dinheiro': "Dinheiro"
+          }
+          return <td key={i}>{ paymentNames[data['paymentType']]}</td>;
         }
 
         if ( keyD === 'action' ) {
           return createActionButtons( i, key, currentInstallment );
         }
-
-        // if ( keyD === 'action' && currentInstallment === "1" ) {
-        //   return createActionButtons( i, key, currentInstallment );
-        // }
-
-
-        // if ( keyD === 'action' && currentInstallment !== "1" ) {
-        //   return <td key={i}>----</td>;
-        // }
   
         if ( keyD === 'baixa' ) {
           return createDarBaixaButton( i,key, currentInstallment );

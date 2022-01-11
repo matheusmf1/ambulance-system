@@ -104,7 +104,7 @@ export const tableBillToPay = [
                 amountPaid: "",
                 paymentType: "dinheiro",
                 installment: "1",
-                paymentStatus: "toPay"
+                paymentStatus: "paid"
             },
             {
                 installmentAmountPay: "125.00",
@@ -135,7 +135,7 @@ export const tableBillToPay = [
     installments: "2",
     installmentsData: [
       {
-        installmentAmountPay: "25",
+        installmentAmountPay: "25.00",
         dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
         receiptFile: "",
         paymentDate: "",
@@ -146,7 +146,7 @@ export const tableBillToPay = [
         paymentStatus: "toReceive",
       },
       {
-        installmentAmountPay: "25",
+        installmentAmountPay: "25.00",
         dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
         receiptFile: "",
         paymentDate: "",
