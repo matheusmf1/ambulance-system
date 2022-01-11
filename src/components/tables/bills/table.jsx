@@ -99,6 +99,16 @@ export const Table = ( props ) => {
           return <td key={i}>{ `${new Date( data['dueDate'] ).toLocaleDateString('pt-br')}` }</td>;
         }
 
+        if ( keyD === "service" ) {
+
+          let servicesNames = {
+            'proposta': "Proposta",
+            'ordemServico': "Ordem de Serviço",
+            'vendaProduto': "Venda de Produto",
+          }
+          return <td key={i}>{ servicesNames[ key[keyD] ]}</td>;
+        }
+
         if ( keyD === 'installments' ) {
           return <td key={i}>{currentInstallment}/{totalInstallments}</td>;
         }

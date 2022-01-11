@@ -159,7 +159,7 @@ export const tableBillToPay = [
     
   },
   
-  service: "Ordem de Servico",
+  service: "ordemServico",
   serviceNumber: "os1"
 },
   

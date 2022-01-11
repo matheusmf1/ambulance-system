@@ -69,7 +69,11 @@ export default function BillPayModal( props ) {
   }
   
   
-  const handleInformation = () => {
+  const handleSubmit = ( e ) => {
+
+    e.preventDefault()
+
+    valuesInstallmentData['amountPaid'] =  parseFloat(valuesInstallmentData['amountPaid']).toFixed(3).slice(0, -1)
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
@@ -101,187 +105,190 @@ export default function BillPayModal( props ) {
           },
         }}
         >      
-    
-        <DialogTitle className="modal__title">Informe os seguintes dados de pagamento</DialogTitle>
+      
+        <form onSubmit={handleSubmit}>
 
-        <div className='modal__container'>
-          
-          <div className="form__input--halfWidth">            
-            <CustomTextField
-              disabled
-              id="name-disabled"
-              label="Empresa"
-              variant="outlined" 
-              defaultValue={values.name}
-            />
-          </div>
+          <DialogTitle className="modal__title">Informe os seguintes dados de pagamento</DialogTitle>
 
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              disabled
-              id="dueDate-disabled"
-              label="Vencimento"
-              variant="outlined" 
-              defaultValue={`${new Date( valuesInstallmentData.dueDate ).toLocaleDateString('pt-br')}`}
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              disabled
-              id="amountPay-disabled"
-              label="Valor total"
-              variant="outlined" 
-              defaultValue={values.amountPay}
-              InputProps={
-                {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
-              }
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              disabled
-              id="installmentAmountPay-disabled"
-              label="Valor da parcela"
-              variant="outlined" 
-              defaultValue={valuesInstallmentData.installmentAmountPay}
-              InputProps={
-                {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
-              }
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              disabled
-              id="installment-disabled"
-              label="Número da parcela"
-              variant="outlined" 
-              defaultValue={`${valuesInstallmentData.installment} / ${values.paymentInfo.installments}`}
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomFormControl>
-              <InputLabel id="formaPagamento-label">Tipo de despesa</InputLabel>
-
-              <Select
-                disabled
-                labelId="formaPagamento-label"
-                id="expenseType"
-                value={values.expenseType}
-                label="Tipo de despesa"
-              >
-                
-                <MenuItem value="fixa">Fixa</MenuItem>
-                <MenuItem value="folhaPagamento">Folha de Pagamento</MenuItem>
-                <MenuItem value="impostos">Impostos</MenuItem>
-                <MenuItem value="bancaria">Bancária</MenuItem>
-                <MenuItem value="produto">Produto</MenuItem>
-                <MenuItem value="serviço">Serviço</MenuItem>   
-                <MenuItem value="alimentacao">Alimentação</MenuItem>   
-
-              </Select>
-
-            </CustomFormControl>
-          </div>
-
-          <div className="form__input--halfWidth">
-
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
-              <DatePicker
-                label="Data de Pagamento"
-                id="date"
-                value={ valuesInstallmentData.paymentDate }
-                inputFormat="dd/MM/yyyy"      
-                onChange={ (newValue) => {
-                  setValuesInstallmentData( { ...valuesInstallmentData, paymentDate: `${new Date( newValue )}` } );
-                }}
-                renderInput={(params) => <CustomTextField {...params}/>}
-              />
-            </LocalizationProvider>
-          </div>
-
-          <div className="form__input--halfWidth">
+          <div className='modal__container'>
             
-              <CustomTextField      
-                id="amountPaid"
-                label="Valor pago"
-                type="text"
-                variant="outlined"
-                value={valuesInstallmentData.amountPaid}
-                onChange={handleInstallmentInformation('amountPaid')}
+            <div className="form__input--halfWidth">            
+              <CustomTextField
+                disabled
+                id="name-disabled"
+                label="Empresa"
+                variant="outlined" 
+                defaultValue={values.name}
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomTextField
+                disabled
+                id="dueDate-disabled"
+                label="Vencimento"
+                variant="outlined" 
+                defaultValue={`${new Date( valuesInstallmentData.dueDate ).toLocaleDateString('pt-br')}`}
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomTextField
+                disabled
+                id="amountPay-disabled"
+                label="Valor total"
+                variant="outlined" 
+                defaultValue={values.amountPay}
                 InputProps={
                   {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
                 }
-                />
-            
-          </div>
+              />
+            </div>
 
-          <div className="form__input--halfWidth">
-            <CustomFormControl>
-                <InputLabel id="formaPagamento-label">Forma de pagamento</InputLabel>
+            <div className="form__input--halfWidth">
+              <CustomTextField
+                disabled
+                id="installmentAmountPay-disabled"
+                label="Valor da parcela"
+                variant="outlined" 
+                defaultValue={valuesInstallmentData.installmentAmountPay}
+                InputProps={
+                  {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
+                }
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomTextField
+                disabled
+                id="installment-disabled"
+                label="Número da parcela"
+                variant="outlined" 
+                defaultValue={`${valuesInstallmentData.installment} / ${values.paymentInfo.installments}`}
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomFormControl>
+                <InputLabel id="paymentType-label">Tipo de despesa</InputLabel>
 
                 <Select
-                  labelId="formaPagamento-label"
-                  id="paymentType"
-                  value={valuesInstallmentData.paymentType}
-                  label="Forma de pagamento"
-                  onChange={handleInstallmentInformation('paymentType')}
+                  disabled
+                  labelId="paymentType-label"
+                  id="expenseType"
+                  value={values.expenseType}
+                  label="Tipo de despesa"
                 >
+                  
+                  <MenuItem value="fixa">Fixa</MenuItem>
+                  <MenuItem value="folhaPagamento">Folha de Pagamento</MenuItem>
+                  <MenuItem value="impostos">Impostos</MenuItem>
+                  <MenuItem value="bancaria">Bancária</MenuItem>
+                  <MenuItem value="produto">Produto</MenuItem>
+                  <MenuItem value="serviço">Serviço</MenuItem>   
+                  <MenuItem value="alimentacao">Alimentação</MenuItem>   
 
-                  <MenuItem value='boleto'>Boleto</MenuItem>
-                  <MenuItem value='pix'>PIX</MenuItem>
-                  <MenuItem value='transferência'>Transferência</MenuItem>
-                  <MenuItem value='deposito'>Depósito</MenuItem>
-                  <MenuItem value='cheque'>Cheque</MenuItem>
-                  <MenuItem value='dinheiro'>Dinheiro</MenuItem>
                 </Select>
 
               </CustomFormControl>
-          </div>
+            </div>
 
-          <div className="form__input--halfWidth">
-            <label htmlFor="receiptFile">
-              <input
-                style={{ display: "none" }}
-                id="receiptFile"
-                name="receiptFile"
-                type="file"
-                onChange={handleInstallmentInformation('receiptFile')}
+            <div className="form__input--halfWidth">   
+              <CustomTextField      
+                id="amountPaid"
+                label="Valor pago"
+                type="number"
+                required
+                variant="outlined"
+                value={valuesInstallmentData.amountPaid}
+                onChange={handleInstallmentInformation('amountPaid')}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  inputProps: { min: 0, step:".01" }
+                }}
+                />
+            </div>
+
+            <div className="form__input--halfWidth">
+
+              <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
+                <DatePicker
+                  label="Data de Pagamento"
+                  id="date"
+                  value={ valuesInstallmentData.paymentDate }
+                  inputFormat="dd/MM/yyyy"      
+                  onChange={ (newValue) => {
+                    setValuesInstallmentData( { ...valuesInstallmentData, paymentDate: `${new Date( newValue )}` } );
+                  }}
+                  renderInput={(params) => <CustomTextField {...params}/>}
+                />
+              </LocalizationProvider>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomFormControl>
+                  <InputLabel id="formaPagamento-label">Forma de pagamento</InputLabel>
+
+                  <Select
+                    labelId="formaPagamento-label"
+                    id="paymentType"
+                    value={valuesInstallmentData.paymentType}
+                    label="Forma de pagamento"
+                    onChange={handleInstallmentInformation('paymentType')}
+                  >
+
+                    <MenuItem value='boleto'>Boleto</MenuItem>
+                    <MenuItem value='pix'>PIX</MenuItem>
+                    <MenuItem value='transferência'>Transferência</MenuItem>
+                    <MenuItem value='deposito'>Depósito</MenuItem>
+                    <MenuItem value='cheque'>Cheque</MenuItem>
+                    <MenuItem value='dinheiro'>Dinheiro</MenuItem>
+                  </Select>
+
+                </CustomFormControl>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label htmlFor="receiptFile">
+                <input
+                  style={{ display: "none" }}
+                  id="receiptFile"
+                  name="receiptFile"
+                  type="file"
+                  onChange={handleInstallmentInformation('receiptFile')}
+                />
+                
+                <Fab
+                  className='modal__upload--button'
+                  component="span"
+                  aria-label="add"
+                  variant="extended">
+
+                  <AddIcon/> Comprovante
+                </Fab>
+              </label>
+
+            </div>
+
+            <div className="form__input--fullWidth">
+              <CustomTextField
+                id="additionalInformation"
+                label="Informações adicionais"
+                multiline
+                value={values.additionalInformation}
+                rows={4}
+                onChange={handleOnChangeInformation('additionalInformation')}
               />
-              
-              <Fab
-                className='modal__upload--button'
-                component="span"
-                aria-label="add"
-                variant="extended">
-
-                <AddIcon/> Comprovante
-              </Fab>
-            </label>
+            </div>
 
           </div>
 
-          <div className="form__input--fullWidth">
-            <CustomTextField
-              id="additionalInformation"
-              label="Informações adicionais"
-              multiline
-              value={values.additionalInformation}
-              rows={4}
-              onChange={handleOnChangeInformation('additionalInformation')}
-            />
-          </div>
+          <DialogActions>
+            <Button onClick={handleOpenCloseDialog}>Cancelar</Button>
+            <Button type="submit">Ok</Button>
+          </DialogActions>
 
-        </div>
-
-
-        <DialogActions>
-          <Button onClick={handleOpenCloseDialog}>Cancelar</Button>
-          <Button onClick={handleInformation}>Ok</Button>
-        </DialogActions>
+        </form>
 
       </Dialog>
     </>

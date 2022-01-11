@@ -71,7 +71,7 @@ toogleMenuBars.forEach( icon => {
 		<aside className="container__sidebar active">
 			
 			<div className="sidebar__logo">
-				<a href="" className="sidebar__logo--anchor">
+				<a href="/" className="sidebar__logo--anchor">
         	<img src={logoRescue} className="sidebar__logo--image" alt="logo"/>
 				</a>
 
