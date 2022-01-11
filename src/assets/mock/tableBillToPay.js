@@ -120,7 +120,48 @@ export const tableBillToPay = [
     },
     "service": "VAZIO EM PAY",
     "serviceNumber": "VAZIO EM PAY"
-}
+},
+
+{
+  id: "4",
+  name: "Cliente 1",
+  billType: "receive",
+  amountPay: "50.00",
+  documentNumber: "VAZIO-RECEIVE",
+  billFile: "file",
+  additionalInformation: "hello",
+  expenseType: "VAZIO-RECEIVE",
+  paymentInfo: {
+    installments: "2",
+    installmentsData: [
+      {
+        installmentAmountPay: "25",
+        dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
+        receiptFile: "",
+        paymentDate: "",
+        amountPaid: "",
+        paymentType: "boleto",
+        installment: "1",
+        // paymentStatus: "received",
+        paymentStatus: "toReceive",
+      },
+      {
+        installmentAmountPay: "25",
+        dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+        receiptFile: "",
+        paymentDate: "",
+        amountPaid: "",
+        paymentType: "boleto",
+        installment: "2",
+        paymentStatus: "toReceive"
+      }
+    ]
+    
+  },
+  
+  service: "Ordem de Servico",
+  serviceNumber: "os1"
+},
   
 
 ];

@@ -19,12 +19,14 @@ export default function BillToPayList() {
   const editarModal = "BillPayModalEdit"
   const darBaixaModal = "BillPayModal"
 
+  const tableData = tableBillToPay.filter( bill => bill.billType === "pay" )
+
   return (
     <>
       <Table
         tableName="Contas a Pagar"
         columns={tableColumns}
-        data={tableBillToPay}
+        data={tableData}
         billModalEdit={editarModal}
         billModal={darBaixaModal}
         linkCadastro="/financeiro/pagar/cadastro"

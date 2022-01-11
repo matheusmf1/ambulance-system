@@ -4,42 +4,159 @@ import '../../customer/customerAdd/customerAdd.css'
 
 export default function NewBillToReceive() {
 
+  const [ hasInstallment, setHasInstallment ] = useState(false)
+
+  const [ installment, setInstallment ] = useState(
+    {
+      installmentAmountPay: "",
+      dueDate: '',          
+      receiptFile: "",
+      paymentDate: "",
+      amountPaid: "",
+      paymentType: "boleto",
+      installment: "1",
+      paymentStatus: "toReceive"
+    }
+  )
+
   const [ data, setData ] = useState( {
     id: "",
-    billType: "pay",
-    documentNumber: "",
-    installments: "",
-    service: "",
-    serviceNumber: "",
-    billFile: "",
-
     name: "",
-    dueDate: "",
-    amountPay: "",
-    expenseType: "",
-    paymentDate: "",
-    amountPaid: "",
-    receiptFile: "",
-    paymentType: "",
+    billType: "receive",
+    documentNumber: "",
+    billFile: "",
     additionalInformation: "",
+    expenseType: "",
+    amountPay: "",
+
+    paymentInfo: {
+      installments: "1",
+      installmentsData: []
+    },
+    
+    service: "VAZIO EM PAY",
+    serviceNumber: "VAZIO EM PAY"
+  
   } )
 
   const handleOnChangeInformation = (id) => (e) => {
-
-    if ( id === 'dueDate') {
-      setData( { ...data, [id]: `${new Date( e.target.value )}` } );
+    
+    if ( id === 'dueDate' ) {
+      let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
+      setInstallment( { ...installment, [id]: `${new Date( formatedDate )}` } );
     }
-    else {
+
+    else if ( id === 'amountPay' ) {
+      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
+      setData( { ...data, [id]: amount } );
+    }
+
+    else if ( id === 'paymentType' ) {
+      setInstallment( { ...installment, [id]: e.target.value } );
+    }
+
+    else if ( id === 'installments' ) {
+      let paymentInfo = {
+        installments: `${e.target.value}`,
+        installmentsData: [] 
+      }
+
+      setData( { ...data, 'paymentInfo': paymentInfo } )
+    }
+
+    else{
       setData( { ...data, [id]: e.target.value } );
     }
+
+
+  }
+
+  const unifyData = () => {
+
+    const totalInstallments = parseInt( data['paymentInfo']['installments'] )
+    let installmentAmountPay = 0
+    if ( totalInstallments !== 0 ) {
+      installmentAmountPay = parseFloat( data['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
+    }
+
+    const installmentDataArray = []
+    for ( let i = 0; i < totalInstallments; i++ ) {
+      
+      let installmentBody = {
+        installmentAmountPay: `${ installmentAmountPay }`,
+        dueDate: '',          
+        receiptFile: '',
+        paymentDate: '',
+        amountPaid: "",
+        paymentType: `${installment['paymentType']}`,
+        installment: `${i + 1}`,
+        paymentStatus: "toPay"
+      }
+    
+      let date = new Date( installment['dueDate'] )
+      let day = parseInt(date.getDate())
+      let month = parseInt(date.getMonth()) + 1
+      let year = parseInt(date.getFullYear())
+
+      if ( month >= 12 ) {
+        month = 1
+        year = year + 1
+      }
+
+      let installmentDate = new Date(`${year}/${month + i}/${day}`)
+      installmentBody['dueDate'] = `${installmentDate}`
+      installmentDataArray.push( installmentBody )
+    }
+
+    let paymentInfo = {
+      installments: `${totalInstallments}`,
+      installmentsData: installmentDataArray
+    }
+
+    data['paymentInfo'] = paymentInfo
+    return data
 
   }
 
   const handleAddInformation = ( e ) => {
     e.preventDefault()
-    console.log( data )
+
+    const finalData = unifyData()
+    finalData['id'] = '1'
+    console.log( finalData )
+    console.log( 'SAVE DATA FIREBASE' )  
   }
 
+
+  const installmentElements = () => setHasInstallment( !hasInstallment )
+
+  const renderInstallment = () => {
+    if ( hasInstallment ){
+
+      let totalAmount = data['amountPay']
+      if ( isNaN(totalAmount) ) {
+        totalAmount = 0
+      }
+      
+      let installmentsNumber = data[ 'paymentInfo']['installments']
+      let amountPerInstallment = parseFloat( 0 ).toFixed(3).slice(0, -1)
+      if ( installmentsNumber > 0 ) {
+        amountPerInstallment = parseFloat( totalAmount / installmentsNumber ).toFixed(3).slice(0, -1)
+      }
+
+      return(
+        <>
+          <div className="form__input--halfWidth">
+            <label className="form__input--label"> Número de Parcelas no valor de R$ { amountPerInstallment }</label>
+            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" onChange={handleOnChangeInformation('installments')}/>
+          </div>
+        </>
+        );
+    }
+    else {
+      return <></>
+    }
+  }
 
   return (
   
@@ -50,7 +167,7 @@ export default function NewBillToReceive() {
       </div>
 
       <div className="form__content">
-        <form>
+        <form onSubmit={handleAddInformation}>
           <div className="form__content--inputs">
 
             <div className="form__input--halfWidth">
@@ -76,13 +193,13 @@ export default function NewBillToReceive() {
 
             <div className="form__input--halfWidth">
             <label className="form__input--label">Formas de Pagamento*</label>
-            <select name="forma-pagamento" className="form__input" onChange={handleOnChangeInformation('paymentType')}>
-                  <option value="Boleto">Boleto</option>
-                  <option value="Cheque">Cheque</option>
-                  <option value="Depósito">Depósito</option>
-                  <option value="Dinheiro">Dinheiro</option>
-                  <option value="PIX">PIX</option>
-                  <option value="Transferência">Transferência</option>   
+            <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleOnChangeInformation('paymentType')}>
+                  <option value="boleto">Boleto</option>
+                  <option value="cheque">Cheque</option>
+                  <option value="deposito">Depósito</option>
+                  <option value="dinheiro">Dinheiro</option>
+                  <option value="pix">PIX</option>
+                  <option value="transferencia">Transferência</option>   
                 </select>  
             </div>
 
@@ -90,7 +207,7 @@ export default function NewBillToReceive() {
               <label className="form__input--label">Serviço*</label>
               <select name="forma-pagamento" className="form__input" onChange={handleOnChangeInformation('service')}>
                 <option value="proposta">Proposta</option>
-                <option value="os">Ordem de Serviço</option>
+                <option value="ordemServico">Ordem de Serviço</option>
                 <option value="vendaProduto">Venda de Produto</option>
               </select>  
             </div>
@@ -105,10 +222,21 @@ export default function NewBillToReceive() {
               <input className="form__input" type="file" placeholder="Arquivo" onChange={handleOnChangeInformation('billFile')}/>
             </div>
 
-            <div className="form__input--halfWidth">
+            {/* <div className="form__input--halfWidth">
               <label className="form__input--label">Parcelas</label>
               <input className="form__input" type="text" placeholder="Se houver informe o nº de parcelas" onChange={handleOnChangeInformation('installments')}/>
+            </div> */}
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Parcelas</label>
+              <select name="forma-pagamento" className="form__input" defaultValue="nao" onChange={installmentElements} >
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+              </select>  
             </div>
+
+            { renderInstallment() }
+
 
             <div className="form__input--fullWidth">            
               <label className="form__input--label">Informações adicionais</label>
@@ -118,7 +246,8 @@ export default function NewBillToReceive() {
           </div>
           
           <div className="form__container--buttons">
-            <button className="form__button form__button--add" onClick={handleAddInformation}>Adicionar</button>
+            {/* <button className="form__button form__button--add" onClick={handleAddInformation}>Adicionar</button> */}
+            <button className="form__button form__button--add">Adicionar</button>
             <button type="reset" className="form__button form__button--calcel">Corrigir</button>
           </div>
         </form>

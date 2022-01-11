@@ -6,8 +6,11 @@ export default function BillToPayList() {
 
   const tableColumns = {
     name: "Empresa/Fornecedor",
+    service: "Serviço",
     dueDate: "Vencimento",
-    amountPay: "Valor",
+    installments: "Parcelas",
+    amountPay: "Valor Total",
+    installmentAmountPay: "Valor da Parcela",
     paymentType: "Pagamento",
     baixa: "Dar Baixa",
     action: "Opções",
@@ -17,12 +20,14 @@ export default function BillToPayList() {
   const editarModal = "BillReceiveModalEdit"
   const darBaixaModal = "BillReceiveModal"
 
+  const tableData = tableBillToPay.filter( bill => bill.billType === "receive" )
+
   return (
     <>
       <Table
         tableName="Contas a Receber"
         columns={tableColumns}
-        data={tableBillToPay}
+        data={tableData}
         billModalEdit={editarModal}
         billModal={darBaixaModal}
         linkCadastro="/financeiro/receber/cadastro"
