@@ -98,13 +98,15 @@ export default function NewBillToPay() {
       let day = parseInt(date.getDate())
       let month = parseInt(date.getMonth()) + 1
       let year = parseInt(date.getFullYear())
-
-      if ( month >= 12 ) {
-        month = 1
+      
+      let correntInstallmentMonth = month + i
+    
+      if ( correntInstallmentMonth > 12 ) {
+        correntInstallmentMonth = correntInstallmentMonth - 12
         year = year + 1
       }
 
-      let installmentDate = new Date(`${year}/${month + i}/${day}`)
+      let installmentDate = new Date(`${year}/${correntInstallmentMonth}/${day}`)
       installmentBody['dueDate'] = `${installmentDate}`
       installmentDataArray.push( installmentBody )
     }

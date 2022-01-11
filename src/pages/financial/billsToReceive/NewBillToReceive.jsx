@@ -97,13 +97,15 @@ export default function NewBillToReceive() {
       let day = parseInt(date.getDate())
       let month = parseInt(date.getMonth()) + 1
       let year = parseInt(date.getFullYear())
-
-      if ( month >= 12 ) {
-        month = 1
+  
+      let correntInstallmentMonth = month + i
+    
+      if ( correntInstallmentMonth > 12 ) {
+        correntInstallmentMonth = correntInstallmentMonth - 12
         year = year + 1
       }
 
-      let installmentDate = new Date(`${year}/${month + i}/${day}`)
+      let installmentDate = new Date(`${year}/${correntInstallmentMonth}/${day}`)
       installmentBody['dueDate'] = `${installmentDate}`
       installmentDataArray.push( installmentBody )
     }
@@ -221,11 +223,6 @@ export default function NewBillToReceive() {
               <label className="form__input--label">Arquivo</label>
               <input className="form__input" type="file" placeholder="Arquivo" onChange={handleOnChangeInformation('billFile')}/>
             </div>
-
-            {/* <div className="form__input--halfWidth">
-              <label className="form__input--label">Parcelas</label>
-              <input className="form__input" type="text" placeholder="Se houver informe o nº de parcelas" onChange={handleOnChangeInformation('installments')}/>
-            </div> */}
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Parcelas</label>
