@@ -19,6 +19,8 @@
   background-color: #457ccede !important;
   color: white !important;
   width: -webkit-fill-available !important;
+  width: -moz-available !important;
+  width: fill-available !important;
 }
 
 .modal__upload--button:hover{

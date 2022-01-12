@@ -24,6 +24,10 @@ import BillToPayList from "./pages/financial/billsToPay/BillToPayList.jsx";
 import NewBillToPay from "./pages/financial/billsToPay/NewBillToPay";
 import BillToReceiveList from "./pages/financial/billsToReceive/BillToReceiveList.jsx";
 import NewBillToReceive from "./pages/financial/billsToReceive/NewBillToReceive";
+import BillPaidList from "./pages/financial/billsPaid/BillPaidList";
+import BillReceivedList from "./pages/financial/billsReceived/BillReceivedList";
+import BillsPayInfo from "./pages/financial/billsInfo/BillsPayInfo";
+import BillsReceiveInfo from "./pages/financial/billsInfo/BillsReceiveInfo";
 
 function App() {
   return (
@@ -103,14 +107,24 @@ function App() {
           </Route>
 
           {/* FINANCEIRO */}
-          {/* <Route path="/financeiro/:id" component={SupplierInfo}/> */}
+          <Route exact path="/financeiro/pagas/:id" component={BillsPayInfo}/>          
 
+          <Route exact path="/financeiro/pagas">
+            <BillPaidList/>
+          </Route>
+          
           <Route exact path="/financeiro/pagar">
             <BillToPayList/>
           </Route>
 
           <Route exact path="/financeiro/pagar/cadastro">
             <NewBillToPay/>
+          </Route>
+
+          <Route exact path="/financeiro/recebidos/:id" component={BillsReceiveInfo}/>
+
+          <Route exact path="/financeiro/recebidos">
+            <BillReceivedList/>
           </Route>
 
           <Route exact path="/financeiro/receber">

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table } from '../../../components/tables/bills/table';
 import { tableBillToPay } from "../../../assets/mock/tableBillToPay";
 
-export default function BillToPayList() {
+export default function BillToReceiveList() {
 
   const tableColumns = {
     name: "Empresa/Fornecedor",

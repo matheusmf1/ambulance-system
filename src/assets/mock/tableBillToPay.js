@@ -13,25 +13,23 @@ export const tableBillToPay = [
       installments: "2",
       installmentsData: [
         {
-          installmentAmountPay: "25",
+          installmentAmountPay: "25.00",
           dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
           receiptFile: "",
-          paymentDate: "",
-          amountPaid: "",
+          paymentDate: "Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)",
+          amountPaid: "25.00",
           paymentType: "boleto",
           installment: "1",
           paymentStatus: "paid",
-          // paymentStatus: "toPay"
         },
         {
-          installmentAmountPay: "25",
+          installmentAmountPay: "25.00",
           dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
           receiptFile: "",
           paymentDate: "",
           amountPaid: "",
           paymentType: "boleto",
           installment: "2",
-          // paymentStatus: "paid",
           paymentStatus: "toPay"
         }
       ]
@@ -56,18 +54,17 @@ export const tableBillToPay = [
       installments: "2",
       installmentsData: [
         {
-          installmentAmountPay: "125",
+          installmentAmountPay: "125.00",
           dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
           receiptFile: "",
           paymentDate: "",
           amountPaid: "",
           paymentType: "boleto",
           installment: "1",
-          // paymentStatus: "paid",
           paymentStatus: "toPay"
         },
         {
-          installmentAmountPay: "125",
+          installmentAmountPay: "125.00",
           dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
           receiptFile: "",
           paymentDate: "",
@@ -100,8 +97,8 @@ export const tableBillToPay = [
                 installmentAmountPay: "125.00",
                 dueDate: "Tue Jan 11 2022 00:00:00 GMT-0300 (Horário Padrão de Brasília)",
                 receiptFile: "",
-                paymentDate: "",
-                amountPaid: "",
+                paymentDate: "Tue Jan 11 2022 00:00:00 GMT-0300 (Horário Padrão de Brasília)",
+                amountPaid: "125.00",
                 paymentType: "dinheiro",
                 installment: "1",
                 paymentStatus: "paid"
@@ -118,50 +115,86 @@ export const tableBillToPay = [
             }
         ]
     },
-    "service": "VAZIO EM PAY",
-    "serviceNumber": "VAZIO EM PAY"
-},
+    service: "VAZIO EM PAY",
+    serviceNumber: "VAZIO EM PAY"
+  },
 
-{
-  id: "4",
-  name: "Cliente 1",
-  billType: "receive",
-  amountPay: "50.00",
-  documentNumber: "VAZIO-RECEIVE",
-  billFile: "file",
-  additionalInformation: "hello",
-  expenseType: "VAZIO-RECEIVE",
-  paymentInfo: {
-    installments: "2",
-    installmentsData: [
-      {
-        installmentAmountPay: "25.00",
-        dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
-        receiptFile: "",
-        paymentDate: "",
-        amountPaid: "",
-        paymentType: "boleto",
-        installment: "1",
-        // paymentStatus: "received",
-        paymentStatus: "toReceive",
-      },
-      {
-        installmentAmountPay: "25.00",
-        dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
-        receiptFile: "",
-        paymentDate: "",
-        amountPaid: "",
-        paymentType: "boleto",
-        installment: "2",
-        paymentStatus: "toReceive"
-      }
-    ]
+  {
+    id: "4",
+    name: "Cliente 1",
+    billType: "receive",
+    amountPay: "50.00",
+    documentNumber: "VAZIO-RECEIVE",
+    billFile: "file",
+    additionalInformation: "hello",
+    expenseType: "VAZIO-RECEIVE",
+    paymentInfo: {
+      installments: "2",
+      installmentsData: [
+        {
+          installmentAmountPay: "25.00",
+          dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
+          receiptFile: "",
+          paymentDate: "Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)",
+          amountPaid: "24.00",
+          paymentType: "boleto",
+          installment: "1",
+          paymentStatus: "received",
+        },
+        {
+          installmentAmountPay: "25.00",
+          dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+          receiptFile: "",
+          paymentDate: "",
+          amountPaid: "",
+          paymentType: "boleto",
+          installment: "2",
+          paymentStatus: "toReceive"
+        }
+      ]
+      
+    },
     
+    service: "ordemServico",
+    serviceNumber: "os1"
   },
   
-  service: "ordemServico",
-  serviceNumber: "os1"
-},
-  
-
+  {
+    id: "5",
+    name: "Cliente 2",
+    billType: "receive",
+    amountPay: "50.00",
+    documentNumber: "VAZIO-RECEIVE",
+    billFile: "file",
+    additionalInformation: "hello",
+    expenseType: "VAZIO-RECEIVE",
+    paymentInfo: {
+      installments: "2",
+      installmentsData: [
+        {
+          installmentAmountPay: "25.00",
+          dueDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',          
+          receiptFile: "",
+          paymentDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+          amountPaid: "26.00",
+          paymentType: "boleto",
+          installment: "1",
+          paymentStatus: "received"
+        },
+        {
+          installmentAmountPay: "25.00",
+          dueDate: 'Thu Feb 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+          receiptFile: "",
+          paymentDate: 'Mon Jan 10 2022 10:20:14 GMT-0300 (Horário Padrão de Brasília)',
+          amountPaid: "24.00",
+          paymentType: "boleto",
+          installment: "2",
+          paymentStatus: "received"
+        }
+      ]
+    },
+    
+    service: "ordemServico",
+    serviceNumber: "os1"
+  },
 ];
