@@ -47,15 +47,15 @@ function App() {
           </Route>
 
           {/* CLIENTES */}
-          <Route exact path="/cliente">
+          <Route exact path="/clientes">
             <CustomerList/>
           </Route>
 
-          <Route path="/cliente/:id" component={CustomerInfo}/>
-
-          <Route path="/novocliente">
+          <Route exact path="/clientes/cadastro">
             <CustomerAdd/>
           </Route>
+
+          <Route exact path="/cliente/:id" component={CustomerInfo}/>
 
           {/* VENDA */}
           <Route path="/venda/nova-os">
@@ -71,26 +71,27 @@ function App() {
           </Route>
 
           {/* FORNECEDOR */}
-          <Route exact path="/fornecedor">
+          <Route exact path="/fornecedores">
             <SupplierList/>
+          </Route>
+
+          <Route path="/fornecedores/cadastro">
+            <SupplierAdd/>
           </Route>
 
           <Route path="/fornecedor/:id" component={SupplierInfo}/>
 
-          <Route path="/novofornecedor">
-            <SupplierAdd/>
+          {/* FUNCIONARIO */}
+          <Route exact path="/funcionarios">
+            <EmployeeList/>
           </Route>
 
-          {/* FUNCIONARIO */}
-          <Route exact path="/funcionario">
-            <EmployeeList/>
+          <Route path="/funcionarios/cadastro">
+            <EmployeeAdd/>
           </Route>
 
           <Route path="/funcionario/:id" component={EmployeeInfo}/>
 
-          <Route path="/novofuncionario">
-            <EmployeeAdd/>
-          </Route>
 
           {/* ORCAMENTO */}
           <Route exact path="/orcamento/nova-os">

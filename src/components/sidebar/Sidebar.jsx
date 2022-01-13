@@ -111,14 +111,14 @@ toogleMenuBars.forEach( icon => {
 								<span className="sidebar__menu--closed-Title">Clientes</span>
 						
 								<li>
-									<a href="/novocliente">								
+									<a href="/clientes/cadastro">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Cadastrar</span>
 									</a>
 								</li>
 						
 								<li>
-									<a href="/cliente">
+									<a href="/clientes">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Visualizar</span>            
 									</a>
@@ -140,14 +140,14 @@ toogleMenuBars.forEach( icon => {
 								<span className="sidebar__menu--closed-Title">Fornecedores</span>
 						
 								<li>
-									<a href="/novofornecedor">								
+									<a href="/fornecedores/cadastro">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Cadastrar</span>
 									</a>
 								</li>
 						
 								<li>
-									<a href="/fornecedor">
+									<a href="/fornecedores">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Visualizar</span>            
 									</a>
@@ -170,14 +170,14 @@ toogleMenuBars.forEach( icon => {
 								<span className="sidebar__menu--closed-Title">Funcionários</span>
 						
 								<li>
-									<a href="/novofuncionario">								
+									<a href="/funcionarios/cadastro">								
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Cadastrar</span>
 									</a>
 								</li>
 						
 								<li>
-									<a href="/funcionario">
+									<a href="/funcionarios">
 										<RemoveOutlinedIcon/>
 										<span className="sidebar__submenu--title">Visualizar</span>            
 									</a>

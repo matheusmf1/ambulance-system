@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 export const Table = ( props ) => {
 
-  const { tableName, columns, data, link } = props;
+  const { tableName, columns, data, link, linkCadastro } = props;
 
   const countPerPage = 10;
   const [value, setValue] = React.useState("");
@@ -104,12 +104,29 @@ export const Table = ( props ) => {
 
         <h3 className="table__titleAndSearch--title">{ tableName }</h3>
 
-        <input
+        {/* <input
           className="table__titleAndSearch--search"
           placeholder="Procurar cliente"
           value={value}
           onChange={e => setValue(e.target.value)}
-        />
+        /> */}
+
+      
+        <div className="table__container--searchAndAdd">
+            
+            <input
+              className="table__titleAndSearch--search"
+              placeholder="Procurar cliente"
+              // value={searchValue}
+              onChange={e => setValue(e.target.value)}
+            />
+
+            <a href={linkCadastro} className="table__button--add">								  
+              <button className="form__button form__button--add table__button--add">Adicionar</button>
+            </a>
+
+        </div>
+
       </div>
       
       <div className="table__container--area">      

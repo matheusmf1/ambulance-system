@@ -23,6 +23,7 @@ export default function SupplierList() {
         columns={tableColumns}
         data={tableProviderData}
         link="fornecedor"
+        linkCadastro="/fornecedores/cadastro"
       />
 
     </>

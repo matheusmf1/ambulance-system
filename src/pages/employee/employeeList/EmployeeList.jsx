@@ -23,6 +23,7 @@ export default function EmployeeList() {
         columns={tableColumns}
         data={tableEmployeeData}
         link="funcionario"
+        linkCadastro="/funcionarios/cadastro"
       />
 
     </>

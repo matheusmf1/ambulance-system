@@ -25,6 +25,7 @@ export default function CustomerList() {
         columns={tableColumns}
         data={tableClientData}
         link="cliente"
+        linkCadastro="/clientes/cadastro"
       />
       
     </>
