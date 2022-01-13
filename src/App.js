@@ -31,7 +31,6 @@ import BillsReceiveInfo from "./pages/financial/billsInfo/BillsReceiveInfo";
 
 function App() {
   return (
-
     <div className="container">
 
       <Router>

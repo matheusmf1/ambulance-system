@@ -193,13 +193,17 @@ export const Table = ( props ) => {
 
 
       </div>
+
+
+      <div className="table__container--area">
+        <table className="table">
+          <thead>
+            <tr>{headRow()}</tr>
+          </thead>
+          <tbody>{tableData()}</tbody>
+        </table>
+      </div>
       
-      <table className="table">
-        <thead>
-          <tr>{headRow()}</tr>
-        </thead>
-        <tbody>{tableData()}</tbody>
-      </table>
       
       <Pagination
         pageSize={countPerPage}

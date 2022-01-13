@@ -63,6 +63,8 @@ main {
   
   /* background: #f3f4f6; */
   /* margin: 15px 5vw */
+
+  overflow-x: hidden;
 }
 
 

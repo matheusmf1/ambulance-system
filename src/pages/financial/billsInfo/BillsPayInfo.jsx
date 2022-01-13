@@ -17,10 +17,19 @@ import './billsInfo.css'
 export default function BillsPayInfo( props ) {
 
   let billID = props.match.params.id;
+  console.log( typeof billID )
   console.log( billID )
 
-  const billData = JSON.parse( localStorage.getItem('billInfo') );
+  let billData = JSON.parse( localStorage.getItem('billInfo') );
   console.log( billData );
+
+  if ( billData['id'] !== billID ) {
+
+    console.log( "Fech data from firebase" )
+
+
+  }
+
 
   const installmentsNumber = billData['paymentInfo']['installments']
   const firstInstallment = billData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0]
