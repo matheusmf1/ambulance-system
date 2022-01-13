@@ -7,8 +7,8 @@ export default function CustomerList() {
 
   const tableColumns = {
     id: "Código",
-    contato: "Contato",
-    nome_fantasia: "Empresa",
+    contact: "Contato",
+    fantasy_name: "Empresa",
     cnpj_cpf: "CPNJ/CPF",
     email: "Email",
     telephone: "Telefone",

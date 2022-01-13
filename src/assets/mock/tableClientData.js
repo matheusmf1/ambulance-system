@@ -2,10 +2,10 @@ export const tableClientData = [
 
   {
     id: "1",
-    responsavel: "Matheus1",
-    contato: "Matheus1c",
-    razao_social: "Razao Social",
-    nome_fantasia: "Empresa LTDA",
+    responsable: "Matheus1",
+    contact: "Matheus1c",
+    corporate_name: "Razao Social",
+    fantasy_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
     email: "xxxx@gmail.com",
     telephone: "(11)0000-0000",
@@ -22,10 +22,10 @@ export const tableClientData = [
 
   {
     id: "2",
-    responsavel: "Matheus2",
-    contato: "Matheus2",
-    razao_social: "Razao Social",
-    nome_fantasia: "Empresa LTDA",
+    responsable: "Matheus2",
+    contact: "Matheus2",
+    corporate_name: "Razao Social",
+    fantasy_name: "Empresa LTDA",
     cnpj_cpf: "000.000.000-00",
     email: "xxxx@gmail.com",
     telephone: "(11)0000-0000",

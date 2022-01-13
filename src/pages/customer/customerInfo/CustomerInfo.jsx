@@ -48,8 +48,8 @@ export default function CustomerInfo(props) {
               className="userShowImg"
             />
             <div className="userShowTopTitle">
-              <span className="userShowUsername">Contato: { userData.contato } </span>
-              <span className="userShowUsername">Responsável: { userData.responsavel } </span>
+              <span className="userShowUsername">Contato: { userData.contact } </span>
+              <span className="userShowUsername">Responsável: { userData.responsable } </span>
               <span className="userShowUserTitle">Código: { userData.id }</span>
             </div>
           </div>
@@ -60,12 +60,12 @@ export default function CustomerInfo(props) {
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Nome Fantasia</h6> 
-              <span className="userShowInfoTitle">{ userData.nome_fantasia }</span>
+              <span className="userShowInfoTitle">{ userData.fantasy_name }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Razão Social</h6> 
-              <span className="userShowInfoTitle">{ userData.razao_social }</span>
+              <span className="userShowInfoTitle">{ userData.corporate_name }</span>
             </div>
 
             <div className="userShowInfo">
@@ -140,7 +140,7 @@ export default function CustomerInfo(props) {
                 <label>Responsável</label>
                 <input
                   type="text"
-                  placeholder={ userData.responsavel }
+                  placeholder={ userData.responsable }
                   className="userUpdateInput"
                 />
               </div>
@@ -158,7 +158,7 @@ export default function CustomerInfo(props) {
                 <label>Razão Social</label>
                 <input
                 type="text"
-                placeholder={ userData.razao_social }
+                placeholder={ userData.corporate_name }
                 className="userUpdateInput"
                 />
               </div>
@@ -219,7 +219,7 @@ export default function CustomerInfo(props) {
                 <label>Contato</label>
                 <input
                   type="text"
-                  placeholder={ userData.contato }
+                  placeholder={ userData.contact }
                   className="userUpdateInput"
                 />
               </div>
@@ -228,7 +228,7 @@ export default function CustomerInfo(props) {
                 <label>Nome Fantasia</label>
                 <input
                 type="text"
-                placeholder={ userData.nome_fantasia }
+                placeholder={ userData.fantasy_name }
                 className="userUpdateInput"
                 />
               </div>
@@ -282,14 +282,12 @@ export default function CustomerInfo(props) {
                   className="userUpdateInput"
                 />
               </div>
-
-
                  
             </div>
 
-              <div class="userUpdateItem--textArea">            
-                <label class="form__input--label">Informações adicionais</label>
-                <textarea class="form__input" rows="2" placeholder={ userData.moreInfo }></textarea>          
+              <div className="userUpdateItem--textArea">            
+                <label className="form__input--label">Informações adicionais</label>
+                <textarea className="form__input" rows="2" placeholder={ userData.moreInfo }></textarea>          
               </div>
 
           </form> 
