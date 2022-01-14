@@ -45,7 +45,7 @@ export default function CustomerAdd() {
       </div>
 
       <div className="form__content">
-        <form action="/clientes" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
 
           <div className="form__content--inputs">
 

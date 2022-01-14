@@ -1,4 +1,4 @@
-import React from 'react'
+import {React, useState} from 'react'
 import {
   MailOutline,
   LocalPhone,
@@ -24,17 +24,46 @@ export default function CustomerInfo(props) {
 
   let userID = props.match.params.id;
   let userData = fetchUserData( userID )
-  console.log( userData )
+
+  const [customerData, setCustomerData] = useState(
+    {
+      id: `${userData['id']}`,
+      responsable: `${userData['responsable']}`,
+      contact: `${userData['contact']}`,
+      corporate_name: `${userData['corporate_name']}`,
+      fantasy_name: `${userData['fantasy_name']}`,
+      cnpj_cpf: `${userData['cnpj_cpf']}`,
+      email: `${userData['email']}`,
+      telephone: `${userData['telephone']}`,
+      mobile: `${userData['mobile']}`,
+      cep: `${userData['cep']}`,
+      address: `${userData['address']}`,
+      addressNumber: `${userData['addressNumber']}`,
+      aditionalInformation: `${userData['aditionalInformation']}`,
+      neighborhood: `${userData['neighborhood']}`,
+      city: `${userData['city']}`,
+      state: `${userData['state']}`,
+      moreInfo: `${userData['moreInfo']}`
+    },
+  );
+
+  const handleInformationChange = ( id ) => ( e ) => {
+    setCustomerData( { ...customerData, [id]: e.target.value } )
+  }
+
+  const handleSubmit = ( e ) => {
+
+    e.preventDefault();
+
+    console.log( customerData ) 
+  }
 
   return (
     <main className="user">
 
       <div className="userTitleContainer">
         <h1 className="userTitle">Editar Cliente</h1>
-        {/* <Link to="/newUser">
-          <button className="userAddButton">Novo</button>
-        </Link> */}
-        <button className="userUpdateButton">Atualizar</button>
+        <button onClick={handleSubmit} className="userUpdateButton">Atualizar</button>
       </div>
 
       <div className="userContainer">
@@ -132,7 +161,7 @@ export default function CustomerInfo(props) {
 
           <span className="userUpdateTitle">Editar</span>
           
-          <form className="userUpdateForm">
+          <form onSubmit={handleSubmit} className="userUpdateForm">
             
             <div className="userUpdateLeft">
               
@@ -140,8 +169,9 @@ export default function CustomerInfo(props) {
                 <label>Responsável</label>
                 <input
                   type="text"
-                  placeholder={ userData.responsable }
+                  defaultValue={ userData.responsable }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('responsable')}
                 />
               </div>
               
@@ -149,8 +179,9 @@ export default function CustomerInfo(props) {
                 <label>CNPJ/CPF</label>
                 <input
                   type="text"
-                  placeholder={ userData.cnpj_cpf }
+                  defaultValue={ userData.cnpj_cpf }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('cnpj_cpf')}
                 />
               </div>
 
@@ -158,8 +189,9 @@ export default function CustomerInfo(props) {
                 <label>Razão Social</label>
                 <input
                 type="text"
-                placeholder={ userData.corporate_name }
+                defaultValue={ userData.corporate_name }
                 className="userUpdateInput"
+                  onChange={handleInformationChange('corporate_name')}
                 />
               </div>
 
@@ -168,8 +200,9 @@ export default function CustomerInfo(props) {
                 <label>Telefone</label>
                 <input
                   type="tel"
-                  placeholder={ userData.telephone }
+                  defaultValue={ userData.telephone }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('telephone')}
                 />
               </div>
 
@@ -177,8 +210,9 @@ export default function CustomerInfo(props) {
                 <label>CEP</label>
                 <input
                   type="text"
-                  placeholder={ userData.cep }
+                  defaultValue={ userData.cep }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('cep')}
                 />
               </div>
 
@@ -187,8 +221,9 @@ export default function CustomerInfo(props) {
                 <label>Número</label>
                 <input
                   type="text"
-                  placeholder={ userData.addressNumber }
+                  defaultValue={ userData.addressNumber }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('addressNumber')}
                 />
               </div>
 
@@ -197,8 +232,9 @@ export default function CustomerInfo(props) {
                 <label>Bairro</label>
                 <input
                   type="text"
-                  placeholder={ userData.neighborhood }
+                  defaultValue={ userData.neighborhood }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('neighborhood')}
                 />
               </div>
 
@@ -206,8 +242,9 @@ export default function CustomerInfo(props) {
                 <label>Estado</label>
                 <input
                   type="text"
-                  placeholder={ userData.state }
+                  defaultValue={ userData.state }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('state')}
                 />
               </div>
 
@@ -219,8 +256,9 @@ export default function CustomerInfo(props) {
                 <label>Contato</label>
                 <input
                   type="text"
-                  placeholder={ userData.contact }
+                  defaultValue={ userData.contact }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('contact')}
                 />
               </div>
               
@@ -228,8 +266,9 @@ export default function CustomerInfo(props) {
                 <label>Nome Fantasia</label>
                 <input
                 type="text"
-                placeholder={ userData.fantasy_name }
+                defaultValue={ userData.fantasy_name }
                 className="userUpdateInput"
+                  onChange={handleInformationChange('fantasy_name')}
                 />
               </div>
 
@@ -237,8 +276,9 @@ export default function CustomerInfo(props) {
                 <label>Email</label>
                 <input
                   type="text"
-                  placeholder={ userData.email }
+                  defaultValue={ userData.email }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('email')}
                 />
               </div>
 
@@ -246,8 +286,9 @@ export default function CustomerInfo(props) {
                 <label>Celular</label>
                 <input
                   type="tel"
-                  placeholder={ userData.mobile }
+                  defaultValue={ userData.mobile }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('mobile')}
                 />
               </div>
 
@@ -257,8 +298,9 @@ export default function CustomerInfo(props) {
                 <label>Endereço</label>
                 <input
                   type="text"
-                  placeholder={ userData.address }
+                  defaultValue={ userData.address }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('address')}
                 />
               </div>
 
@@ -268,8 +310,9 @@ export default function CustomerInfo(props) {
                 <label>Complemento</label>
                 <input
                   type="text"
-                  placeholder={ userData.aditionalInformation }
+                  defaultValue={ userData.aditionalInformation }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('aditionalInformation')}
                 />
               </div>
 
@@ -278,8 +321,9 @@ export default function CustomerInfo(props) {
                 <label>Cidade</label>
                 <input
                   type="text"
-                  placeholder={ userData.city }
+                  defaultValue={ userData.city }
                   className="userUpdateInput"
+                  onChange={handleInformationChange('city')}
                 />
               </div>
                  
@@ -287,7 +331,7 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem--textArea">            
                 <label className="form__input--label">Informações adicionais</label>
-                <textarea className="form__input" rows="2" placeholder={ userData.moreInfo }></textarea>          
+                <textarea className="form__input" rows="2" defaultValue={ userData.moreInfo }></textarea>          
               </div>
 
           </form> 
