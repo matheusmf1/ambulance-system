@@ -3,10 +3,10 @@ export const tableEmployeeData = [
   {
     id: "1",
     name: "Matheus",
-    birthday: "xx/xx/xxxx",
+    birthday: "Sat Jan 29 2022 00:00:00 GMT-0300 (Horário Padrão de Brasília)",
     
     gender: "masculino",
-    estado_civil: "solteiro",
+    marital_status: "solteiro",
     
     cep: "00000-000",
     address: "Rua xxxx",
@@ -22,10 +22,10 @@ export const tableEmployeeData = [
 
     rg: "00.000.000-0",
     cpf: "000.000.000-00",
-    cargo: "ceo",
+    job_role: "ceo",
     salary: "10000",
-    vale_transporte: "100",
-    bank_number: "341",
+    transportation_voucher: "100",
+    bank_number: "1",
     bank_agency: "5081",
     bank_accountType: "corrente",
     bank_accountNumber: "00000-0",
@@ -35,10 +35,10 @@ export const tableEmployeeData = [
   {
     id: "2",
     name: "Matheus2",
-    birthday: "xx/xx/xxxx",
+    birthday: "Sat Jan 29 2022 00:00:00 GMT-0300 (Horário Padrão de Brasília)",
     
     gender: "masculino",
-    estado_civil: "solteiro",
+    marital_status: "solteiro",
     
     cep: "00000-000",
     address: "Rua xxxx",
@@ -54,10 +54,10 @@ export const tableEmployeeData = [
 
     rg: "00.000.000-0",
     cpf: "000.000.000-00",
-    cargo: "ceo",
+    job_role: "ceo",
     salary: "10000",
-    vale_transporte: "100",
-    bank_number: "000",
+    transportation_voucher: "100",
+    bank_number: "1",
     bank_agency: "0000",
     bank_accountType: "poupanca",
     bank_accountNumber: "00000-0",
