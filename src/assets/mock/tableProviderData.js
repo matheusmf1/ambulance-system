@@ -2,8 +2,8 @@ export const tableProviderData = [
 
   {
     id: "1",
-    responsavel: "nome1",
-    contato: "nome1c",
+    responsable: "nome1",
+    contact: "nome1c",
     cnpj_cpf: "000.000.000-00",
 
     cep: "00000-000",
@@ -17,15 +17,15 @@ export const tableProviderData = [
     telephone: "(11)0000-0000",
     mobile: "(11)00000-0000",
     email: "xxxx@gmail.com",
-    site: "",
+    site: "www.matheusmf.com",
 
     moreInfo: "xxxxx",
   },
 
   {
     id: "2",
-    responsavel: "nome2",
-    contato: "nome2c",
+    responsable: "nome2",
+    contact: "nome2c",
     cnpj_cpf: "000.000.000-00",
 
     cep: "00000-000",
