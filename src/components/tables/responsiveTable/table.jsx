@@ -272,7 +272,7 @@ const ReactTable = React.memo( props => {
           { headerGroups.map( headerGroup => (
             <tr className="tableOS__header" {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map( column => (
-                <th {...column.getHeaderProps()} colspan={ column.colSpan }>{column.render("Header")}</th>
+                <th {...column.getHeaderProps()} colSpan={ column.colSpan }>{column.render("Header")}</th>
               ))}
             </tr>
           ))}
@@ -286,7 +286,7 @@ const ReactTable = React.memo( props => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td data-label={ cell.column.Header } colspan={ cell.column.colSpan }  {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  <td data-label={ cell.column.Header } colSpan={ cell.column.colSpan }  {...cell.getCellProps()}>{cell.render("Cell")}</td>
                 ))}
               </tr>
             );

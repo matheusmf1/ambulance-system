@@ -23,6 +23,23 @@
   font-size: 24px;
   /* font-size: calc( 12px + 1vw); */
 }
+.os__header--responsableInfo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.os__header--responsableInput {
+  border: none;
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem 0 0.375rem;
+  border-bottom: 2px solid black;
+}
+
+.os__header--responsableInput:focus {
+  outline:none;
+}
 
 .os__header--image {
   width: 100px;
@@ -108,7 +125,7 @@
   border-bottom: 2px solid black;
 }
 
-.os__signatureField--container input:focus-visible {
+.os__signatureField--container input:focus {
   outline: none;
 }
 
@@ -262,6 +279,10 @@
 
   .osForm__titleWithDate--container {
     height: auto;
+  }
+
+  .osForm__content--container {
+    flex-direction: column;
   }
 
 }

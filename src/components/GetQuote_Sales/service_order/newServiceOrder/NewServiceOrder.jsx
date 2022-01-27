@@ -1,4 +1,4 @@
-import React from 'react'
+import {React, useState} from 'react'
 
 import './newServiceOrder.css'
 
@@ -7,8 +7,52 @@ import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
 export default function NewServiceOrder( props ) {
 
-  const [valorTotalProduto, setValorTotalProduto] = React.useState(0);
-  const [valorTotalServico, setValorTotalServico] = React.useState(0);
+  const [valorTotalProduto, setValorTotalProduto] = useState(0);
+  const [valorTotalServico, setValorTotalServico] = useState(0);
+  const [ hasInstallment, setHasInstallment ] = useState(false)
+
+  const [ installment, setInstallment ] = useState(
+    {
+      installmentAmountPay: "",
+      dueDate: '',          
+      receiptFile: "",
+      paymentDate: "",
+      amountPaid: "",
+      paymentType: "pix",
+      installment: "1",
+      paymentStatus: "toPay"
+    }
+  )
+
+  const [serviceOrderData, setServiceOrderData] = useState({
+    entryDate: "",
+    clientNumber: "",
+    companyName: "",
+    cpf: "",
+  
+    cep: "",
+    address: "",
+    
+    city: "",
+    state: "SP",
+    email: "",
+    telephone: "",
+    equipament_vehicle : "",
+    equipament_brand : "",
+    equipament_model : "",
+    equipament_plate : "",
+    equipament_prefix : "",
+
+    amountPay : "",
+
+    paymentInfo: {
+      installments: "1",
+      installmentsData: []
+    },
+
+    responsable: ""
+
+  });
 
   const tableDataProdutos = {
 
@@ -202,6 +246,145 @@ export default function NewServiceOrder( props ) {
     }
   }
 
+  const installmentElements = () => setHasInstallment( !hasInstallment )
+
+
+  const renderInstallment = () => {
+    if ( hasInstallment ){
+
+      let totalAmount = serviceOrderData['amountPay']
+      if ( isNaN(totalAmount) ) {
+        totalAmount = 0
+      }
+      
+      let installmentsNumber = serviceOrderData[ 'paymentInfo']['installments']
+      let amountPerInstallment = parseFloat( 0 ).toFixed(3).slice(0, -1)
+      if ( installmentsNumber > 0 ) {
+        amountPerInstallment = parseFloat( totalAmount / installmentsNumber ).toFixed(3).slice(0, -1)
+      }
+
+      return(
+        <>
+          <div className="form__input--halfWidth">
+            <label className="form__input--label"> Número de Parcelas:</label>
+            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" onChange={handleInformationChange('installments')}/>
+          </div>
+
+          <div className="form__input--halfWidth">
+            <label className="form__input--label"> Valor de cada parcela:</label>
+            <input className="form__input" type="text" disabled value={`R$ ${amountPerInstallment}`}/>
+          </div>
+        </>
+        );
+    }
+    else {
+      return <></>
+    }
+
+
+  }
+
+
+  const handleInformationChange = ( id ) => ( e ) => {
+
+    if ( id === "entryDate" || id === "dueDate" ) {
+      let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
+
+      if ( id === "entryDate" )
+        setServiceOrderData( { ...serviceOrderData, [id]: `${new Date( formatedDate )}` } );
+      
+      else
+        setInstallment( { ...installment, [id]: `${new Date( formatedDate )}` } );
+    }
+
+    else if ( id === 'amountPay' ) {
+      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
+      setServiceOrderData( { ...serviceOrderData, [id]: amount } )
+    }
+
+    else if ( id === 'paymentType' ) {
+      setInstallment( { ...installment, [id]: e.target.value } );
+    }
+
+    else if ( id === 'installments' ) {
+      let paymentInfo = {
+        installments: `${e.target.value}`,
+        installmentsData: [] 
+      }
+
+      setServiceOrderData( { ...serviceOrderData, 'paymentInfo': paymentInfo } )
+    }
+
+    else {
+      setServiceOrderData( { ...serviceOrderData, [id]: e.target.value } )
+    }
+  }
+
+  const unifyData = () => {
+
+    const totalInstallments = parseInt( serviceOrderData['paymentInfo']['installments'] )
+    let installmentAmountPay = 0
+    if ( totalInstallments !== 0 ) {
+      installmentAmountPay = parseFloat( serviceOrderData['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
+    }
+
+    const installmentDataArray = []
+    for ( let i = 0; i < totalInstallments; i++ ) {
+      
+      let installmentBody = {
+        installmentAmountPay: `${ installmentAmountPay }`,
+        dueDate: '',          
+        receiptFile: '',
+        paymentDate: '',
+        amountPaid: "",
+        paymentType: `${installment['paymentType']}`,
+        installment: `${i + 1}`,
+        paymentStatus: "toPay"
+      }
+    
+      let date = new Date( installment['dueDate'] )
+      let day = parseInt(date.getDate())
+      let month = parseInt(date.getMonth()) + 1
+      let year = parseInt(date.getFullYear())
+      
+      let correntInstallmentMonth = month + i
+    
+      if ( correntInstallmentMonth > 12 ) {
+        correntInstallmentMonth = correntInstallmentMonth - 12
+        year = year + 1
+      }
+
+      let lastDayCurrentInstallmentMonth = new Date( year, correntInstallmentMonth, 0).getDate();
+
+      if ( day > lastDayCurrentInstallmentMonth ) {
+        day = lastDayCurrentInstallmentMonth
+      }
+
+      let installmentDate = new Date(`${year}/${correntInstallmentMonth}/${day}`)
+      installmentBody['dueDate'] = `${installmentDate}`
+      installmentDataArray.push( installmentBody )
+    }
+
+    let paymentInfo = {
+      installments: `${totalInstallments}`,
+      installmentsData: installmentDataArray
+    }
+
+    serviceOrderData['paymentInfo'] = paymentInfo
+    return serviceOrderData
+
+  }
+  
+
+  const handleSubmit = ( e ) => {
+    e.preventDefault()
+
+    const finalData = unifyData()
+    finalData['id'] = '1'
+    console.log( finalData )
+    console.log( 'SAVE DATA FIREBASE' )
+  }
+
   return (
   
     <main className="form__container">
@@ -212,7 +395,7 @@ export default function NewServiceOrder( props ) {
       <div className="os__header--container">
 
         <div className="os__header--containerImage">
-          <img src={logoRescue} alt="" className="os__header--image" />
+          <img src={logoRescue} alt="logo empresa Rescue" className="os__header--image"/>
 
           <div className="os__header--content">
 
@@ -232,13 +415,18 @@ export default function NewServiceOrder( props ) {
           <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
           <h6 className="info">adm@rescueveiculosespeciais.com.br</h6>
           <h6 className="info">www.rescueveiculosespeciais.com.br</h6>
-          <h6 className="info">Responsável:</h6>
+
+          <div className='os__header--responsableInfo'>
+            <h6 className="info">Responsável:</h6>
+            <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('responsable')}/>
+          </div>
+
         </div>
       </div>
 
 
       <div className="form__content">
-        <form action="page-list-product.html">
+        <form onSubmit={handleSubmit}>
           <div className="form__content--inputs">
 
             {/* INFO INICIAL */}
@@ -247,13 +435,14 @@ export default function NewServiceOrder( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine" htmlFor="os-number">Ordem de Serviço Nº</label>
-                  <input className="osForm__input--OSnumber" id="os-number" type="number" required/>
+                  {/* <label className="form__input--labelInLine" htmlFor="os-number">Ordem de Serviço Nº</label>
+                  <input className="osForm__input--OSnumber" id="os-number" type="number" required/> */}
+                  <label className="form__input--labelInLine">Ordem de Serviço</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Entrada</label>
-                  <input className="osForm__input--date" type="date" required/>   
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('entryDate')} required />   
                 </div>
 
               </div>
@@ -261,44 +450,44 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" required/>
+                <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" required/>
+                <input className="form__input" type="text" placeholder="Nome do responsável"/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
-              </div>
-
-
-              <div className="form__input--halfWidth">
-                <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" required/>
+                <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" onChange={handleInformationChange('cpf')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço"/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('cep')}/>
               </div>
 
               <div className="form__input--halfWidth">
+                <label className="form__input--label">Endereço*</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('address')} required/>
+              </div>
+
+
+              <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('city')}required/>
               </div>
 
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input">
+                <select name="estados-brasil" className="form__input" defaultValue="SP" onChange={handleInformationChange('state')}>
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>
@@ -323,7 +512,7 @@ export default function NewServiceOrder( props ) {
                   <option value="RO">Rondônia</option>
                   <option value="RR">Roraima</option>
                   <option value="SC">Santa Catarina</option>
-                  <option value="SP" selected>São Paulo</option>
+                  <option value="SP">São Paulo</option>
                   <option value="SE">Sergipe</option>
                   <option value="TO">Tocantins</option>
                 </select>              
@@ -331,12 +520,12 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email"/>
+                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <input className="form__input" type="text" placeholder="Número de telefone" required/>
+                <input className="form__input" type="text" placeholder="Número de telefone" onChange={handleInformationChange('telephone')} required/>
               </div>
             </div>
 
@@ -347,28 +536,28 @@ export default function NewServiceOrder( props ) {
 
               <div className="osForm__input">
                 <label className="form__input--label">Veículo*</label>
-                <input className="form__input" type="text" placeholder="Veículo" required/>
+                <input className="form__input" type="text" placeholder="Veículo" onChange={handleInformationChange('equipament_vehicle')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Marca*</label>
-                <input className="form__input" type="text" placeholder="Marca" required/>
+                <input className="form__input" type="text" placeholder="Marca" onChange={handleInformationChange('equipament_brand')} required/>
               </div>
 
 
               <div className="osForm__input">
                 <label className="form__input--label">Modelo*</label>
-                <input className="form__input" type="text" placeholder="Modelo" required/>
+                <input className="form__input" type="text" placeholder="Modelo" onChange={handleInformationChange('equipament_model')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Placa*</label>
-                <input className="form__input" type="text" placeholder="Placa" required/>
+                <input className="form__input" type="text" placeholder="Placa" onChange={handleInformationChange('equipament_plate')} required/>
               </div>
 
               <div className="osForm__input">
-                <label className="form__input--label">Prefixo*</label>
-                <input className="form__input" type="text" placeholder="Prefixo" required/>
+                <label className="form__input--label">Prefixo</label>
+                <input className="form__input" type="text" placeholder="Prefixo" onChange={handleInformationChange('equipament_prefix')}/>
               </div>
 
             </div>
@@ -376,7 +565,6 @@ export default function NewServiceOrder( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-              {/* <TableOS2/> */}
               <TableOS tableData={tableDataProdutos} setValorTotal={setValorTotalProduto}/>
             </div>
 
@@ -384,47 +572,44 @@ export default function NewServiceOrder( props ) {
             <div className="osForm__content--container">
               <h6 className="os__content--title">Serviços</h6>
               <TableOS tableData={tableDataServicos} setValorTotal={setValorTotalServico}/>
-              
               <h3 className="os__content--sumTableTitle">Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
             </div>
 
             {/* DADOS PAGAMENTO */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Dados do Pagamento</h6>
-              {/* <TableOS tableData={tableDataServicos} setValorTotal={setValorTotalServico}/> */}
-
-
+              
               <div className="osForm__input">
                 <label className="form__input--label">Vencimento*</label>
-                <input className="form__input" type="text" placeholder="Vencimento" required/>
+                <input className="form__input" type="date" placeholder="Vencimento" onChange={handleInformationChange('dueDate')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Valor*</label>
-                <input className="form__input" type="text" placeholder="Valor" required/>
+                <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" onChange={handleInformationChange('amountPay')} required/>
               </div>
 
-
               <div className="osForm__input">
-                {/* <label className="form__input--label">Formas de Pagamento*</label> */}
-                {/* <input className="form__input" type="text" placeholder="Boleto, PIX, transferência, depósito, cheque, dinheiro" required/> */}
-              
                 <label className="form__input--label">Formas de Pagamento*</label>
-                <select name="forma-pagamento" className="form__input">
-                  <option value="Boleto">Boleto</option>
-                  <option value="Cheque">Cheque</option>
-                  <option value="Depósito">Depósito</option>
-                  <option value="Dinheiro">Dinheiro</option>
-                  <option value="PIX" selected>PIX</option>
-                  <option value="Transferência">Transferência</option>   
+                <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleInformationChange('paymentType')}>
+                  <option value="boleto">Boleto</option>
+                  <option value="cheque">Cheque</option>
+                  <option value="deposito">Depósito</option>
+                  <option value="dinheiro">Dinheiro</option>
+                  <option value="pix">PIX</option>
+                  <option value="transferencia">Transferência</option>   
                 </select> 
-
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Parcelas</label>
-                <input className="form__input" type="text" placeholder="nº parcelas ou não"/>
+                <select name="forma-pagamento" className="form__input" defaultValue="nao" onChange={installmentElements} >
+                  <option value="sim">Sim</option>
+                  <option value="nao">Não</option>
+                </select>  
               </div>
+
+              { renderInstallment() }
 
             </div>
            
@@ -449,7 +634,8 @@ export default function NewServiceOrder( props ) {
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" required/>   
+                  {/* <input className="osForm__input--date" type="date" required/>    */}
+                  <input className="osForm__input--date" type="date"/>   
                 </div>
 
 

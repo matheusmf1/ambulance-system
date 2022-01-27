@@ -106,6 +106,12 @@ export default function NewBillToPay() {
         year = year + 1
       }
 
+      let lastDayCurrentInstallmentMonth = new Date( year, correntInstallmentMonth, 0).getDate();
+
+      if ( day > lastDayCurrentInstallmentMonth ) {
+        day = lastDayCurrentInstallmentMonth
+      }
+
       let installmentDate = new Date(`${year}/${correntInstallmentMonth}/${day}`)
       installmentBody['dueDate'] = `${installmentDate}`
       installmentDataArray.push( installmentBody )
