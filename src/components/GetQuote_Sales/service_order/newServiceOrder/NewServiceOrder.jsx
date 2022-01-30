@@ -50,11 +50,14 @@ export default function NewServiceOrder( props ) {
       installmentsData: []
     },
 
-    responsable: ""
+    responsable: "",
+
+    tableDataProdutos: "",
+    tableDataServicos: "" 
 
   });
 
-  const tableDataProdutos = {
+  const [tableDataProdutos, setTableDataProdutos] = useState( {
 
     "columns" : [
 
@@ -144,9 +147,9 @@ export default function NewServiceOrder( props ) {
   
     ]
 
-  }
+  });
 
-  const tableDataServicos = {
+  const [ tableDataServicos, setTableDataServicos ] = useState({
 
     "columns" : [
 
@@ -220,7 +223,7 @@ export default function NewServiceOrder( props ) {
   
     ]
 
-  }
+  });
 
   const { session } = props
 
@@ -371,6 +374,8 @@ export default function NewServiceOrder( props ) {
     }
 
     serviceOrderData['paymentInfo'] = paymentInfo
+    serviceOrderData['tableDataProdutos'] = tableDataProdutos
+    serviceOrderData['tableDataServicos'] = tableDataServicos
     return serviceOrderData
 
   }
@@ -379,10 +384,12 @@ export default function NewServiceOrder( props ) {
   const handleSubmit = ( e ) => {
     e.preventDefault()
 
+    console.log( tableDataProdutos )
+
     const finalData = unifyData()
     finalData['id'] = '1'
     console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+    // console.log( 'SAVE DATA FIREBASE' )
   }
 
   return (
@@ -565,13 +572,13 @@ export default function NewServiceOrder( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-              <TableOS tableData={tableDataProdutos} setValorTotal={setValorTotalProduto}/>
+              <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
             </div>
 
             {/* SERVICOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Serviços</h6>
-              <TableOS tableData={tableDataServicos} setValorTotal={setValorTotalServico}/>
+              <TableOS tableData={tableDataServicos} setTableData={setTableDataServicos} setValorTotal={setValorTotalServico}/>
               <h3 className="os__content--sumTableTitle">Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
             </div>
 
