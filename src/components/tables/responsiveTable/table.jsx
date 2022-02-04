@@ -63,7 +63,7 @@ const ReactTable = memo( props => {
         newData[ key ] = resetTable[0][ key ]
       }
     })
-    
+
     return newData
   }
 
@@ -164,7 +164,6 @@ const ReactTable = memo( props => {
 export const TableOS = ( props ) => {
 
   const { tableData, setTableData, setValorTotal } = props
-  const { columns, initialData, somaTotalRow, somaTotalTextAndItens } = tableData
   
   return(
     
@@ -172,11 +171,7 @@ export const TableOS = ( props ) => {
       <ReactTable
         tableData={tableData}
         setTableData={setTableData}
-        // columns={columns} 
-        // initialData={initialData}
-        // somaTotalRow={somaTotalRow}
         setValorTotal={setValorTotal}
-        // somaTotalTextAndItens={somaTotalTextAndItens}
       />
     </>    
     
