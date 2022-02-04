@@ -53,7 +53,10 @@ export default function NewServiceOrder( props ) {
     responsable: "",
 
     tableDataProdutos: "",
-    tableDataServicos: "" 
+    tableDataServicos: "",
+    outputDate: "",
+    requestedBy: "",
+    status: "cancelado_naoAprovado"
 
   });
 
@@ -231,18 +234,18 @@ export default function NewServiceOrder( props ) {
     
     if ( session === 'venda' ) {
       return (
-        <select name="forma-pagamento" className="form__input">
-          <option value="Cancelado">Cancelado</option>
-          <option value="Em Andamento">Em Andamento</option>
-          <option value="Concluído">Concluído</option>
+        <select className="form__input" defaultValue={serviceOrderData['status']} onChange={handleInformationChange( 'status' )}>
+          <option value="cancelado_naoAprovado">Cancelado</option>
+          <option value="emAndamento">Em Andamento</option>
+          <option value="concluido">Concluído</option>
         </select>       
       );
     }
 
     else if ( session === 'orcamento' ) {
       return (
-        <select name="forma-pagamento" className="form__input">
-          <option value="Nao_Aprovado">Não Aprovado</option>
+        <select className="form__input" defaultValue={serviceOrderData['status']} onChange={handleInformationChange( 'status' )}>
+          <option value="cancelado_naoAprovado">Não Aprovado</option>
           <option value="Aprovado">Aprovado</option>
         </select>       
       );
@@ -287,13 +290,12 @@ export default function NewServiceOrder( props ) {
 
   }
 
-
   const handleInformationChange = ( id ) => ( e ) => {
 
-    if ( id === "entryDate" || id === "dueDate" ) {
+    if ( id === "entryDate" || id === "dueDate" || id === "outputDate" ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
 
-      if ( id === "entryDate" )
+      if ( id === "entryDate" || id === "outputDate" )
         setServiceOrderData( { ...serviceOrderData, [id]: `${new Date( formatedDate )}` } );
       
       else
@@ -389,7 +391,7 @@ export default function NewServiceOrder( props ) {
     const finalData = unifyData()
     finalData['id'] = '1'
     console.log( finalData )
-    // console.log( 'SAVE DATA FIREBASE' )
+    console.log( 'SAVE DATA FIREBASE' )
   }
 
   return (
@@ -449,7 +451,7 @@ export default function NewServiceOrder( props ) {
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Entrada</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('entryDate')} required />   
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('entryDate')} required />
                 </div>
 
               </div>
@@ -494,7 +496,7 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" defaultValue="SP" onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" defaultValue={serviceOrderData['state']} onChange={handleInformationChange('state')}>
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>
@@ -621,12 +623,11 @@ export default function NewServiceOrder( props ) {
             </div>
            
             {/* ASSINATURA E DADOS BANCARIOS */}
-
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input type="text"/>
-                <h3>Solicitado por:</h3>
+                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')}/>
+                <h3 className="info">Solicitado por:</h3>
               </div>
 
               <div className="os__signatureBankInfo--content">
@@ -641,8 +642,7 @@ export default function NewServiceOrder( props ) {
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  {/* <input className="osForm__input--date" type="date" required/>    */}
-                  <input className="osForm__input--date" type="date"/>   
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')}/>
                 </div>
 
 
@@ -650,10 +650,8 @@ export default function NewServiceOrder( props ) {
 
             </div>
 
-
           </div>
-
-          
+  
          
           <div className="footer__button--container">
             
