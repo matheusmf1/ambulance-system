@@ -1,4 +1,4 @@
-import React from 'react'
+import {React, useState } from 'react'
 
 import '../../service_order/newServiceOrder/newServiceOrder.css';
 
@@ -7,9 +7,51 @@ import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
 export default function NewProductsSale( props ) {
 
-  const [valorTotalProduto, setValorTotalProduto] = React.useState(0);
+  const [valorTotalProduto, setValorTotalProduto] = useState(0);
+  const [ hasInstallment, setHasInstallment ] = useState(false)
+  
+  const [ productSaleData, setProductSaleData ] = useState({
+    entryDate: "",
+    clientNumber: "",
+    companyName: "",
+    cpf: "",
+  
+    cep: "",
+    address: "",
+    
+    city: "",
+    state: "SP",
+    email: "",
+    telephone: "",
+    amountPay : "",
 
-  const tableDataProdutos = {
+    paymentInfo: {
+      installments: "1",
+      installmentsData: []
+    },
+
+    responsable: "",
+
+    tableDataProdutos: "",
+    outputDate: "",
+    requestedBy: "",
+    status: "cancelado_naoAprovado"
+  });
+
+  const [ installment, setInstallment ] = useState(
+    {
+      installmentAmountPay: "",
+      dueDate: '',          
+      receiptFile: "",
+      paymentDate: "",
+      amountPaid: "",
+      paymentType: "pix",
+      installment: "1",
+      paymentStatus: "toPay"
+    }
+  )
+
+  const [tableDataProdutos, setTableDataProdutos] = useState( {
 
     "columns" : [
 
@@ -99,7 +141,7 @@ export default function NewProductsSale( props ) {
   
     ]
 
-  }
+  });
   
   const { session } = props
 
@@ -107,62 +149,207 @@ export default function NewProductsSale( props ) {
     
     if ( session === 'venda' ) {
       return (
-        <select name="forma-pagamento" class="form__input">
-          <option value="Cancelado">Cancelado</option>
-          <option value="Em Andamento">Em Andamento</option>
-          <option value="Concluído">Concluído</option>
+        <select className="form__input" defaultValue={productSaleData['status']} onChange={handleInformationChange( 'status' )}>
+          <option value="cancelado_naoAprovado">Cancelado</option>
+          <option value="emAndamento">Em Andamento</option>
+          <option value="concluido">Concluído</option>
         </select>       
       );
     }
 
     else if ( session === 'orcamento' ) {
       return (
-        <select name="forma-pagamento" class="form__input">
-          <option value="Nao_Aprovado">Não Aprovado</option>
-          <option value="Aprovado">Aprovado</option>
+        <select className="form__input" defaultValue={productSaleData['status']} onChange={handleInformationChange( 'status' )}>
+          <option value="cancelado_naoAprovado">Não Aprovado</option>
+          <option value="aprovado">Aprovado</option>
         </select>       
       );
     }
   }
 
+  const installmentElements = () => setHasInstallment( !hasInstallment )
+
+  const renderInstallment = () => {
+    if ( hasInstallment ){
+
+      let totalAmount = productSaleData['amountPay']
+      if ( isNaN(totalAmount) ) {
+        totalAmount = 0
+      }
+      
+      let installmentsNumber = productSaleData[ 'paymentInfo']['installments']
+      let amountPerInstallment = parseFloat( 0 ).toFixed(3).slice(0, -1)
+      if ( installmentsNumber > 0 ) {
+        amountPerInstallment = parseFloat( totalAmount / installmentsNumber ).toFixed(3).slice(0, -1)
+      }
+
+      return(
+        <>
+          <div className="form__input--halfWidth">
+            <label className="form__input--label"> Número de Parcelas:</label>
+            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" defaultValue={ parseInt(productSaleData['paymentInfo']['installments'])} onChange={handleInformationChange('installments')}/>
+          </div>
+
+          <div className="form__input--halfWidth">
+            <label className="form__input--label"> Valor de cada parcela:</label>
+            <input className="form__input" type="text" disabled value={`R$ ${amountPerInstallment}`}/>
+          </div>
+        </>
+        );
+    }
+    else {
+      return <></>
+    }
+
+  }
+
+  const handleInformationChange = (id) => ( e ) => {
+
+    if ( id === "entryDate" || id === "dueDate" || id === "outputDate" ) {
+      let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
+
+      if ( id === "entryDate" || id === "outputDate" )
+      setProductSaleData( { ...productSaleData, [id]: `${new Date( formatedDate )}` } );
+      
+      else
+        setInstallment( { ...installment, [id]: `${new Date( formatedDate )}` } );
+    }
+
+    else if ( id === 'amountPay' ) {
+      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
+      setProductSaleData( { ...productSaleData, [id]: amount } )
+    }
+
+    else if ( id === 'paymentType' ) {
+      setInstallment( { ...installment, [id]: e.target.value } );
+    }
+
+    else if ( id === 'installments' ) {
+      let paymentInfo = {
+        installments: `${e.target.value}`,
+        installmentsData: [] 
+      }
+
+      setProductSaleData( { ...productSaleData, 'paymentInfo': paymentInfo } )
+    }
+
+    else {
+      setProductSaleData( {...productSaleData, [ id ]: e.target.value } )
+    }
+
+  }
+
+  const unifyData = () => {
+
+    const totalInstallments = parseInt( productSaleData['paymentInfo']['installments'] )
+    let installmentAmountPay = 0
+    if ( totalInstallments !== 0 ) {
+      installmentAmountPay = parseFloat( productSaleData['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
+    }
+
+    const installmentDataArray = []
+    for ( let i = 0; i < totalInstallments; i++ ) {
+      
+      let installmentBody = {
+        installmentAmountPay: `${ installmentAmountPay }`,
+        dueDate: '',          
+        receiptFile: '',
+        paymentDate: '',
+        amountPaid: "",
+        paymentType: `${installment['paymentType']}`,
+        installment: `${i + 1}`,
+        paymentStatus: "toPay"
+      }
+    
+      let date = new Date( installment['dueDate'] )
+      let day = parseInt(date.getDate())
+      let month = parseInt(date.getMonth()) + 1
+      let year = parseInt(date.getFullYear())
+      
+      let correntInstallmentMonth = month + i
+    
+      if ( correntInstallmentMonth > 12 ) {
+        correntInstallmentMonth = correntInstallmentMonth - 12
+        year = year + 1
+      }
+
+      let lastDayCurrentInstallmentMonth = new Date( year, correntInstallmentMonth, 0).getDate();
+
+      if ( day > lastDayCurrentInstallmentMonth ) {
+        day = lastDayCurrentInstallmentMonth
+      }
+
+      let installmentDate = new Date(`${year}/${correntInstallmentMonth}/${day}`)
+      installmentBody['dueDate'] = `${installmentDate}`
+      installmentDataArray.push( installmentBody )
+    }
+
+    let paymentInfo = {
+      installments: `${totalInstallments}`,
+      installmentsData: installmentDataArray
+    }
+
+    productSaleData['paymentInfo'] = paymentInfo
+    productSaleData['tableDataProdutos'] = tableDataProdutos
+    
+    return productSaleData
+
+  }
+
+  const handleSubmit = ( e ) => {
+    e.preventDefault()
+
+    console.log( tableDataProdutos )
+
+    const finalData = unifyData()
+    finalData['id'] = '1'
+    console.log( finalData )
+    console.log( 'SAVE DATA FIREBASE' )
+  }
+
   return (
   
-    <main class="form__container">
+    <main className="form__container">
       
       <h4 className="os__container--title">Nova Venda de Produto</h4>
 
       {/* HEADER */}
       <div className="os__header--container">
 
-        <div class="os__header--containerImage">
-          <img src={logoRescue} alt="" class="os__header--image" />
+        <div className="os__header--containerImage">
+          <img src={logoRescue} alt="" className="os__header--image" />
 
-          <div class="os__header--content">
+          <div className="os__header--content">
 
             <h6>Rescue Transformação de veículos especiais Eireli</h6>
 
-            <h6 class="info">CNPJ: 33.972.355/0001-00</h6>
-            <h6 class="info">Rua Machado, 55 Vila Sorocabana</h6>
-            <h6 class="info">Guarulhos/SP - CEP: 07025-210</h6>
+            <h6 className="info">CNPJ: 33.972.355/0001-00</h6>
+            <h6 className="info">Rua Machado, 55 Vila Sorocabana</h6>
+            <h6 className="info">Guarulhos/SP - CEP: 07025-210</h6>
 
           </div>
 
         </div>
 
         
-        <div class="os__header--content">
+        <div className="os__header--content">
 
-          <h6 class="info">(11) 2847-0356 - (11) 95651-2030</h6>
-          <h6 class="info">adm@rescueveiculosespeciais.com.br</h6>
-          <h6 class="info">www.rescueveiculosespeciais.com.br</h6>
-          <h6 class="info">Responsável:</h6>
+          <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
+          <h6 className="info">adm@rescueveiculosespeciais.com.br</h6>
+          <h6 className="info">www.rescueveiculosespeciais.com.br</h6>
+          
+          <div className='os__header--responsableInfo'>
+            <h6 className="info">Responsável:</h6>
+            <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('responsable')}/>
+          </div>
+
         </div>
       </div>
 
 
-      <div class="form__content">
-        <form action="page-list-product.html">
-          <div class="form__content--inputs">
+      <div className="form__content">
+        <form onSubmit={handleSubmit}>
+          <div className="form__content--inputs">
 
             {/* INFO INICIAL */}
             <div className="osForm__content--container">
@@ -170,58 +357,57 @@ export default function NewProductsSale( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine" htmlFor="os-number">Ordem de Serviço Nº</label>
-                  <input className="osForm__input--OSnumber" id="os-number" type="number" required/>
+                  <label className="form__input--labelInLine">Nº da Venda:</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data</label>
-                  <input className="osForm__input--date" type="date" required/>   
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('entryDate')} required />
                 </div>
 
               </div>
 
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Código do Cliente*</label>
-                <input class="form__input" type="text" placeholder="Nome do responsável" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Código do Cliente*</label>
+               <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input class="form__input" type="text" placeholder="Nome do responsável" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
+                <input className="form__input" type="text" placeholder="Nome do responsável"/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Empresa*</label>
-                <input class="form__input" type="text" placeholder="Nome da empresa" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Empresa*</label>
+                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">CNPJ/CPF*</label>
-                <input class="form__input" type="text" placeholder="Informe o CNPJ ou CPF" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">CNPJ/CPF*</label>
+                <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" onChange={handleInformationChange('cpf')} required/>
               </div>
 
-
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Endereço*</label>
-                <input class="form__input" type="text" placeholder="Informe o endereço" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">CEP</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('cep')}/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">CEP</label>
-                <input class="form__input" type="text" placeholder="Informe o endereço"/>
-              </div>
-
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Cidade*</label>
-                <input class="form__input" type="text" placeholder="Informe o endereço" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Endereço*</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('address')} required/>
               </div>
 
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Estado*</label>
-                <select name="estados-brasil" class="form__input">
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Cidade*</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('city')}required/>
+              </div>
+
+
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Estado*</label>
+                <select name="estados-brasil" className="form__input" defaultValue={productSaleData['state']} onChange={handleInformationChange('state')}>
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>
@@ -246,20 +432,20 @@ export default function NewProductsSale( props ) {
                   <option value="RO">Rondônia</option>
                   <option value="RR">Roraima</option>
                   <option value="SC">Santa Catarina</option>
-                  <option value="SP" selected>São Paulo</option>
+                  <option value="SP">São Paulo</option>
                   <option value="SE">Sergipe</option>
                   <option value="TO">Tocantins</option>
                 </select>              
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Email*</label>
-                <input class="form__input" type="email" placeholder="Endereço de email"/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Email*</label>
+                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Telefone*</label>
-                <input class="form__input" type="text" placeholder="Número de telefone" required/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Telefone*</label>
+                <input className="form__input" type="text" placeholder="Número de telefone" onChange={handleInformationChange('telephone')} required/>
               </div>
             </div>
 
@@ -267,88 +453,84 @@ export default function NewProductsSale( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-              {/* <TableOS2/> */}
-              <TableOS tableData={tableDataProdutos} setValorTotal={setValorTotalProduto}/>
+              <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
             </div>
 
 
             {/* DADOS PAGAMENTO */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Dados do Pagamento</h6>
-              {/* <TableOS tableData={tableDataServicos} setValorTotal={setValorTotalServico}/> */}
 
-
-              <div class="osForm__input">
-                <label class="form__input--label">Vencimento*</label>
-                <input class="form__input" type="text" placeholder="Vencimento" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Vencimento*</label>
+                <input className="form__input" type="date" placeholder="Vencimento" onChange={handleInformationChange('dueDate')} required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Valor*</label>
-                <input class="form__input" type="text" placeholder="Valor" required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Valor*</label>
+                <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" onChange={handleInformationChange('amountPay')} required/>
               </div>
 
-
-              <div class="osForm__input">
-                {/* <label class="form__input--label">Formas de Pagamento*</label> */}
-                {/* <input class="form__input" type="text" placeholder="Boleto, PIX, transferência, depósito, cheque, dinheiro" required/> */}
-              
-                <label class="form__input--label">Formas de Pagamento*</label>
-                <select name="forma-pagamento" class="form__input">
-                  <option value="Boleto">Boleto</option>
-                  <option value="Cheque">Cheque</option>
-                  <option value="Depósito">Depósito</option>
-                  <option value="Dinheiro">Dinheiro</option>
-                  <option value="PIX" selected>PIX</option>
-                  <option value="Transferência">Transferência</option>   
+              <div className="osForm__input">
+                <label className="form__input--label">Formas de Pagamento*</label>
+                <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleInformationChange('paymentType')}>
+                  <option value="boleto">Boleto</option>
+                  <option value="cheque">Cheque</option>
+                  <option value="deposito">Depósito</option>
+                  <option value="dinheiro">Dinheiro</option>
+                  <option value="pix">PIX</option>
+                  <option value="transferencia">Transferência</option>   
                 </select> 
-
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Parcelas</label>
-                <input class="form__input" type="text" placeholder="nº parcelas ou não"/>
+              <div className="osForm__input">
+                <label className="form__input--label">Parcelas</label>
+                <select name="forma-pagamento" className="form__input" defaultValue="nao" onChange={installmentElements} >
+                  <option value="sim">Sim</option>
+                  <option value="nao">Não</option>
+                </select>  
               </div>
+
+               { renderInstallment() }
 
             </div>
            
             {/* ASSINATURA E DADOS BANCARIOS */}
-
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input type="text"/>
-                <h3>Solicitado por:</h3>
+                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')}/>
+                <h3 className="info">Solicitado por:</h3>
               </div>
 
               <div className="os__signatureBankInfo--content">
 
                 <h6>DADOS BANCÁRIOS</h6>
-                <h6 class="info">BANCO BRADESCO</h6>
-                <h6 class="info">AG: 0593</h6>
-                <h6 class="info">C/C: 20.867-1</h6>
-                <h6 class="info">Rescue Transformação de veículos especiais Eireli</h6>
-                <h6 class="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
+                <h6 className="info">BANCO BRADESCO</h6>
+                <h6 className="info">AG: 0593</h6>
+                <h6 className="info">C/C: 20.867-1</h6>
+                <h6 className="info">Rescue Transformação de veículos especiais Eireli</h6>
+                <h6 className="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
+
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" required/>   
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')}/>
                 </div>
-                
+
+
               </div>
 
             </div>
 
-
           </div>
 
-          
          
-          <div class="footer__button--container">
+          <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" class="form__button form__button--add">Adicionar</button>
-              <button type="reset" class="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" className="form__button form__button--add">Adicionar</button>
+              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
             </div>
 
             <div className="footer__button--status">
