@@ -22,8 +22,6 @@ export default function SupplierInfo( props ) {
 
   let userID = props.match.params.id;
   let userData = fetchUserData( userID )
-  // console.log( userData )
-
 
   const [ supplierData, setSupplierData ] = useState(
     {
@@ -51,6 +49,27 @@ export default function SupplierInfo( props ) {
   
   const handleInformationChange = ( id ) => ( e ) => {
     setSupplierData( { ...supplierData, [id]: e.target.value } )
+  }
+
+  const checkCep = ( e ) => {
+    let cep = e.target.value.replace( /\D/g, '' );
+    console.log( cep )
+
+    if ( cep ) { 
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then( response => {
+        if (response.ok)
+          return response.json()
+      })
+      .then( data => {
+        setSupplierData( { ...supplierData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+  
+      })
+      .catch( error => {
+        console.error( error )
+        alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
+      })
+    }
   }
   
   const handleSubmit = ( e ) => {
@@ -175,7 +194,7 @@ export default function SupplierInfo( props ) {
                 <label>Responsável</label>
                 <input
                   type="text"
-                  defaultValue={ userData.responsable }
+                  defaultValue={ supplierData.responsable }
                   className="userUpdateInput"
                   onChange={handleInformationChange('responsable')}
                 />
@@ -185,7 +204,7 @@ export default function SupplierInfo( props ) {
                 <label>CPF/CNPJ</label>
                 <input
                   type="text"
-                  defaultValue={ userData.cnpj_cpf }
+                  defaultValue={ supplierData.cnpj_cpf }
                   className="userUpdateInput"
                   onChange={handleInformationChange('cnpj_cpf')}
                 />
@@ -195,7 +214,7 @@ export default function SupplierInfo( props ) {
                 <label>Celular</label>
                 <input
                   type="tel"
-                  defaultValue={ userData.mobile }
+                  defaultValue={ supplierData.mobile }
                   className="userUpdateInput"
                   onChange={handleInformationChange('mobile')}
                 />
@@ -205,9 +224,9 @@ export default function SupplierInfo( props ) {
                 <label>CEP</label>
                 <input
                   type="text"
-                  defaultValue={ userData.cep }
+                  defaultValue={ supplierData.cep }
                   className="userUpdateInput"
-                  onChange={handleInformationChange('cep')}
+                  onBlur={checkCep}
                 />
               </div>
 
@@ -215,18 +234,17 @@ export default function SupplierInfo( props ) {
                 <label>Complemento</label>
                 <input
                   type="text"
-                  defaultValue={ userData.aditionalInformation }
+                  defaultValue={ supplierData.aditionalInformation }
                   className="userUpdateInput"
                   onChange={handleInformationChange('aditionalInformation')}
                 />
               </div>
 
-
               <div className="userUpdateItem">
                 <label>Cidade</label>
                 <input
                   type="text"
-                  defaultValue={ userData.city }
+                  defaultValue={ supplierData.city }
                   className="userUpdateInput"
                   onChange={handleInformationChange('city')}
                 />
@@ -236,7 +254,7 @@ export default function SupplierInfo( props ) {
                 <label>Estado</label>
                 <input
                   type="text"
-                  defaultValue={ userData.state }
+                  defaultValue={ supplierData.state }
                   className="userUpdateInput"
                   onChange={handleInformationChange('state')}
                 />
@@ -245,31 +263,31 @@ export default function SupplierInfo( props ) {
 
             <div className="userUpdateRight--singleItem">
 
-            <div className="userUpdateItem">
-              <label>Contato</label>
-              <input
-                type="text"
-                defaultValue={ userData.contact }
-                className="userUpdateInput"
-                  onChange={handleInformationChange('contact')}
-              />
-            </div>
+              <div className="userUpdateItem">
+                <label>Contato</label>
+                <input
+                  type="text"
+                  defaultValue={ supplierData.contact }
+                  className="userUpdateInput"
+                    onChange={handleInformationChange('contact')}
+                />
+              </div>
 
-            <div className="userUpdateItem">
-              <label>Email</label>
-              <input
-                type="text"
-                defaultValue={ userData.email }
-                className="userUpdateInput"
-                  onChange={handleInformationChange('email')}
-              />
-            </div>
+              <div className="userUpdateItem">
+                <label>Email</label>
+                <input
+                  type="text"
+                  defaultValue={ supplierData.email }
+                  className="userUpdateInput"
+                    onChange={handleInformationChange('email')}
+                />
+              </div>
 
               <div className="userUpdateItem">
                 <label>Telefone</label>
                 <input
                   type="tel"
-                  defaultValue={ userData.telephone }
+                  defaultValue={ supplierData.telephone }
                   className="userUpdateInput"
                   onChange={handleInformationChange('telephone')}
                 />
@@ -279,7 +297,7 @@ export default function SupplierInfo( props ) {
                 <label>Endereço</label>
                 <input
                   type="text"
-                  defaultValue={ userData.address }
+                  defaultValue={ supplierData.address }
                   className="userUpdateInput"
                   onChange={handleInformationChange('address')}
                 />
@@ -289,7 +307,7 @@ export default function SupplierInfo( props ) {
                 <label>Número</label>
                 <input
                   type="text"
-                  defaultValue={ userData.addressNumber }
+                  defaultValue={ supplierData.addressNumber }
                   className="userUpdateInput"
                   onChange={handleInformationChange('addressNumber')}
                 />
@@ -299,7 +317,7 @@ export default function SupplierInfo( props ) {
                 <label>Bairro</label>
                 <input
                   type="text"
-                  defaultValue={ userData.neighborhood }
+                  defaultValue={ supplierData.neighborhood }
                   className="userUpdateInput"
                   onChange={handleInformationChange('neighborhood')}
                 />
@@ -311,7 +329,7 @@ export default function SupplierInfo( props ) {
               <textarea
                 className="form__input"
                 rows="2"
-                defaultValue={userData.moreInfo}
+                defaultValue={supplierData.moreInfo}
                 onChange={handleInformationChange('moreInfo')}></textarea>          
             </div>
 

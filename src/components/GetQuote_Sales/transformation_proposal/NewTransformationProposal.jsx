@@ -56,6 +56,27 @@ export default function NewTransformationProposal( props ) {
 
   const { session } = props
 
+  const checkCep = ( e ) => {
+    let cep = e.target.value.replace( /\D/g, '' );
+    console.log( cep )
+
+    if ( cep ) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then( response => {
+        if (response.ok)
+          return response.json()
+      })
+      .then( data => {
+        setTransformationProposalData( { ...transformationProposalData, "cep": cep, "address": data['logradouro'], "city": data['localidade'], "state": data['uf'] } );
+  
+      })
+      .catch( error => {
+        console.error( error )
+        alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
+      })
+    }
+  }
+
   const defineStatusFieldOptions = ( session ) => {
     
     if ( session === 'venda' ) {
@@ -150,7 +171,6 @@ export default function NewTransformationProposal( props ) {
 
   }
 
-
   const unifyData = () => {
 
     const totalInstallments = parseInt( transformationProposalData['paymentInfo']['installments'] )
@@ -206,7 +226,6 @@ export default function NewTransformationProposal( props ) {
     return transformationProposalData
 
   }
-
 
   const handleSubmit = ( e ) => {
     e.preventDefault()
@@ -299,52 +318,50 @@ export default function NewTransformationProposal( props ) {
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">CEP</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('cep')}/>
+                <label className="form__input--label">CEP*</label>
+                <input className="form__input" type="text" placeholder="Informe o CEP" onBlur={checkCep} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={transformationProposalData['address']} onChange={handleInformationChange('address')} required/>
               </div>
-
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('city')}required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={transformationProposalData['city']} onChange={handleInformationChange('city')} required/>
               </div>
-
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
                 <select name="estados-brasil" className="form__input" defaultValue={transformationProposalData['state']} onChange={handleInformationChange('state')}>
-                  <option value="AC">Acre</option>
-                  <option value="AL">Alagoas</option>
-                  <option value="AP">Amapá</option>
-                  <option value="AM">Amazonas</option>
-                  <option value="BA">Bahia</option>
-                  <option value="CE">Ceará</option>
-                  <option value="DF">Distrito Federal</option>
-                  <option value="ES">Espírito Santo</option>
-                  <option value="GO">Goiás</option>
-                  <option value="MA">Maranhão</option>
-                  <option value="MT">Mato Grosso</option>
-                  <option value="MS">Mato Grosso do Sul</option>
-                  <option value="MG">Minas Gerais</option>
-                  <option value="PA">Pará</option>
-                  <option value="PB">Paraíba</option>
-                  <option value="PR">Paraná</option>
-                  <option value="PE">Pernambuco</option>
-                  <option value="PI">Piauí</option>
-                  <option value="RJ">Rio de Janeiro</option>
-                  <option value="RN">Rio Grande do Norte</option>
-                  <option value="RS">Rio Grande do Sul</option>
-                  <option value="RO">Rondônia</option>
-                  <option value="RR">Roraima</option>
-                  <option value="SC">Santa Catarina</option>
-                  <option value="SP">São Paulo</option>
-                  <option value="SE">Sergipe</option>
-                  <option value="TO">Tocantins</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
                 </select>              
               </div>
 

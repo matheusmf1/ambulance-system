@@ -145,6 +145,28 @@ export default function NewProductsSale( props ) {
   
   const { session } = props
 
+
+  const checkCep = ( e ) => {
+    let cep = e.target.value.replace( /\D/g, '' );
+    console.log( cep )
+
+    if ( cep ) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then( response => {
+        if (response.ok)
+          return response.json()
+      })
+      .then( data => {
+        setProductSaleData( { ...productSaleData, "cep": cep, "address": data['logradouro'], "city": data['localidade'], "state": data['uf'] } );
+  
+      })
+      .catch( error => {
+        console.error( error )
+        alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
+      })
+    }
+  }
+
   const defineStatusFieldOptions = ( session ) => {
     
     if ( session === 'venda' ) {
@@ -390,24 +412,24 @@ export default function NewProductsSale( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('cep')}/>
+                <input className="form__input" type="text" placeholder="Informe o CEP" onBlur={checkCep} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={productSaleData['address']} onChange={handleInformationChange('address')} required/>
               </div>
 
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('city')}required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={productSaleData['city']} onChange={handleInformationChange('city')} required/>
               </div>
 
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" defaultValue={productSaleData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={productSaleData['state']} onChange={handleInformationChange('state')}>
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>

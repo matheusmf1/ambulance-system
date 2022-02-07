@@ -30,6 +30,27 @@ export default function SupplierAdd() {
     setSupplierData( { ...supplierData, [id]: e.target.value } )
   }
 
+  const checkCep = ( e ) => {
+    let cep = e.target.value.replace( /\D/g, '' );
+    console.log( cep )
+
+    if ( cep ) { 
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then( response => {
+        if (response.ok)
+          return response.json()
+      })
+      .then( data => {
+        setSupplierData( { ...supplierData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+  
+      })
+      .catch( error => {
+        console.error( error )
+        alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
+      })
+    }
+  }
+
   const handleSubmit = ( e ) => {
 
     e.preventDefault();
@@ -87,14 +108,14 @@ export default function SupplierAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>
-              <input className="form__input" type="text" placeholder="Informe o CEP" onChange={handleInformationChange('cep')} required/>
+              {/* <input className="form__input" type="text" placeholder="Informe o CEP" onChange={handleInformationChange('cep')} required/> */}
+              <input className="form__input" type="text" placeholder="Informe o CEP" onBlur={checkCep} required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Endereço*</label>
-              <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('address')} required/>
+              <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={supplierData['address']} onChange={handleInformationChange('address')} required/>
             </div>
-
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Número*</label>
@@ -103,17 +124,17 @@ export default function SupplierAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Complemento</label>
-              <input className="form__input" type="text" placeholder="Apartamento, sala, edifício, andar, etc." onChange={handleInformationChange('aditionalInformation')}/>
+              <input className="form__input" type="text" placeholder="Apartamento, sala, edifício, andar, etc." onChange={handleInformationChange('aditionalInformation')} />
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Bairro*</label>
-              <input className="form__input" type="text" placeholder="Informe o bairro" onChange={handleInformationChange('neighborhood')} required/>
+              <input className="form__input" type="text" placeholder="Informe o bairro" defaultValue={supplierData['neighborhood']} onChange={handleInformationChange('neighborhood')} required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Cidade*</label>
-              <input className="form__input" type="text" placeholder="Informe o endereço" onChange={handleInformationChange('city')} required/>
+              <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={supplierData['city']} onChange={handleInformationChange('city')} required/>
             </div>
 
             <div className="form__input--halfWidth">

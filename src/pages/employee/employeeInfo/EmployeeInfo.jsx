@@ -76,6 +76,27 @@ export default function EmployeeInfo( props ) {
 
   }
 
+  const checkCep = ( e ) => {
+    let cep = e.target.value.replace( /\D/g, '' );
+
+    if ( cep ) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then( response => {
+        if (response.ok)
+          return response.json()
+      })
+      .then( data => {
+        console.log( data )
+        setEmployeeData( { ...employeeData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+      })
+      .catch( error => {
+        console.error( error )
+        alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
+      })
+    }
+
+  }
+
   const handleSubmit = ( e ) => {
     
     e.preventDefault();
@@ -439,7 +460,8 @@ export default function EmployeeInfo( props ) {
                     type="text"
                     defaultValue={ employeeData.cep }
                     className="userUpdateInput"
-                    onChange={handleInformationChange('cep')}
+                    onBlur={checkCep}
+                    // onChange={handleInformationChange('cep')}
                   />
                 </div>
 

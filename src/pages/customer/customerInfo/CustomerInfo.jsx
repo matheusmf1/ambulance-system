@@ -48,8 +48,32 @@ export default function CustomerInfo(props) {
   );
 
   const handleInformationChange = ( id ) => ( e ) => {
-    setCustomerData( { ...customerData, [id]: e.target.value } )
+    setCustomerData( { ...customerData, [id]: e.target.value } )    
   }
+
+
+  const checkCep = ( e ) => {
+    console.log( e.target )
+    let cep = e.target.value.replace( /\D/g, '' );
+
+    if ( cep ) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then( response => {
+        if (response.ok)
+          return response.json()
+      })
+      .then( data => {
+        console.log( data )
+        setCustomerData( { ...customerData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+      })
+      .catch( error => {
+        console.error( error )
+        alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
+      })
+    }
+
+  }
+
 
   const handleSubmit = ( e ) => {
 
@@ -155,9 +179,9 @@ export default function CustomerInfo(props) {
 
 
         </div>
-      </div>
+        </div>
       
-      <div className="userUpdate">
+        <div className="userUpdate">
 
           <span className="userUpdateTitle">Editar</span>
           
@@ -169,7 +193,7 @@ export default function CustomerInfo(props) {
                 <label>Responsável</label>
                 <input
                   type="text"
-                  defaultValue={ userData.responsable }
+                  defaultValue={ customerData.responsable }
                   className="userUpdateInput"
                   onChange={handleInformationChange('responsable')}
                 />
@@ -179,7 +203,7 @@ export default function CustomerInfo(props) {
                 <label>CNPJ/CPF</label>
                 <input
                   type="text"
-                  defaultValue={ userData.cnpj_cpf }
+                  defaultValue={ customerData.cnpj_cpf }
                   className="userUpdateInput"
                   onChange={handleInformationChange('cnpj_cpf')}
                 />
@@ -189,18 +213,17 @@ export default function CustomerInfo(props) {
                 <label>Razão Social</label>
                 <input
                 type="text"
-                defaultValue={ userData.corporate_name }
+                defaultValue={ customerData.corporate_name }
                 className="userUpdateInput"
                   onChange={handleInformationChange('corporate_name')}
                 />
               </div>
 
-
               <div className="userUpdateItem">
                 <label>Telefone</label>
                 <input
                   type="tel"
-                  defaultValue={ userData.telephone }
+                  defaultValue={ customerData.telephone }
                   className="userUpdateInput"
                   onChange={handleInformationChange('telephone')}
                 />
@@ -210,9 +233,10 @@ export default function CustomerInfo(props) {
                 <label>CEP</label>
                 <input
                   type="text"
-                  defaultValue={ userData.cep }
+                  defaultValue={ customerData.cep }
                   className="userUpdateInput"
-                  onChange={handleInformationChange('cep')}
+                  onBlur={checkCep}
+                  // onChange={handleInformationChange('cep')}
                 />
               </div>
 
@@ -221,7 +245,7 @@ export default function CustomerInfo(props) {
                 <label>Número</label>
                 <input
                   type="text"
-                  defaultValue={ userData.addressNumber }
+                  defaultValue={ customerData.addressNumber }
                   className="userUpdateInput"
                   onChange={handleInformationChange('addressNumber')}
                 />
@@ -232,7 +256,7 @@ export default function CustomerInfo(props) {
                 <label>Bairro</label>
                 <input
                   type="text"
-                  defaultValue={ userData.neighborhood }
+                  defaultValue={ customerData.neighborhood }
                   className="userUpdateInput"
                   onChange={handleInformationChange('neighborhood')}
                 />
@@ -240,23 +264,46 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem">
                 <label>Estado</label>
-                <input
-                  type="text"
-                  defaultValue={ userData.state }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('state')}
-                />
+                <select name="estados-brasil" className="userUpdateInput" defaultValue={customerData['state']} onChange={handleInformationChange('state')}>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                </select>
               </div>
 
             </div>
 
             <div className="userUpdateRight--singleItem">
 
-            <div className="userUpdateItem">
+              <div className="userUpdateItem">
                 <label>Contato</label>
                 <input
                   type="text"
-                  defaultValue={ userData.contact }
+                  defaultValue={ customerData.contact }
                   className="userUpdateInput"
                   onChange={handleInformationChange('contact')}
                 />
@@ -266,7 +313,7 @@ export default function CustomerInfo(props) {
                 <label>Nome Fantasia</label>
                 <input
                 type="text"
-                defaultValue={ userData.fantasy_name }
+                defaultValue={ customerData.fantasy_name }
                 className="userUpdateInput"
                   onChange={handleInformationChange('fantasy_name')}
                 />
@@ -276,7 +323,7 @@ export default function CustomerInfo(props) {
                 <label>Email</label>
                 <input
                   type="text"
-                  defaultValue={ userData.email }
+                  defaultValue={ customerData.email }
                   className="userUpdateInput"
                   onChange={handleInformationChange('email')}
                 />
@@ -286,7 +333,7 @@ export default function CustomerInfo(props) {
                 <label>Celular</label>
                 <input
                   type="tel"
-                  defaultValue={ userData.mobile }
+                  defaultValue={ customerData.mobile }
                   className="userUpdateInput"
                   onChange={handleInformationChange('mobile')}
                 />
@@ -298,7 +345,7 @@ export default function CustomerInfo(props) {
                 <label>Endereço</label>
                 <input
                   type="text"
-                  defaultValue={ userData.address }
+                  defaultValue={ customerData.address }
                   className="userUpdateInput"
                   onChange={handleInformationChange('address')}
                 />
@@ -310,7 +357,7 @@ export default function CustomerInfo(props) {
                 <label>Complemento</label>
                 <input
                   type="text"
-                  defaultValue={ userData.aditionalInformation }
+                  defaultValue={ customerData.aditionalInformation }
                   className="userUpdateInput"
                   onChange={handleInformationChange('aditionalInformation')}
                 />
@@ -321,7 +368,7 @@ export default function CustomerInfo(props) {
                 <label>Cidade</label>
                 <input
                   type="text"
-                  defaultValue={ userData.city }
+                  defaultValue={ customerData.city }
                   className="userUpdateInput"
                   onChange={handleInformationChange('city')}
                 />
@@ -331,7 +378,7 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem--textArea">            
                 <label className="form__input--label">Informações adicionais</label>
-                <textarea className="form__input" rows="2" defaultValue={ userData.moreInfo }></textarea>          
+                <textarea className="form__input" rows="2" defaultValue={ customerData.moreInfo }></textarea>          
               </div>
 
           </form> 
@@ -340,7 +387,7 @@ export default function CustomerInfo(props) {
 
         </div>
     
-    </div>
+      </div>
  
   </main>
 
