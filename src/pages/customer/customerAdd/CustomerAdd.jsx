@@ -1,6 +1,9 @@
 import {React, useState} from 'react'
 
-import './customerAdd.css'
+import './customerAdd.css';
+import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
+import InputCep from '../../../components/inputs/input--cep';
 
 export default function CustomerAdd() {
 
@@ -32,7 +35,6 @@ export default function CustomerAdd() {
 
   const checkCep = ( e ) => {
     let cep = e.target.value.replace( /\D/g, '' );
-    console.log( cep )
 
     if ( cep ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
@@ -92,8 +94,8 @@ export default function CustomerAdd() {
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">CNPJ/CPF*</label>
-              <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" onChange={handleInformationChange('cnpj_cpf')} required/>
+              <label className="form__input--label">CPF/CNPJ*</label>
+              <InputCpfCnpj onChange={handleInformationChange('cnpj_cpf')}/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -103,17 +105,17 @@ export default function CustomerAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Telefone Fixo*</label>
-              <input className="form__input" type="text" placeholder="Número de telefone" onChange={handleInformationChange('telephone')} required/>
+              <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Telefone Celular*</label>
-              <input className="form__input" type="text" placeholder="Número de celular" onChange={handleInformationChange('mobile')} required/>
+              <InputPhoneNumber placeholder="Informe o número de celular" mask="(99) 99999-9999" onChange={handleInformationChange('mobile')}/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>
-              <input className="form__input" type="text" placeholder="Informe o CEP" onBlur={checkCep} required/>
+              <InputCep onBlur={checkCep} />
             </div>
 
             <div className="form__input--halfWidth">

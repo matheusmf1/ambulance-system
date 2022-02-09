@@ -12,6 +12,10 @@ import { tableProviderData } from '../../../assets/mock/tableProviderData.js';
 import BusinessIcon from '@material-ui/icons/Business';
 import userImage from '../../../assets/images/user.png'
 
+import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
+import InputCep from '../../../components/inputs/input--cep';
+
 const fetchUserData = ( id ) => {
 
   return tableProviderData.filter( user => user.id === id )[0] 
@@ -53,8 +57,7 @@ export default function SupplierInfo( props ) {
 
   const checkCep = ( e ) => {
     let cep = e.target.value.replace( /\D/g, '' );
-    console.log( cep )
-
+    
     if ( cep ) { 
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
@@ -202,32 +205,17 @@ export default function SupplierInfo( props ) {
 
               <div className="userUpdateItem">
                 <label>CPF/CNPJ</label>
-                <input
-                  type="text"
-                  defaultValue={ supplierData.cnpj_cpf }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('cnpj_cpf')}
-                />
+                <InputCpfCnpj defaultValue={ supplierData.cnpj_cpf } className="userUpdateInput" onChange={handleInformationChange('cnpj_cpf')}/>
               </div>
 
               <div className="userUpdateItem">
                 <label>Celular</label>
-                <input
-                  type="tel"
-                  defaultValue={ supplierData.mobile }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('mobile')}
-                />
+                <InputPhoneNumber mask="(99) 99999-9999" defaultValue={ supplierData.mobile } className="userUpdateInput" onChange={handleInformationChange('mobile')}/>
               </div>
 
               <div className="userUpdateItem">
                 <label>CEP</label>
-                <input
-                  type="text"
-                  defaultValue={ supplierData.cep }
-                  className="userUpdateInput"
-                  onBlur={checkCep}
-                />
+                <InputCep defaultValue={ supplierData.cep } className="userUpdateInput" onBlur={checkCep} />
               </div>
 
               <div className="userUpdateItem">
@@ -285,12 +273,7 @@ export default function SupplierInfo( props ) {
 
               <div className="userUpdateItem">
                 <label>Telefone</label>
-                <input
-                  type="tel"
-                  defaultValue={ supplierData.telephone }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('telephone')}
-                />
+                <InputPhoneNumber mask="(99) 9999-9999" defaultValue={ supplierData.telephone } className="userUpdateInput" onChange={handleInformationChange('telephone')}/>
               </div>
 
               <div className="userUpdateItem">

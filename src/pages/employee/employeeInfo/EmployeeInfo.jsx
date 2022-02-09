@@ -10,6 +10,10 @@ import BusinessIcon from '@material-ui/icons/Business';
 import userImage from '../../../assets/images/user.png'
 import { tableEmployeeData } from '../../../assets/mock/tableEmployeeData';
 
+import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
+import InputCep from '../../../components/inputs/input--cep';
+
 const fetchUserData = ( id ) => {
   return tableEmployeeData.filter( user => user.id === id )[0] 
 }
@@ -86,7 +90,6 @@ export default function EmployeeInfo( props ) {
           return response.json()
       })
       .then( data => {
-        console.log( data )
         setEmployeeData( { ...employeeData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
       })
       .catch( error => {
@@ -320,12 +323,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>Telefone</label>
-                  <input
-                    type="text"
-                    defaultValue={ employeeData.telephone }
-                    className="userUpdateInput"
-                    onChange={handleInformationChange('telephone')}
-                  />
+                  <InputPhoneNumber mask="(99) 9999-9999" defaultValue={ employeeData.telephone } className="userUpdateInput" onChange={handleInformationChange('telephone')}/>
                 </div>
 
                 <div className="userUpdateItem">
@@ -382,6 +380,8 @@ export default function EmployeeInfo( props ) {
                   <label>Vale Transporte</label>
                   <input
                     type="number"
+                    min="1"
+                    step=".01"
                     defaultValue={ employeeData.transportation_voucher }
                     className="userUpdateInput"
                     onChange={handleInformationChange('transportation_voucher')}
@@ -425,12 +425,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>CPF</label>
-                  <input
-                    type="text"
-                    defaultValue={ employeeData.cpf }
-                    className="userUpdateInput"
-                    onChange={handleInformationChange('cpf')}
-                  />
+                  <InputCpfCnpj defaultValue={ employeeData.cnpj_cpf } className="userUpdateInput" onChange={handleInformationChange('cpf')}/>
                 </div>
 
                 <div className="userUpdateItem">
@@ -446,23 +441,12 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>Celular</label>
-                  <input
-                    type="tel"
-                    defaultValue={ employeeData.mobile }
-                    className="userUpdateInput"
-                    onChange={handleInformationChange('mobile')}
-                  />
+                  <InputPhoneNumber mask="(99) 99999-9999" defaultValue={ employeeData.mobile } className="userUpdateInput" onChange={handleInformationChange('mobile')}/>
                 </div>
 
                 <div className="userUpdateItem">
                   <label>CEP</label>
-                  <input
-                    type="text"
-                    defaultValue={ employeeData.cep }
-                    className="userUpdateInput"
-                    onBlur={checkCep}
-                    // onChange={handleInformationChange('cep')}
-                  />
+                  <InputCep defaultValue={ employeeData.cep } className="userUpdateInput" onBlur={checkCep} />
                 </div>
 
                 <div className="userUpdateItem">

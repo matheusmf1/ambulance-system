@@ -5,6 +5,10 @@ import '../../service_order/newServiceOrder/newServiceOrder.css';
 import logoRescue from '../../../../assets/images/logo-rescue.png';
 import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
+import InputCpfCnpj from '../../../inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../../inputs/input--phoneNumber'
+import InputCep from '../../../inputs/input--cep'
+
 export default function NewProductsSale( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
@@ -407,12 +411,12 @@ export default function NewProductsSale( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <input className="form__input" type="text" placeholder="Informe o CNPJ ou CPF" onChange={handleInformationChange('cpf')} required/>
+                <InputCpfCnpj onChange={handleInformationChange('cpf')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP</label>
-                <input className="form__input" type="text" placeholder="Informe o CEP" onBlur={checkCep} required/>
+                <InputCep onBlur={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">
@@ -467,7 +471,7 @@ export default function NewProductsSale( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <input className="form__input" type="text" placeholder="Número de telefone" onChange={handleInformationChange('telephone')} required/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 

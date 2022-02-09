@@ -14,6 +14,10 @@ import BusinessIcon from '@material-ui/icons/Business';
 
 import userImage from '../../../assets/images/user.png'
 
+import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
+import InputCep from '../../../components/inputs/input--cep';
+
 const fetchUserData = ( id ) => {
 
   return tableClientData.filter( user => user.id === id )[0] 
@@ -200,13 +204,8 @@ export default function CustomerInfo(props) {
               </div>
               
               <div className="userUpdateItem">
-                <label>CNPJ/CPF</label>
-                <input
-                  type="text"
-                  defaultValue={ customerData.cnpj_cpf }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('cnpj_cpf')}
-                />
+                <label>CPF/CNPJ</label>
+                <InputCpfCnpj defaultValue={ customerData.cnpj_cpf } className="userUpdateInput" onChange={handleInformationChange('cnpj_cpf')}/>
               </div>
 
               <div className="userUpdateItem">
@@ -221,23 +220,12 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem">
                 <label>Telefone</label>
-                <input
-                  type="tel"
-                  defaultValue={ customerData.telephone }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('telephone')}
-                />
+                <InputPhoneNumber mask="(99) 9999-9999" defaultValue={ customerData.telephone } className="userUpdateInput" onChange={handleInformationChange('telephone')}/>
               </div>
 
               <div className="userUpdateItem">
                 <label>CEP</label>
-                <input
-                  type="text"
-                  defaultValue={ customerData.cep }
-                  className="userUpdateInput"
-                  onBlur={checkCep}
-                  // onChange={handleInformationChange('cep')}
-                />
+                <InputCep defaultValue={ customerData.cep } className="userUpdateInput" onBlur={checkCep} />
               </div>
 
 
@@ -250,7 +238,6 @@ export default function CustomerInfo(props) {
                   onChange={handleInformationChange('addressNumber')}
                 />
               </div>
-
 
               <div className="userUpdateItem">
                 <label>Bairro</label>
@@ -331,16 +318,10 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem">
                 <label>Celular</label>
-                <input
-                  type="tel"
-                  defaultValue={ customerData.mobile }
-                  className="userUpdateInput"
-                  onChange={handleInformationChange('mobile')}
-                />
+                <InputPhoneNumber mask="(99) 99999-9999" defaultValue={ customerData.mobile } className="userUpdateInput" onChange={handleInformationChange('mobile')}/>
               </div>
 
               
-
               <div className="userUpdateItem">
                 <label>Endereço</label>
                 <input
@@ -351,8 +332,6 @@ export default function CustomerInfo(props) {
                 />
               </div>
 
-
-
               <div className="userUpdateItem">
                 <label>Complemento</label>
                 <input
@@ -362,7 +341,6 @@ export default function CustomerInfo(props) {
                   onChange={handleInformationChange('aditionalInformation')}
                 />
               </div>
-
 
               <div className="userUpdateItem">
                 <label>Cidade</label>
@@ -382,8 +360,6 @@ export default function CustomerInfo(props) {
               </div>
 
           </form> 
-
-
 
         </div>
     

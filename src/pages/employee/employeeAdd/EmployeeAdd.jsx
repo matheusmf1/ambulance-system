@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
+import InputCep from '../../../components/inputs/input--cep';
+
 export default function EmployeeAdd() {
 
   const [bankData, setBankData] = useState([])
@@ -137,7 +141,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CPF*</label>
-              <input className="form__input" type="text" placeholder="Informe o nº do CPF" onChange={handleInformationChange('cpf')} required/>
+              <InputCpfCnpj placeholder="Informe o nº do CPF" onChange={handleInformationChange('cnpj_cpf')}/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -146,18 +150,18 @@ export default function EmployeeAdd() {
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Telefone*</label>
-              <input className="form__input" type="text" placeholder="Número de telefone" onChange={handleInformationChange('telephone')} required/>
+              <label className="form__input--label">Telefone Fixo*</label>
+              <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Celular*</label>
-              <input className="form__input" type="text" placeholder="Número de celular" onChange={handleInformationChange('mobile')} required/>
+              <label className="form__input--label">Telefone Celular*</label>
+              <InputPhoneNumber placeholder="Informe o número de celular" mask="(99) 99999-9999" onChange={handleInformationChange('mobile')}/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>
-              <input className="form__input" type="text" placeholder="Informe o CEP" onBlur={checkCep} required/>
+              <InputCep onBlur={checkCep} />
             </div>
 
             <div className="form__input--halfWidth">
@@ -232,7 +236,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Vale Transporte(Total por dia)*</label>
-              <input className="form__input" type="number" placeholder="Informe o valor gasto por dia" onChange={handleInformationChange('transportation_voucher')} required/>
+              <input className="form__input" type="number" min="1" step=".01" placeholder="Informe o valor gasto por dia" onChange={handleInformationChange('transportation_voucher')} required/>
             </div>
 
             <div className="form__input--halfWidth">
