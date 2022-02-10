@@ -1,0 +1,13 @@
+.form__input--halfWidth {
+  /* flex: 0 0 50%; */
+  width: calc( 100% / 2 - 20px );
+  padding: 15px 0px;
+}
+
+@media (max-width: 583.98px) {
+
+  .form__input--halfWidth {  
+    width: 100%;
+  }
+
+}
