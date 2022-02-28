@@ -5,8 +5,7 @@ import "rc-pagination/assets/index.css";
 import './table.css';
 
 import { DeleteOutline } from "@material-ui/icons";
-import { db } from "../../../firebase"
-import { doc, deleteDoc } from "firebase/firestore";
+import { Customer } from "../../../data/customer";
 
 export const Table = ( props ) => {
 
@@ -50,22 +49,22 @@ export const Table = ( props ) => {
     ));
   };
 
-  const handleDelete = async ( id ) => {
+  const handleDelete = async ( data, id ) => {
     console.log('item to delete: ' + id );
-    
-    try {
       
-      if ( link === "cliente" ) {
-        await deleteDoc( doc( db, "customers", `/${id}` ) );
-  
-        console.log( 'apagou' )
+    if ( link === "cliente" ) {
+
+      const customer = new Customer( { data: data, id: id } )
+      let result = await customer.deleteCustomerFromFirebase();
+
+      if ( result ) {
         setCollection2( collection2.filter( item => item.id !== id ) )
       }
-
-    } catch (error) {
-      console.error( error )
-      alert( "Algo deu errado ao apagar as informações" )
-      window.location.reload();
+      else {
+        alert( "Algo deu errado ao apagar as informações, por favor tente novamente." )
+        window.location.reload();
+      }
+      
     }
     
   }
@@ -89,7 +88,7 @@ export const Table = ( props ) => {
 
       <DeleteOutline
         className="userListDelete"
-        onClick={ async () => await handleDelete( id )}
+        onClick={ async () => await handleDelete( rowData, id )}
       />
 
     </td>;  

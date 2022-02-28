@@ -15,9 +15,7 @@ import userImage from '../../../assets/images/user.png'
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
-
-import { db } from '../../../firebase';
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { Customer } from "../../../data/customer"
 
 
 export default function CustomerInfo( props ) {
@@ -46,12 +44,19 @@ export default function CustomerInfo( props ) {
       if ( toString( billData['id'] ) !== toString( id ) ) {
 
         console.log( "Feching data from firebase" )
-  
-        const docRef = doc( db, "customers", id );
-        const docSnap = await getDoc( docRef );
-        setData( docSnap.data() )
-        setCustomerData( docSnap.data() )
-      
+
+        const customer = new Customer( { id: id } )
+        const customerData = await customer.getCustomerFromFirebase();
+
+        if ( customerData ) {
+          setData( customerData )
+          setCustomerData( customerData )
+        }
+        else {
+          alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+          window.close();
+        }
+ 
       }
       else {
         setData( billData )
@@ -61,12 +66,18 @@ export default function CustomerInfo( props ) {
     else {
       console.log( "Feching data from firebase after updating" )
   
-      const docRef = doc( db, "customers", id );
-      const docSnap = await getDoc( docRef );
-      setData( docSnap.data() )
-      setCustomerData( docSnap.data() )
+      const customer = new Customer( { id: id } )
+      const customerData = await customer.getCustomerFromFirebase();
+
+      if ( customerData ) {
+        setData( customerData )
+        setCustomerData( customerData )
+      }
+      else {
+        alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+        window.close();
+      }
     }
-  
 
   }
 
@@ -106,34 +117,23 @@ export default function CustomerInfo( props ) {
 
   }
 
-  const updateDataFirebase = async () => {
-    
-    try {
-
-      const docRef = doc( db, "customers", idRef );
-      await updateDoc( docRef, customerData );
-      return true
-      
-    } catch (error) {
-      console.error( error )
-      alert( "Algo deu errado ao atualizar as informações. Por favor tente novamente." )
-      return false
-    }
-  }
-
-
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
 
-    console.log( customerData ) 
+    console.log( customerData )
 
-    const result = await updateDataFirebase( customerData )
+    const customer = new Customer( { data: customerData, id: idRef } )
+    const result = await customer.updateCustomerOnFirebase();
 
     if ( result ) {
       alert( "Cliente atualizado com sucesso" )
       localStorage.removeItem( 'customerInfo' )
       window.location.reload()
+    }
+
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
     }
   }
 

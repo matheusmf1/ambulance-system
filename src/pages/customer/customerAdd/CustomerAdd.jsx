@@ -3,9 +3,6 @@ import {React, useState} from 'react'
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
-
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
-import { db } from "../../../firebase";
 import { useHistory } from "react-router-dom"
 import './customerAdd.css';
 import { Customer } from '../../../data/customer';
@@ -70,41 +67,20 @@ export default function CustomerAdd() {
 
   }
 
-  const addDataFirebase = async ( data ) => {
-    
-    try {
-      //Update id counter
-      await updateDoc( doc( db, "ids", "customers"), { id: increment( 1 ) } );
-
-      const idSnap = await getDoc( doc( db, "ids", "customers" ) );
-      const idData = idSnap.data();
-
-      //Set new document id
-      data['id'] = idData['id']
-      await setDoc( doc( db, "customers", `${data['id']}` ), data );
-      
-      return true
-      
-    } catch (error) {
-      console.error( error )
-      alert( "Algo deu errado ao salvar as informações" )
-      return false
-    }
-  }
-
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
+  
+    const customer = new Customer( { data: customerData } );
 
-    // const customer = new Customer( customerData );
-
-    // const result = await customer.addCustomerToFirebase();
-
-    const result = await addDataFirebase( customerData )
+    const result = await customer.addCustomerToFirebase();
 
     if ( result ) {
       alert( "Cliente cadastrado com sucesso" )
       history.push("/clientes")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
     }
 
     
@@ -175,7 +151,7 @@ export default function CustomerAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Número*</label>
-              <input className="form__input" type="text" placeholder="Informe o número" onChange={handleInformationChange('addressNumber')} required/>
+              <input className="form__input" type="number" placeholder="Informe o número" onChange={handleInformationChange('addressNumber')} required/>
             </div>
 
             <div className="form__input--halfWidth">

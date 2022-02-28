@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export class Customer {
@@ -27,8 +27,9 @@ export class Customer {
   // }
 
 
-  constructor ( data ) {
+  constructor ( { data, id } ) {
     this.data = data;
+    this.id = id;
   }
 
   addCustomerToFirebase = async () => {
@@ -47,7 +48,43 @@ export class Customer {
       
     } catch (error) {
       console.error( error )
-      alert( "Algo deu errado ao salvar as informações" )
+      return false
+    }
+  }
+
+  getCustomerFromFirebase = async () => {
+
+    try {
+      const docRef = doc( db, "customers", this.id );
+      const docSnap = await getDoc( docRef );
+      return docSnap.data()
+
+    } catch( error ) {
+      console.error( error )
+      return null;
+    }  
+
+  }
+
+  updateCustomerOnFirebase = async () => {
+    try {
+      const docRef = doc( db, "customers", this.id );
+      await updateDoc( docRef, this.data );
+      return true
+      
+    } catch (error) {
+      console.error( error ) 
+      return false
+    }
+  }
+
+  deleteCustomerFromFirebase = async () => {
+    try {
+      await deleteDoc( doc( db, "customers", `/${this.id}` ) );
+      return true
+
+    } catch ( error ) {
+      console.error( error )
       return false
     }
   }
