@@ -1,51 +1,26 @@
 import React from "react";
 import cloneDeep from "lodash/cloneDeep";
-import throttle from "lodash/throttle";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
 import './table.css';
 
 import { DeleteOutline } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+import { db } from "../../../firebase"
+import { doc, deleteDoc } from "firebase/firestore";
 
 export const Table = ( props ) => {
 
-  const { tableName, columns, data, link, linkCadastro } = props;
+  const { tableName, columns, data, link, linkCadastro, collection2, setCollection2 } = props;
 
   const countPerPage = 10;
-  const [value, setValue] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [collection, setCollection] = React.useState(
-    cloneDeep(data.slice(0, countPerPage))
-  );
 
-  const searchData = React.useRef( throttle(val => { 
-    
-    const query = val.toLowerCase();
-    setCurrentPage(1);
-  
-    const dataSearch = cloneDeep( 
-      data
-        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.email.toLowerCase().indexOf(query) > -1 || item.phone.toLowerCase().indexOf(query) > -1 )
-        .slice(0, countPerPage)
-      );
-      setCollection(dataSearch);
-    }, 400)
-  );
-
-  React.useEffect(() => {
-    if (!value) {
-      updatePage(1);
-    } else {
-      searchData.current(value);
-    }
-  }, [value]);
 
   const updatePage = p => {
     setCurrentPage(p);
     const to = countPerPage * p;
     const from = to - countPerPage;
-    setCollection(cloneDeep(data.slice(from, to)));
+    setCollection2(cloneDeep(data.slice(from, to)));
   };
 
   const tableRows = rowData => {
@@ -53,13 +28,10 @@ export const Table = ( props ) => {
 
     const tableCell = Object.keys( columns );
 
-    console.log('tableCell')
-    console.log(tableCell)
-    
     const columnData = tableCell.map((keyD, i) => {
 
       if ( keyD === 'action' ) {
-        return createActionButtons( i,key["id"] );
+        return createActionButtons( i, key );
       }
 
       return <td key={i}>{key[keyD]}</td>;
@@ -69,7 +41,7 @@ export const Table = ( props ) => {
   };
 
   const tableData = () => {
-    return collection.map((key, index) => tableRows({ key, index }));
+    return collection2.map((key, index) => tableRows({ key, index }));
   };
 
   const headRow = () => {
@@ -78,24 +50,67 @@ export const Table = ( props ) => {
     ));
   };
 
-  const handleDelete = ( key ) => {
-    console.log('item to delete: ' + key );
-    setCollection( collection.filter( item => item.id !== key ) )
+  const handleDelete = async ( id ) => {
+    console.log('item to delete: ' + id );
+    
+    try {
+      
+      if ( link === "cliente" ) {
+        await deleteDoc( doc( db, "customers", `/${id}` ) );
+  
+        console.log( 'apagou' )
+        setCollection2( collection2.filter( item => item.id !== id ) )
+      }
+
+    } catch (error) {
+      console.error( error )
+      alert( "Algo deu errado ao apagar as informações" )
+      window.location.reload();
+    }
     
   }
 
-  const createActionButtons = ( i, key ) => {
+ 
+  const createActionButtons = ( i, rowData ) => {
+
+    let {id} = rowData
+    let localStorageName = () => {
+      if ( link === "cliente" ) {
+        return 'customerInfo'
+      }
+    }
+
     return <td key={i}>
-      <Link to={`/${link}/` + key } className="link">
-        <button className="userListEdit">Editar</button>
-      </Link>
+      <a href={`${link}/${id}`} target="_blank" rel="noreferrer" className="link">
+        <button className="userListEdit" onClick={ () => { localStorage.setItem( localStorageName(), JSON.stringify(rowData) ) }}>
+          Editar
+        </button>
+      </a>
 
       <DeleteOutline
         className="userListDelete"
-        onClick={() => handleDelete( key )}
+        onClick={ async () => await handleDelete( id )}
       />
 
     </td>;  
+  }
+
+  const searchMethod = ( value ) => {
+
+    if ( link === "cliente" ) {
+      return cloneDeep( data
+        .filter( item => 
+          item.contact.toLowerCase().indexOf( value ) > -1 ||
+          item.fantasy_name.toLowerCase().indexOf( value ) > -1 ||
+          item.cnpj_cpf.toLowerCase().indexOf( value ) > -1 ||
+          item.email.toLowerCase().indexOf( value ) > -1 ||
+          item.telephone.toLowerCase().indexOf( value ) > -1 ||
+          item.mobile.toLowerCase().indexOf( value ) > -1 ||
+          item.city.toLowerCase().indexOf( value ) > -1 
+        )
+        .slice(0, countPerPage)
+      );
+    }
   }
 
   return (
@@ -103,22 +118,19 @@ export const Table = ( props ) => {
       <div className="table__titleAndSearch--container">
 
         <h3 className="table__titleAndSearch--title">{ tableName }</h3>
-
-        {/* <input
-          className="table__titleAndSearch--search"
-          placeholder="Procurar cliente"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        /> */}
-
       
         <div className="table__container--searchAndAdd">
             
             <input
               className="table__titleAndSearch--search"
               placeholder="Procurar cliente"
-              // value={searchValue}
-              onChange={e => setValue(e.target.value)}
+              onChange={ e => {
+
+                let value = e.target.value
+                let dataSearch = searchMethod( value )
+                setCollection2(dataSearch);
+                
+              }}
             />
 
             <a href={linkCadastro} className="table__button--add">								  
@@ -129,12 +141,14 @@ export const Table = ( props ) => {
 
       </div>
       
-      <div className="table__container--area">      
+      <div className="table__container--area">   
         <table className="table">
           <thead>
             <tr>{headRow()}</tr>
           </thead>
+
           <tbody>{tableData()}</tbody>
+          
         </table>
       </div>
   

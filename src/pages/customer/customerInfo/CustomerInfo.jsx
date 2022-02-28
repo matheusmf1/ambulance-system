@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import {React, useState, useEffect} from 'react'
 import {
   MailOutline,
   LocalPhone,
@@ -8,8 +8,6 @@ import {
 
 import "./customerInfo.css";
 
-import { tableClientData } from '../../../assets/mock/tableClientData'
-
 import BusinessIcon from '@material-ui/icons/Business';
 
 import userImage from '../../../assets/images/user.png'
@@ -18,38 +16,59 @@ import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
 
-const fetchUserData = ( id ) => {
+import { db } from '../../../firebase';
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
-  return tableClientData.filter( user => user.id === id )[0] 
 
-}
+export default function CustomerInfo( props ) {
 
-export default function CustomerInfo(props) {
+  const [ data, setData ] = useState( '' );
+  const [ customerData, setCustomerData ] = useState( '' );
+  const [ idRef, setIdRef ] = useState( '' );
 
-  let userID = props.match.params.id;
-  let userData = fetchUserData( userID )
+  useEffect( () => {
 
-  const [customerData, setCustomerData] = useState(
-    {
-      id: `${userData['id']}`,
-      responsable: `${userData['responsable']}`,
-      contact: `${userData['contact']}`,
-      corporate_name: `${userData['corporate_name']}`,
-      fantasy_name: `${userData['fantasy_name']}`,
-      cnpj_cpf: `${userData['cnpj_cpf']}`,
-      email: `${userData['email']}`,
-      telephone: `${userData['telephone']}`,
-      mobile: `${userData['mobile']}`,
-      cep: `${userData['cep']}`,
-      address: `${userData['address']}`,
-      addressNumber: `${userData['addressNumber']}`,
-      aditionalInformation: `${userData['aditionalInformation']}`,
-      neighborhood: `${userData['neighborhood']}`,
-      city: `${userData['city']}`,
-      state: `${userData['state']}`,
-      moreInfo: `${userData['moreInfo']}`
-    },
-  );
+    let userID = props.match.params.id;
+
+    if ( !data ) {
+      fetchUserData( userID )
+    }
+
+  }, []);
+
+  const fetchUserData = async ( id ) => {
+
+    setIdRef( id )
+    let billData = JSON.parse( localStorage.getItem( 'customerInfo' ) );
+
+    if ( billData ) {
+
+      if ( toString( billData['id'] ) !== toString( id ) ) {
+
+        console.log( "Feching data from firebase" )
+  
+        const docRef = doc( db, "customers", id );
+        const docSnap = await getDoc( docRef );
+        setData( docSnap.data() )
+        setCustomerData( docSnap.data() )
+      
+      }
+      else {
+        setData( billData )
+        setCustomerData( billData )
+      }
+    } 
+    else {
+      console.log( "Feching data from firebase after updating" )
+  
+      const docRef = doc( db, "customers", id );
+      const docSnap = await getDoc( docRef );
+      setData( docSnap.data() )
+      setCustomerData( docSnap.data() )
+    }
+  
+
+  }
 
   const handleInformationChange = ( id ) => ( e ) => {
     setCustomerData( { ...customerData, [id]: e.target.value } )    
@@ -57,18 +76,27 @@ export default function CustomerInfo(props) {
 
 
   const checkCep = ( e ) => {
-    console.log( e.target )
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+    console.log( cep )
+    
+    setCustomerData( { ...customerData, "cep": cep } );
+
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        console.log( data )
-        setCustomerData( { ...customerData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          console.log( data )
+          setCustomerData( { ...customerData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
@@ -78,12 +106,35 @@ export default function CustomerInfo(props) {
 
   }
 
+  const updateDataFirebase = async () => {
+    
+    try {
 
-  const handleSubmit = ( e ) => {
+      const docRef = doc( db, "customers", idRef );
+      await updateDoc( docRef, customerData );
+      return true
+      
+    } catch (error) {
+      console.error( error )
+      alert( "Algo deu errado ao atualizar as informações. Por favor tente novamente." )
+      return false
+    }
+  }
+
+
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault();
 
     console.log( customerData ) 
+
+    const result = await updateDataFirebase( customerData )
+
+    if ( result ) {
+      alert( "Cliente atualizado com sucesso" )
+      localStorage.removeItem( 'customerInfo' )
+      window.location.reload()
+    }
   }
 
   return (
@@ -105,9 +156,9 @@ export default function CustomerInfo(props) {
               className="userShowImg"
             />
             <div className="userShowTopTitle">
-              <span className="userShowUsername">Contato: { userData.contact } </span>
-              <span className="userShowUsername">Responsável: { userData.responsable } </span>
-              <span className="userShowUserTitle">Código: { userData.id }</span>
+              <span className="userShowUsername">Contato: { data.contact } </span>
+              <span className="userShowUsername">Responsável: { data.responsable } </span>
+              <span className="userShowUserTitle">Código: { data.id }</span>
             </div>
           </div>
           
@@ -117,32 +168,32 @@ export default function CustomerInfo(props) {
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Nome Fantasia</h6> 
-              <span className="userShowInfoTitle">{ userData.fantasy_name }</span>
+              <span className="userShowInfoTitle">{ data.fantasy_name }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Razão Social</h6> 
-              <span className="userShowInfoTitle">{ userData.corporate_name }</span>
+              <span className="userShowInfoTitle">{ data.corporate_name }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">CNPJ</h6> 
-              <span className="userShowInfoTitle">{ userData.cnpj_cpf }</span>
+              <span className="userShowInfoTitle">{ data.cnpj_cpf }</span>
             </div>
 
             <div className="userShowInfo">
               <LocalPhone className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.telephone }</span>
+              <span className="userShowInfoTitle">{ data.telephone }</span>
             </div>
             
             <div className="userShowInfo">
               <PhoneAndroid className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.mobile }</span>
+              <span className="userShowInfoTitle">{ data.mobile }</span>
             </div>
 
             <div className="userShowInfo">
               <MailOutline className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.email }</span>
+              <span className="userShowInfoTitle">{ data.email }</span>
             </div>
 
 
@@ -150,35 +201,35 @@ export default function CustomerInfo(props) {
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">CEP:</h6> { userData.cep }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">CEP:</h6> { data.cep }</span>
             </div>            
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Endereço:</h6> { userData.address }, { userData.addressNumber }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Endereço:</h6> { data.address }, { data.addressNumber }</span>
             </div>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Complemento:</h6> { userData.aditionalInformation }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Complemento:</h6> { data.aditionalInformation }</span>
             </div>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Bairro:</h6> { userData.neighborhood }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Bairro:</h6> { data.neighborhood }</span>
             </div>
 
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Cidade/Estado:</h6> { userData.city } - { userData.state }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Cidade/Estado:</h6> { data.city } - { data.state }</span>
             </div>
 
             <span className="userShowTitle">Informações Adicionais</span>
 
             <div className="userShowInfo">
               <Info className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.moreInfo } </span>
+              <span className="userShowInfoTitle">{ data.moreInfo } </span>
             </div>
 
 
@@ -211,10 +262,10 @@ export default function CustomerInfo(props) {
               <div className="userUpdateItem">
                 <label>Razão Social</label>
                 <input
-                type="text"
-                defaultValue={ customerData.corporate_name }
-                className="userUpdateInput"
-                  onChange={handleInformationChange('corporate_name')}
+                  type="text"
+                  defaultValue={ customerData.corporate_name }
+                  className="userUpdateInput"
+                    onChange={handleInformationChange('corporate_name')}
                 />
               </div>
 
@@ -225,9 +276,8 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem">
                 <label>CEP</label>
-                <InputCep defaultValue={ customerData.cep } className="userUpdateInput" onBlur={checkCep} />
+                <InputCep defaultValue={ customerData.cep } className="userUpdateInput" onChange={ checkCep } />
               </div>
-
 
               <div className="userUpdateItem">
                 <label>Número</label>
@@ -251,7 +301,7 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem">
                 <label>Estado</label>
-                <select name="estados-brasil" className="userUpdateInput" defaultValue={customerData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="userUpdateInput" value={ customerData.state } onChange={handleInformationChange('state')}>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -320,8 +370,7 @@ export default function CustomerInfo(props) {
                 <label>Celular</label>
                 <InputPhoneNumber mask="(99) 99999-9999" defaultValue={ customerData.mobile } className="userUpdateInput" onChange={handleInformationChange('mobile')}/>
               </div>
-
-              
+             
               <div className="userUpdateItem">
                 <label>Endereço</label>
                 <input
@@ -356,7 +405,7 @@ export default function CustomerInfo(props) {
 
               <div className="userUpdateItem--textArea">            
                 <label className="form__input--label">Informações adicionais</label>
-                <textarea className="form__input" rows="2" defaultValue={ customerData.moreInfo }></textarea>          
+                <textarea className="form__input" rows="2" defaultValue={ customerData.moreInfo } onChange={handleInformationChange('moreInfo')}></textarea>          
               </div>
 
           </form> 
@@ -369,5 +418,3 @@ export default function CustomerInfo(props) {
 
   )
 }
-
-
