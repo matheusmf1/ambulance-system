@@ -15,7 +15,7 @@ import userImage from '../../../assets/images/user.png'
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
-import { Customer } from "../../../data/customer"
+import { Customer } from "../../../data/Customer"
 
 
 export default function CustomerInfo( props ) {
