@@ -7,6 +7,7 @@ import './table.css';
 import { DeleteOutline } from "@material-ui/icons";
 import { Customer } from "../../../data/customer";
 import { Supplier } from "../../../data/supplier";
+import { Employee } from "../../../data/employee";
 
 export const Table = ( props ) => {
 
@@ -78,6 +79,19 @@ export const Table = ( props ) => {
         window.location.reload();
       }
     }
+
+    else if ( link === "funcionario" ) {
+      const employee = new Employee( { data: data, id: id } )
+      let result = await employee.deleteEmployeeFromFirebase();
+
+      if ( result ) {
+        setCollection2( collection2.filter( item => item.id !== id ) )
+      }
+      else {
+        alert( "Algo deu errado ao apagar as informações, por favor tente novamente." )
+        window.location.reload();
+      }
+    }
     
   }
 
@@ -94,6 +108,9 @@ export const Table = ( props ) => {
 
         case "fornecedor":
           return 'supplierInfo';
+
+        case "funcionario":
+          return 'employeeInfo';
           
         default:
           return null
@@ -144,6 +161,19 @@ export const Table = ( props ) => {
         .slice(0, countPerPage)
       );
     }
+    else if ( link === "funcionario" ) {
+      return cloneDeep( data
+        .filter( item => 
+          item.name.toLowerCase().indexOf( value ) > -1 ||
+          item.email.toLowerCase().indexOf( value ) > -1 ||
+          item.telephone.toLowerCase().indexOf( value ) > -1 ||
+          item.mobile.toLowerCase().indexOf( value ) > -1 ||
+          item.cpf.toLowerCase().indexOf( value ) > -1 ||
+          item.city.toLowerCase().indexOf( value ) > -1 
+        )
+        .slice(0, countPerPage)
+      );
+    }
   }
 
   const searchPlaceholderName = () => {
@@ -153,6 +183,9 @@ export const Table = ( props ) => {
 
       case "fornecedor":
         return 'Procurar fornecedor';
+
+      case "funcionario":
+        return 'Procurar funcionário';
         
       default:
         return ""

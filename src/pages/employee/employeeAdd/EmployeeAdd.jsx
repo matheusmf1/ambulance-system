@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
+import { useHistory } from "react-router-dom"
+import { Employee } from '../../../data/employee';
 
 export default function EmployeeAdd() {
 
@@ -54,6 +56,8 @@ export default function EmployeeAdd() {
     } 
   )
 
+  let history = useHistory();
+
   const handleInformationChange = ( id ) => ( e ) => {
 
     if ( id === 'birthday' ){
@@ -67,29 +71,49 @@ export default function EmployeeAdd() {
   }
 
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+  
+    setEmployeeData( { ...employeeData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setEmployeeData( { ...employeeData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          setEmployeeData( { ...employeeData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
+
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault();
+    
+    const employee = new Employee( { data: employeeData } );
 
-    console.log( employeeData ) 
+    const result = await employee.addEmployeeToFirebase();
+
+    if ( result ) {
+      alert( "Funcionário cadastrado com sucesso" )
+      history.push("/funcionarios")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
+
   }
 
   return (
@@ -141,7 +165,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CPF*</label>
-              <InputCpfCnpj placeholder="Informe o nº do CPF" onChange={handleInformationChange('cnpj_cpf')}/>
+              <InputCpfCnpj placeholder="Informe o nº do CPF" onChange={handleInformationChange('cpf')}/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -161,7 +185,7 @@ export default function EmployeeAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>
-              <InputCep onBlur={checkCep} />
+              <InputCep onChange={checkCep} />
             </div>
 
             <div className="form__input--halfWidth">

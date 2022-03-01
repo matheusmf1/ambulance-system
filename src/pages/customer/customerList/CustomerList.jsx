@@ -33,7 +33,6 @@ export default class CustomerList extends Component {
     // const customerCollectionRef = collection( db, "customers" )
     // const docSnap = await getDocs( customerCollectionRef );
 
-
     const customerCollectionRef = collection( db, "customers" )
     // const q = query( customerCollectionRef, orderBy("id"), limit(5));
     const queryResult = query( customerCollectionRef, orderBy("id") );
