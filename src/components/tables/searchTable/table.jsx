@@ -6,6 +6,7 @@ import './table.css';
 
 import { DeleteOutline } from "@material-ui/icons";
 import { Customer } from "../../../data/customer";
+import { Supplier } from "../../../data/supplier";
 
 export const Table = ( props ) => {
 
@@ -53,7 +54,6 @@ export const Table = ( props ) => {
     console.log('item to delete: ' + id );
       
     if ( link === "cliente" ) {
-
       const customer = new Customer( { data: data, id: id } )
       let result = await customer.deleteCustomerFromFirebase();
 
@@ -66,6 +66,18 @@ export const Table = ( props ) => {
       }
       
     }
+    else if ( link === "fornecedor" ) {
+      const supplier = new Supplier( { data: data, id: id } )
+      let result = await supplier.deleteSupplierFromFirebase();
+
+      if ( result ) {
+        setCollection2( collection2.filter( item => item.id !== id ) )
+      }
+      else {
+        alert( "Algo deu errado ao apagar as informações, por favor tente novamente." )
+        window.location.reload();
+      }
+    }
     
   }
 
@@ -74,8 +86,17 @@ export const Table = ( props ) => {
 
     let {id} = rowData
     let localStorageName = () => {
-      if ( link === "cliente" ) {
-        return 'customerInfo'
+
+      switch( link ) {
+
+        case "cliente":
+          return 'customerInfo';
+
+        case "fornecedor":
+          return 'supplierInfo';
+          
+        default:
+          return null
       }
     }
 
@@ -110,6 +131,32 @@ export const Table = ( props ) => {
         .slice(0, countPerPage)
       );
     }
+    else if ( link === "fornecedor" ) {
+      return cloneDeep( data
+        .filter( item => 
+          item.contact.toLowerCase().indexOf( value ) > -1 ||
+          item.email.toLowerCase().indexOf( value ) > -1 ||
+          item.telephone.toLowerCase().indexOf( value ) > -1 ||
+          item.mobile.toLowerCase().indexOf( value ) > -1 ||
+          item.cnpj_cpf.toLowerCase().indexOf( value ) > -1 ||
+          item.city.toLowerCase().indexOf( value ) > -1 
+        )
+        .slice(0, countPerPage)
+      );
+    }
+  }
+
+  const searchPlaceholderName = () => {
+    switch( link ) {
+      case "cliente":
+        return 'Procurar cliente';
+
+      case "fornecedor":
+        return 'Procurar fornecedor';
+        
+      default:
+        return ""
+    }
   }
 
   return (
@@ -122,7 +169,7 @@ export const Table = ( props ) => {
             
             <input
               className="table__titleAndSearch--search"
-              placeholder="Procurar cliente"
+              placeholder={ searchPlaceholderName() }
               onChange={ e => {
 
                 let value = e.target.value

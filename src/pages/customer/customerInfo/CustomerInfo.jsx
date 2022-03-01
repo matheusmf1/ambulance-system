@@ -232,8 +232,7 @@ export default function CustomerInfo( props ) {
               <span className="userShowInfoTitle">{ data.moreInfo } </span>
             </div>
 
-
-        </div>
+          </div>
         </div>
       
         <div className="userUpdate">
@@ -265,7 +264,7 @@ export default function CustomerInfo( props ) {
                   type="text"
                   defaultValue={ customerData.corporate_name }
                   className="userUpdateInput"
-                    onChange={handleInformationChange('corporate_name')}
+                  onChange={handleInformationChange('corporate_name')}
                 />
               </div>
 

@@ -34,6 +34,14 @@ export class Customer {
 
   addCustomerToFirebase = async () => {
     try {
+
+      const refID = doc(db, "ids", "customers")
+      const docSnap = await getDoc( refID );
+  
+      if ( !docSnap.exists() ) {
+        await setDoc( doc( db, "ids", "customers" ), { id: 0 } );
+      }
+      
       //Update id counter
       await updateDoc( doc( db, "ids", "customers"), { id: increment( 1 ) } );
 

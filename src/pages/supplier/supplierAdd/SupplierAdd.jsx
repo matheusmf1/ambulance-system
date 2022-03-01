@@ -3,6 +3,9 @@ import {React, useState} from 'react';
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
+import { useHistory } from "react-router-dom"
+import { Supplier } from "../../../data/supplier"
+
 
 export default function SupplierAdd() {
 
@@ -30,36 +33,58 @@ export default function SupplierAdd() {
     }
   )
 
+  let history = useHistory();
+
   const handleInformationChange = ( id ) => ( e ) => {
     setSupplierData( { ...supplierData, [id]: e.target.value } )
   }
 
   const checkCep = ( e ) => {
+
     let cep = e.target.value.replace( /\D/g, '' );
     console.log( cep )
+    
+    setSupplierData( { ...supplierData, "cep": cep } );
 
-    if ( cep ) { 
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setSupplierData( { ...supplierData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
-  
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          console.log( data )
+          setSupplierData( { ...supplierData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
+
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault();
 
-    console.log( supplierData ) 
+    console.log( supplierData )
+
+    const supplier = new Supplier( { data: supplierData } )
+    const result = await supplier.addSupplierToFirebase();
+
+    if ( result ) {
+      alert( "Fornecedor cadastrado com sucesso" )
+      history.push("/fornecedores")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
   }
 
 
@@ -112,7 +137,7 @@ export default function SupplierAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>
-              <InputCep onBlur={checkCep} />
+              <InputCep onChange={checkCep} />
             </div>
 
             <div className="form__input--halfWidth">
