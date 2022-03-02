@@ -7,6 +7,7 @@ import InputFile from '../../../components/inputs/input--file';
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
+import { TransformationProposal } from "../../../data/TransformationProposal";
 
 export default function NewTransformationProposal( props ) {
 
@@ -60,23 +61,30 @@ export default function NewTransformationProposal( props ) {
   const { session } = props
 
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+    setTransformationProposalData( { ...transformationProposalData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setTransformationProposalData( { ...transformationProposalData, "cep": cep, "address": data['logradouro'], "city": data['localidade'], "state": data['uf'] } );
-  
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          setTransformationProposalData( { ...transformationProposalData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
+
   }
 
   const defineStatusFieldOptions = ( session ) => {
@@ -229,13 +237,23 @@ export default function NewTransformationProposal( props ) {
 
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
-    finalData['id'] = '1'
     console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+
+    const transformationProposal = new TransformationProposal( { data: finalData, type: session } )
+    const result = await transformationProposal.addTransformationProposalToFirebase();
+
+    if ( result ) {
+      alert( "Proposta de Transformação cadastrada com sucesso" )
+      // history.push("/fornecedores")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
+    
   }
 
 
@@ -288,7 +306,7 @@ export default function NewTransformationProposal( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Proposta Nº</label>
+                  <label className="form__input--labelInLine">Proposta de Transformação</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
@@ -316,12 +334,12 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')}/>
+                <InputCpfCnpj onChange={handleInformationChange('cpf')} required={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onBlur={checkCep}/>
+                <InputCep onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">

@@ -6,7 +6,7 @@ export default function InputCpfCnpj( props ) {
   const [ cpfCnpj, setCpfCnpj ] = useState( '' );
   const [ mask, setMask ] = useState( '' );
 
-  const { onChange, className, defaultValue, placeholder } = props;
+  const { onChange, className, defaultValue, placeholder, required } = props;
 
   return(
     <CpfCnpj
@@ -18,6 +18,7 @@ export default function InputCpfCnpj( props ) {
         setMask( type === "CPF" )
         onChange( e )
       }}
+      required={required ? required : false}
     />
   )
 }
