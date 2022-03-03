@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
-import '../../customer/customerAdd/customerAdd.css'
+import '../../customer/customerAdd/customerAdd.css';
+import { Bill } from "../../../data/Bill";
 
 export default function NewBillToPay() {
 
@@ -35,8 +36,8 @@ export default function NewBillToPay() {
         installmentsData: []
       },
       
-      service: "VAZIO EM PAY",
-      serviceNumber: "VAZIO EM PAY"
+      // service: "VAZIO EM PAY",
+      // serviceNumber: "VAZIO EM PAY"
     }
   )
 
@@ -127,13 +128,21 @@ export default function NewBillToPay() {
 
   }
 
-  const handleAddInformation = ( e ) => {
+  const handleAddInformation = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
-    finalData['id'] = '1'
-    console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+    const bill = new Bill( { data: finalData, billType: finalData['billType'] } );
+
+    const result = await bill.addBillToFirebase();
+
+    if ( result ) {
+      alert( "Conta a ser paga cadastrada com sucesso" )
+      // history.push("/clientes"
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
     
   }
 

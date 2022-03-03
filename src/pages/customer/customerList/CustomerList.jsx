@@ -43,7 +43,6 @@ export default class CustomerList extends Component {
 
   };
 
-
   render() {
 
     const setCollection = ( value ) => {

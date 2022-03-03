@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
-import '../../customer/customerAdd/customerAdd.css'
+import '../../customer/customerAdd/customerAdd.css';
+import { Bill } from "../../../data/Bill";
 
 export default function NewBillToReceive() {
 
@@ -26,17 +27,18 @@ export default function NewBillToReceive() {
     documentNumber: "",
     billFile: "",
     additionalInformation: "",
-    expenseType: "",
     amountPay: "",
-
+    
     paymentInfo: {
       installments: "1",
       installmentsData: []
     },
     
-    service: "VAZIO EM PAY",
-    serviceNumber: "VAZIO EM PAY"
-  
+    service: "",
+    serviceNumber: "",
+
+    // expenseType: "",
+    
   } )
 
   const handleOnChangeInformation = (id) => (e) => {
@@ -126,13 +128,21 @@ export default function NewBillToReceive() {
 
   }
 
-  const handleAddInformation = ( e ) => {
+  const handleAddInformation = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
-    finalData['id'] = '1'
-    console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )  
+    const bill = new Bill( { data: finalData, billType: finalData['billType'] } );
+
+    const result = await bill.addBillToFirebase();
+
+    if ( result ) {
+      alert( "Conta a ser recebida cadastrada com sucesso" )
+      // history.push("/clientes"
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
   }
 
 
