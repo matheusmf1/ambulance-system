@@ -102,7 +102,7 @@ export const TablePaidReceivedBill = ( props ) => {
         let paymentNames = {
           'boleto': "Boleto",
           'pix': "PIX",
-          'transferência': "Transferência",
+          'transferencia': "Transferência",
           'deposito': "Depósito",
           'cheque': "Cheque",
           'dinheiro': "Dinheiro"

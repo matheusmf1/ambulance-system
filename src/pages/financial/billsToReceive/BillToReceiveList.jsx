@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table } from '../../../components/tables/bills/table';
+import { TableBill } from '../../../components/tables/bills/tableBill';
 import { tableBillToPay } from "../../../assets/mock/tableBillToPay";
 
 export default function BillToReceiveList() {
@@ -24,7 +24,7 @@ export default function BillToReceiveList() {
 
   return (
     <>
-      <Table
+      <TableBill
         tableName="Contas a Receber"
         columns={tableColumns}
         data={tableData}

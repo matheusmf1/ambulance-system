@@ -17,8 +17,10 @@ import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
 
 import CustomTextField from '../../CustomTextField';
-import CustomFormControl from '../../CustomFormControl'
-import ptBrLocate from "date-fns/locale/pt-BR"
+import CustomFormControl from '../../CustomFormControl';
+import ptBrLocate from "date-fns/locale/pt-BR";
+
+import { Bill } from "../../../data/Bill";
 
 export default function BillPayModalEdit( props ) {
 
@@ -31,7 +33,7 @@ export default function BillPayModalEdit( props ) {
     installmentAmountPay: `${installmentData.installmentAmountPay}`,
     dueDate: `${installmentData.dueDate}`,
     receiptFile: `${installmentData.receiptFile}`,
-    paymentDate: `${ new Date() }`,
+    paymentDate: "",
     amountPaid: `${installmentData.amountPaid}`,
     paymentType: `${installmentData.paymentType}`,
     installment: `${installmentData.installment}`,
@@ -48,8 +50,8 @@ export default function BillPayModalEdit( props ) {
     expenseType: `${data.expenseType}`,
     amountPay: `${data.amountPay}`,
 
-    service: `${data.service}`,
-    serviceNumber: `${data.serviceNumber}`,
+    // service: `${data.service}`,
+    // serviceNumber: `${data.serviceNumber}`,
 
     paymentInfo: {
       installments: `${data['paymentInfo'].installments}`,
@@ -65,16 +67,23 @@ export default function BillPayModalEdit( props ) {
     setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
   }
 
-  const handleInformation = () => {
+  const handleInformation = async () => {
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
-    values['paymentInfo']['installmentsData'] = finalInstallmentData
-  
+    values['paymentInfo']['installmentsData'] = finalInstallmentData;
 
-    console.log( '------ Nova alteracao -------' )
-    console.log( values )
-    
-    // handleOpenCloseDialog()
+    const bill = new Bill( { data: values, id: values['id'], billType: "pay" } )
+    let result = await bill.updateBillOnFirebase();
+
+    if ( result ) {
+      alert( "Conta atualizada com sucesso" )
+      window.location.reload()
+    }
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+    }
+
+    handleOpenCloseDialog()
   }
   
   const handleOnChangeInformation = (id) => (e) => {
@@ -165,7 +174,7 @@ export default function BillPayModalEdit( props ) {
 
                 <MenuItem value='boleto'>Boleto</MenuItem>
                 <MenuItem value='pix'>PIX</MenuItem>
-                <MenuItem value='transferência'>Transferência</MenuItem>
+                <MenuItem value='transferencia'>Transferência</MenuItem>
                 <MenuItem value='deposito'>Depósito</MenuItem>
                 <MenuItem value='cheque'>Cheque</MenuItem>
                 <MenuItem value='dinheiro'>Dinheiro</MenuItem>
@@ -192,7 +201,7 @@ export default function BillPayModalEdit( props ) {
                 <MenuItem value="impostos">Impostos</MenuItem>
                 <MenuItem value="bancaria">Bancária</MenuItem>
                 <MenuItem value="produto">Produto</MenuItem>
-                <MenuItem value="serviço">Serviço</MenuItem>   
+                <MenuItem value="servico">Serviço</MenuItem>   
                 <MenuItem value="alimentacao">Alimentação</MenuItem>   
 
               </Select>

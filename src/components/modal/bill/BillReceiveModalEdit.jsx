@@ -168,7 +168,7 @@ export default function BillReceiveModalEdit( props ) {
 
                   <MenuItem value='boleto'>Boleto</MenuItem>
                   <MenuItem value='pix'>PIX</MenuItem>
-                  <MenuItem value='transferência'>Transferência</MenuItem>
+                  <MenuItem value='transferencia'>Transferência</MenuItem>
                   <MenuItem value='deposito'>Depósito</MenuItem>
                   <MenuItem value='cheque'>Cheque</MenuItem>
                   <MenuItem value='dinheiro'>Dinheiro</MenuItem>

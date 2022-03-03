@@ -2,8 +2,11 @@ import React, {useState} from "react";
 
 import '../../customer/customerAdd/customerAdd.css';
 import { Bill } from "../../../data/Bill";
+import { useHistory } from "react-router-dom";
 
 export default function NewBillToPay() {
+
+  const history = useHistory();
 
   const [ hasInstallment, setHasInstallment ] = useState(false)
 
@@ -138,7 +141,7 @@ export default function NewBillToPay() {
 
     if ( result ) {
       alert( "Conta a ser paga cadastrada com sucesso" )
-      // history.push("/clientes"
+      history.push("/financeiro/pagar")
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )

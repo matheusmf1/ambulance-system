@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { DeleteOutline } from "@material-ui/icons";
 
-export default function DeleteModal( { id } ) {
+export default function DeleteModal( { id, deleteFunction, collection, setCollection } ) {
 
   const [ isOpenModal, setIsOpenModal  ] = useState( false );
 
@@ -16,11 +16,17 @@ export default function DeleteModal( { id } ) {
     setIsOpenModal( !isOpenModal )
   };
 
-  const handleInformation = () => {
+  const handleInformation = async () => {
 
-    console.log('Deleting...')
-    console.log( id )
-
+    const result = await deleteFunction( id )
+    
+    if ( result ) {
+      setCollection( collection.filter( item => item.id !== id ) )
+    }
+    else {
+      alert( "Algo deu errado ao apagar as informações, por favor tente novamente." )
+      window.location.reload();
+    }
 
     handleOpenCloseDialog()
   }

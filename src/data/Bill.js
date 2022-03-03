@@ -53,7 +53,7 @@ export class Bill {
 
   updateBillOnFirebase = async () => {
     try {
-      const docRef = doc( db, "customers", this.id );
+      const docRef = doc( db, `bills_${this.billType}`, this.id );
       await updateDoc( docRef, this.data );
       return true
       
@@ -65,7 +65,7 @@ export class Bill {
 
   deleteBillFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, "customers", `/${this.id}` ) );
+      await deleteDoc( doc( db, `bills_${this.billType}`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {
@@ -73,6 +73,5 @@ export class Bill {
       return false
     }
   }
-
 
 }
