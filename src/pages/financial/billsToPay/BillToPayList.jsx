@@ -49,20 +49,9 @@ export default class BillToPayList extends Component {
       this.setState( {"collection":  value } )
     }
 
-    const handleDelete = async ( id ) => {
-      
-      const bill = new Bill( { id: id, billType: "pay" } )
-      let result = await bill.deleteBillFromFirebase();
-
-      return result
-      
-      // if ( result ) {
-      //   setCollection( this.state.collection.filter( item => item.id !== id ) )
-      // }
-      // else {
-      //   alert( "Algo deu errado ao apagar as informações, por favor tente novamente." )
-      //   window.location.reload();
-      // }
+    const handleDelete = async ( id ) => {     
+      const bill = new Bill( { id: id, billType: "pay" } );
+      return await bill.deleteBillFromFirebase();
     }
     
     return (

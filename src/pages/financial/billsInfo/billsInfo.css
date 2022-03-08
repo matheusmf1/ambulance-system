@@ -5,6 +5,13 @@
   width: fill-available;
 }
 
+.bill_button--container {
+  padding: 10px 10px;
+  width: -webkit-fill-available;
+  width: -moz-available;
+  text-align-last: end;
+}
+
 .renderInstallments__container--title {
   padding: 10px;
 }

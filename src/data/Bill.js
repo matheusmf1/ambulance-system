@@ -40,7 +40,7 @@ export class Bill {
   getBillFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `bills_${this.billType}`, this.id );
+      const docRef = doc( db, `bills_${this.billType}`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -53,7 +53,7 @@ export class Bill {
 
   updateBillOnFirebase = async () => {
     try {
-      const docRef = doc( db, `bills_${this.billType}`, this.id );
+      const docRef = doc( db, `bills_${this.billType}`, `${this.id}` );
       await updateDoc( docRef, this.data );
       return true
       

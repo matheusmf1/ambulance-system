@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
@@ -14,7 +14,7 @@ export const Table = ( props ) => {
   const { tableName, columns, data, link, linkCadastro, collection2, setCollection2 } = props;
 
   const countPerPage = 10;
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
 
   const updatePage = p => {

@@ -2,8 +2,11 @@ import React, {useState} from "react";
 
 import '../../customer/customerAdd/customerAdd.css';
 import { Bill } from "../../../data/Bill";
+import { useHistory } from "react-router-dom";
 
 export default function NewBillToReceive() {
+
+  const history = useHistory();
 
   const [ hasInstallment, setHasInstallment ] = useState(false)
 
@@ -35,10 +38,7 @@ export default function NewBillToReceive() {
     },
     
     service: "",
-    serviceNumber: "",
-
-    // expenseType: "",
-    
+    serviceNumber: ""
   } )
 
   const handleOnChangeInformation = (id) => (e) => {
@@ -92,7 +92,7 @@ export default function NewBillToReceive() {
         amountPaid: "",
         paymentType: `${installment['paymentType']}`,
         installment: `${i + 1}`,
-        paymentStatus: "toPay"
+        paymentStatus: "toReceive"
       }
     
       let date = new Date( installment['dueDate'] )
@@ -138,7 +138,7 @@ export default function NewBillToReceive() {
 
     if ( result ) {
       alert( "Conta a ser recebida cadastrada com sucesso" )
-      // history.push("/clientes"
+      history.push("/financeiro/receber")
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )

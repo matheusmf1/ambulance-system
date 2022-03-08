@@ -37,10 +37,7 @@ export default function NewBillToPay() {
       paymentInfo: {
         installments: "1",
         installmentsData: []
-      },
-      
-      // service: "VAZIO EM PAY",
-      // serviceNumber: "VAZIO EM PAY"
+      }
     }
   )
 

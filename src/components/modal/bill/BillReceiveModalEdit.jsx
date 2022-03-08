@@ -20,6 +20,7 @@ import CustomTextField from '../../CustomTextField';
 import CustomFormControl from '../../CustomFormControl'
 import ptBrLocate from "date-fns/locale/pt-BR"
 
+import { Bill } from "../../../data/Bill";
 
 export default function BillReceiveModalEdit( props ) {
 
@@ -40,13 +41,12 @@ export default function BillReceiveModalEdit( props ) {
   });
   
   const [values, setValues] = useState({
-    id: `${data.id}`,
+    id: data.id,
     name: `${data.name}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
     additionalInformation: `${data.additionalInformation}`,
-    expenseType: `${data.expenseType}`,
     amountPay: `${data.amountPay}`,
 
     service: `${data.service}`,
@@ -66,16 +66,23 @@ export default function BillReceiveModalEdit( props ) {
     setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault()
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
-  
+    
+    const bill = new Bill( { data: values, id: values['id'], billType: "receive" } )
+    let result = await bill.updateBillOnFirebase();
 
-    console.log( '------ Nova alteracao -------' )
-    console.log( values )
+    if ( result ) {
+      alert( "Conta atualizada com sucesso" )
+      window.location.reload()
+    }
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+    }
     
     handleOpenCloseDialog()
   }

@@ -147,7 +147,6 @@ export const TableBill = ( props ) => {
         )
         .slice(0, countPerPage)
       );
-    
   }
 
 

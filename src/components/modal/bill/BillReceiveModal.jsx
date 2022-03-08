@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { React, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -22,6 +22,7 @@ import CustomFormControl from '../../CustomFormControl'
 import ptBrLocate from "date-fns/locale/pt-BR"
 
 import '../modal.css';
+import { Bill } from "../../../data/Bill";
 
 export default function BillReceiveModal( props ) {
 
@@ -42,13 +43,12 @@ export default function BillReceiveModal( props ) {
   });
   
   const [values, setValues] = useState({
-    id: `${data.id}`,
+    id: data.id,
     name: `${data.name}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
     additionalInformation: `${data.additionalInformation}`,
-    expenseType: `${data.expenseType}`,
     amountPay: `${data.amountPay}`,
 
     service: `${data.service}`,
@@ -74,7 +74,7 @@ export default function BillReceiveModal( props ) {
   }
 
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault()
 
@@ -83,8 +83,16 @@ export default function BillReceiveModal( props ) {
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
   
-    console.log( '------ Nova alteracao -------' )
-    console.log( values )
+    const bill = new Bill( { data: values, id: values['id'], billType: "receive" } )
+    let result = await bill.updateBillOnFirebase();
+
+    if ( result ) {
+      alert( "Conta atualizada com sucesso" )
+      window.location.reload()
+    }
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+    }
     
     handleOpenCloseDialog()
 

@@ -41,7 +41,7 @@ export default function BillPayModalEdit( props ) {
   });
   
   const [values, setValues] = useState({
-    id: `${data.id}`,
+    id: data.id,
     name: `${data.name}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
@@ -49,9 +49,6 @@ export default function BillPayModalEdit( props ) {
     additionalInformation: `${data.additionalInformation}`,
     expenseType: `${data.expenseType}`,
     amountPay: `${data.amountPay}`,
-
-    // service: `${data.service}`,
-    // serviceNumber: `${data.serviceNumber}`,
 
     paymentInfo: {
       installments: `${data['paymentInfo'].installments}`,
@@ -67,7 +64,9 @@ export default function BillPayModalEdit( props ) {
     setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
   }
 
-  const handleInformation = async () => {
+  const handleSubmit = async ( e ) => {
+
+    e.preventDefault();
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData;
@@ -104,165 +103,168 @@ export default function BillPayModalEdit( props ) {
             maxWidth: "720px"
           },
         }}
-        >      
+        >
+
+        <form onSubmit={handleSubmit}>     
     
-        <DialogTitle className="modal__title">Editar dados de Conta a Pagar</DialogTitle>
+          <DialogTitle className="modal__title">Editar dados de Conta a Pagar</DialogTitle>
 
-        <div className='modal__container'>
-          
-          <div className="form__input--halfWidth">            
-            <CustomTextField
-              id="name"
-              label="Empresa"
-              variant="outlined" 
-              defaultValue={values.name}
-              onChange={handleOnChangeInformation('name')}
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              id="documentNumber"
-              label="Número do documento"
-              variant="outlined" 
-              defaultValue={values.documentNumber}
-              onChange={handleOnChangeInformation('documentNumber')}
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <CustomTextField  
-              id="amountPay"
-              label={ valuesInstallmentData.installment === "1" ? `Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments} no total de R$ ${values.amountPay}` : "Valor Total a Receber"}
-              disabled
-              variant="outlined" 
-              defaultValue={valuesInstallmentData.installmentAmountPay}
-              onChange={handleInstallmentInformation('amountPay')}
-              InputProps={
-                {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
-              }
-            />
-          </div>
-
-          <div className="form__input--halfWidth">
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
-              <DatePicker
-                label="Data de vencimento"
-                id="dueDate"
-                value={ valuesInstallmentData.dueDate }
-                inputFormat="dd/MM/yyyy"      
-                onChange={ (newValue) => {
-                  setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
-                }}
-                renderInput={(params) => <CustomTextField {...params}/>}
+          <div className='modal__container'>
+            
+            <div className="form__input--halfWidth">            
+              <CustomTextField
+                id="name"
+                label="Empresa"
+                required
+                variant="outlined" 
+                defaultValue={values.name}
+                onChange={handleOnChangeInformation('name')}
               />
-            </LocalizationProvider>
-          </div>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomTextField
+                id="documentNumber"
+                label="Número do documento"
+                variant="outlined" 
+                defaultValue={values.documentNumber}
+                onChange={handleOnChangeInformation('documentNumber')}
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <CustomTextField  
+                id="amountPay"
+                label={ valuesInstallmentData.installment === "1" ? `Valor da parcela ${valuesInstallmentData.installment} / ${values.paymentInfo.installments} no total de R$ ${values.amountPay}` : "Valor Total a Receber"}
+                disabled
+                variant="outlined" 
+                defaultValue={valuesInstallmentData.installmentAmountPay}
+                onChange={handleInstallmentInformation('amountPay')}
+                InputProps={
+                  {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
+                }
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBrLocate}>
+                <DatePicker
+                  label="Data de vencimento"
+                  id="dueDate"
+                  value={ valuesInstallmentData.dueDate }
+                  inputFormat="dd/MM/yyyy"      
+                  onChange={ (newValue) => {
+                    setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
+                  }}
+                  renderInput={(params) => <CustomTextField {...params}/>}
+                />
+              </LocalizationProvider>
+            </div>
 
 
-          <div className="form__input--halfWidth">
-            <CustomFormControl>
-              <InputLabel id="formaPagamento-label">Formas de pagamento</InputLabel>
+            <div className="form__input--halfWidth">
+              <CustomFormControl>
+                <InputLabel id="formaPagamento-label">Formas de pagamento</InputLabel>
 
-              <Select
-                labelId="formaPagamento-label"
-                id="paymentType"
-                value={valuesInstallmentData.paymentType}
-                label="Formas de pagamento"
-                onChange={handleInstallmentInformation('paymentType')}
-              >
+                <Select
+                  labelId="formaPagamento-label"
+                  id="paymentType"
+                  value={valuesInstallmentData.paymentType}
+                  label="Formas de pagamento"
+                  onChange={handleInstallmentInformation('paymentType')}
+                >
 
-                <MenuItem value='boleto'>Boleto</MenuItem>
-                <MenuItem value='pix'>PIX</MenuItem>
-                <MenuItem value='transferencia'>Transferência</MenuItem>
-                <MenuItem value='deposito'>Depósito</MenuItem>
-                <MenuItem value='cheque'>Cheque</MenuItem>
-                <MenuItem value='dinheiro'>Dinheiro</MenuItem>
-              </Select>
+                  <MenuItem value='boleto'>Boleto</MenuItem>
+                  <MenuItem value='pix'>PIX</MenuItem>
+                  <MenuItem value='transferencia'>Transferência</MenuItem>
+                  <MenuItem value='deposito'>Depósito</MenuItem>
+                  <MenuItem value='cheque'>Cheque</MenuItem>
+                  <MenuItem value='dinheiro'>Dinheiro</MenuItem>
+                </Select>
 
-            </CustomFormControl>
-          </div>
+              </CustomFormControl>
+            </div>
 
 
-          <div className="form__input--halfWidth">
-            <CustomFormControl>
-              <InputLabel id="formaPagamento-label">Tipo de despesa</InputLabel>
+            <div className="form__input--halfWidth">
+              <CustomFormControl>
+                <InputLabel id="formaPagamento-label">Tipo de despesa</InputLabel>
 
-              <Select
-                labelId="formaPagamento-label"
-                id="expenseType"
-                value={values.expenseType}
-                label="Tipo de despesa"
-                onChange={handleOnChangeInformation('expenseType')}
-              >
+                <Select
+                  labelId="formaPagamento-label"
+                  id="expenseType"
+                  value={values.expenseType}
+                  label="Tipo de despesa"
+                  onChange={handleOnChangeInformation('expenseType')}
+                >
+                  
+                  <MenuItem value="fixa">Fixa</MenuItem>
+                  <MenuItem value="folhaPagamento">Folha de Pagamento</MenuItem>
+                  <MenuItem value="impostos">Impostos</MenuItem>
+                  <MenuItem value="bancaria">Bancária</MenuItem>
+                  <MenuItem value="produto">Produto</MenuItem>
+                  <MenuItem value="servico">Serviço</MenuItem>   
+                  <MenuItem value="alimentacao">Alimentação</MenuItem>   
+
+                </Select>
+
+              </CustomFormControl>
+            </div>
+
+
+            <div className="form__input--halfWidth">
+              <CustomTextField
+                id="billFile"
+                label="Arquivo da conta"
+                variant="outlined" 
+                defaultValue={values.billFile}
+                onChange={handleOnChangeInformation('billFile')}
+              />
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label htmlFor="upload-file">
+                <input
+                  style={{ display: "none" }}
+                  id="upload-file"
+                  name="upload-file"
+                  type="file"
+                />
                 
-                <MenuItem value="fixa">Fixa</MenuItem>
-                <MenuItem value="folhaPagamento">Folha de Pagamento</MenuItem>
-                <MenuItem value="impostos">Impostos</MenuItem>
-                <MenuItem value="bancaria">Bancária</MenuItem>
-                <MenuItem value="produto">Produto</MenuItem>
-                <MenuItem value="servico">Serviço</MenuItem>   
-                <MenuItem value="alimentacao">Alimentação</MenuItem>   
+                <Fab
+                  className='modal__upload--button'
+                  component="span"
+                  aria-label="add"
+                  variant="extended"
+                >
 
-              </Select>
+                  <AddIcon /> Novo arquivo
+                </Fab>
+              </label>
 
-            </CustomFormControl>
-          </div>
+            </div>
 
 
-          <div className="form__input--halfWidth">
-            <CustomTextField
-              id="billFile"
-              label="Arquivo da conta"
-              variant="outlined" 
-              defaultValue={values.billFile}
-              onChange={handleOnChangeInformation('billFile')}
-            />
-          </div>
 
-          <div className="form__input--halfWidth">
-            <label htmlFor="upload-file">
-              <input
-                style={{ display: "none" }}
-                id="upload-file"
-                name="upload-file"
-                type="file"
+            <div className="form__input--fullWidth">
+              <CustomTextField
+                id="additionalInformation"
+                label="Informações adicionais"
+                multiline
+                value={values.additionalInformation}
+                rows={4}
+                onChange={handleOnChangeInformation('additionalInformation')}
               />
-              
-              <Fab
-                className='modal__upload--button'
-                component="span"
-                aria-label="add"
-                variant="extended"
-              >
-
-                <AddIcon /> Novo arquivo
-              </Fab>
-            </label>
+            </div>
 
           </div>
 
-
-
-          <div className="form__input--fullWidth">
-            <CustomTextField
-              id="additionalInformation"
-              label="Informações adicionais"
-              multiline
-              value={values.additionalInformation}
-              rows={4}
-              onChange={handleOnChangeInformation('additionalInformation')}
-            />
-          </div>
-
-        </div>
-
-
-        <DialogActions>
-          <Button onClick={handleOpenCloseDialog}>Cancelar</Button>
-          <Button onClick={handleInformation}>Ok</Button>
-        </DialogActions>
-
+          <DialogActions>
+            <Button onClick={handleOpenCloseDialog}>Cancelar</Button>
+            {/* <Button onClick={handleInformation}>Ok</Button> */}
+            <Button type="submit">Ok</Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </>
   );

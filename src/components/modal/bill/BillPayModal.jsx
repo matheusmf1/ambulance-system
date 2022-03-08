@@ -42,7 +42,7 @@ export default function BillPayModal( props ) {
   });
   
   const [values, setValues] = useState({
-    id: `${data.id}`,
+    id: data.id,
     name: `${data.name}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
