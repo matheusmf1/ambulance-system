@@ -10,6 +10,7 @@
   width: -webkit-fill-available;
   width: -moz-available;
   text-align-last: end;
+  text-align: end;
 }
 
 .renderInstallments__container--title {
