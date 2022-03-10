@@ -248,7 +248,6 @@ export default function NewTransformationProposal( props ) {
     e.preventDefault()
 
     const finalData = unifyData()
-    // console.log( finalData )
 
     const transformationProposal = new TransformationProposal( { data: finalData, type: session } )
     const result = await transformationProposal.addTransformationProposalToFirebase();

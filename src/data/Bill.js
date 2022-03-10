@@ -1,5 +1,6 @@
 import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc, collection, query, getDocs, addDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
+import { ref, uploadBytes } from "firebase/storage";
 
 export class Bill {
   
@@ -27,7 +28,17 @@ export class Bill {
 
       //Set new document id
       this.data['id'] = idData['id']
-      await setDoc( doc( db, `bills_${this.billType}`, `${this.data['id']}` ), this.data );
+
+      if ( this.data['billFile'] !== '' ) {
+        let file = this.data[ 'billFile' ]
+        this.data[ 'billFile' ] = file['name']
+        await setDoc( doc( db, `bills_${this.billType}`, `${this.data['id']}` ), this.data );
+        await this.uploadFile( file )
+      }
+
+      else {
+        await setDoc( doc( db, `bills_${this.billType}`, `${this.data['id']}` ), this.data );
+      }
       
       return true
       
@@ -72,6 +83,14 @@ export class Bill {
       console.error( error )
       return false
     }
+  }
+
+  uploadFile = async ( file ) => {
+    const storageRef = ref( storage, `bills_${this.billType}/${this.data['id']}/${file['name']}` );
+
+    await uploadBytes( storageRef, file ).then((snapshot) => {
+      console.log( "Feito upload do arquivo" )
+    });
   }
 
 }

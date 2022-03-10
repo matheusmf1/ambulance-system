@@ -66,6 +66,10 @@ export default function NewBillToPay() {
       setData( { ...data, 'paymentInfo': paymentInfo } )
     }
 
+    else if ( id === 'billFile' ) {
+      setData( { ...data, 'billFile': e.target.files[0] } )
+    }
+
     else{
       setData( { ...data, [id]: e.target.value } );
     }
