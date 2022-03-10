@@ -20,3 +20,4 @@ export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const db = getFirestore();
 export const storage = getStorage(app);
+export const bucketName = "silene-pro.appspot.com";

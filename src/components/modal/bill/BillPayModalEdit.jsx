@@ -21,6 +21,8 @@ import CustomFormControl from '../../CustomFormControl';
 import ptBrLocate from "date-fns/locale/pt-BR";
 
 import { Bill } from "../../../data/Bill";
+import { storage, bucketName } from "../../../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillPayModalEdit( props ) {
 
@@ -56,12 +58,24 @@ export default function BillPayModalEdit( props ) {
     }
   });
 
+  const [ billFileData, setBillFileData ] = useState( null );
+
   const handleOpenCloseDialog = ( e ) => {
     setIsOpenModal( !isOpenModal )
   };
 
   const handleInstallmentInformation = ( id ) => ( e ) => {
     setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
+  }
+
+  const checkIfFileHasChanged = () => {
+
+    if ( billFileData ) {
+      return billFileData;
+    }
+    else {
+      return false;
+    }
   }
 
   const handleSubmit = async ( e ) => {
@@ -71,7 +85,7 @@ export default function BillPayModalEdit( props ) {
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData;
 
-    const bill = new Bill( { data: values, id: values['id'], billType: "pay" } )
+    const bill = new Bill( { data: values, id: values['id'], billType: "pay", file: checkIfFileHasChanged() } )
     let result = await bill.updateBillOnFirebase();
 
     if ( result ) {
@@ -86,7 +100,19 @@ export default function BillPayModalEdit( props ) {
   }
   
   const handleOnChangeInformation = (id) => (e) => {
-    setValues( { ...values, [id]: e.target.value } );
+
+    if ( id === 'billFile' ) {      
+      setValues( { ...values, [id]: e.target.files[0]['name'] } );
+      
+      let data = {
+        file: e.target.files[0],
+        fileID: "billFile"
+      }
+      setBillFileData( data );
+    }
+    else {
+      setValues( { ...values, [id]: e.target.value } );
+    }
   }
   
   return (
@@ -216,9 +242,19 @@ export default function BillPayModalEdit( props ) {
               <CustomTextField
                 id="billFile"
                 label="Arquivo da conta"
-                variant="outlined" 
-                defaultValue={values.billFile}
-                onChange={handleOnChangeInformation('billFile')}
+                variant="outlined"
+                disabled
+                // value={ typeof values.billFile !== 'string' ? values.billFile['name'] : values.billFile }
+                value={ values.billFile }
+                onClick={ () => {
+
+                  if ( values.billFile !== '' ) {
+                    let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_pay/${values.id}/billFile/${values.billFile}`) )
+                    .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                    
+                  }
+                  
+                }}
               />
             </div>
 
@@ -229,6 +265,7 @@ export default function BillPayModalEdit( props ) {
                   id="upload-file"
                   name="upload-file"
                   type="file"
+                  onChange={handleOnChangeInformation('billFile')}
                 />
                 
                 <Fab
@@ -238,7 +275,7 @@ export default function BillPayModalEdit( props ) {
                   variant="extended"
                 >
 
-                  <AddIcon /> Novo arquivo
+                  <AddIcon /> Substituir arquivo
                 </Fab>
               </label>
 
@@ -261,7 +298,6 @@ export default function BillPayModalEdit( props ) {
 
           <DialogActions>
             <Button onClick={handleOpenCloseDialog}>Cancelar</Button>
-            {/* <Button onClick={handleInformation}>Ok</Button> */}
             <Button type="submit">Ok</Button>
           </DialogActions>
         </form>

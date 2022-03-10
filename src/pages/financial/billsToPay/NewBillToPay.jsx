@@ -41,6 +41,8 @@ export default function NewBillToPay() {
     }
   )
 
+  const [ billFileData, setBillFileData ] = useState( null );
+
   const handleOnChangeInformation = (id) => (e) => {
     
     if ( id === 'dueDate' ) {
@@ -67,7 +69,14 @@ export default function NewBillToPay() {
     }
 
     else if ( id === 'billFile' ) {
-      setData( { ...data, 'billFile': e.target.files[0] } )
+      // setData( { ...data, 'billFile': e.target.files[0] } )
+      setData( { ...data, [id]: e.target.files[0]['name'] } );
+      
+      let data2 = {
+        file: e.target.files[0],
+        fileID: "billFile"
+      }
+      setBillFileData( data2 );
     }
 
     else{
@@ -132,11 +141,22 @@ export default function NewBillToPay() {
 
   }
 
+  const checkIfFileHasChanged = () => {
+
+    if ( billFileData ) {
+      return billFileData;
+    }
+    else {
+      return false;
+    }
+  }
+
+
   const handleAddInformation = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
-    const bill = new Bill( { data: finalData, billType: finalData['billType'] } );
+    const bill = new Bill( { data: finalData, billType: finalData['billType'], file: checkIfFileHasChanged() } );
 
     const result = await bill.addBillToFirebase();
 
@@ -217,14 +237,14 @@ export default function NewBillToPay() {
 
             <div className="form__input--halfWidth">
             <label className="form__input--label">Formas de Pagamento</label>
-                <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleOnChangeInformation('paymentType')}>
+              <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleOnChangeInformation('paymentType')}>
                   <option value="boleto">Boleto</option>
                   <option value="cheque">Cheque</option>
                   <option value="deposito">Depósito</option>
                   <option value="dinheiro">Dinheiro</option>
                   <option value="pix">PIX</option>
                   <option value="transferencia">Transferência</option>   
-                </select>  
+              </select>  
             </div>
 
             <div className="form__input--halfWidth">
