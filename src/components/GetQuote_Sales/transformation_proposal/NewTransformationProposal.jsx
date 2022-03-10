@@ -179,7 +179,6 @@ export default function NewTransformationProposal( props ) {
     }
 
     else if ( id === 'information_file' ) {
-      console.log( e.target.files[0] )
       setTransformationProposalData( { ...transformationProposalData, 'information_file': e.target.files[0] } )
     }
 
@@ -249,7 +248,7 @@ export default function NewTransformationProposal( props ) {
     e.preventDefault()
 
     const finalData = unifyData()
-    console.log( finalData )
+    // console.log( finalData )
 
     const transformationProposal = new TransformationProposal( { data: finalData, type: session } )
     const result = await transformationProposal.addTransformationProposalToFirebase();
@@ -481,7 +480,7 @@ export default function NewTransformationProposal( props ) {
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')}/>
+                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')} required/>
                 <h3 className="info">Solicitado por:</h3>
               </div>
 
@@ -496,7 +495,7 @@ export default function NewTransformationProposal( props ) {
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')}/>
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')} required/>
                 </div>
 
               </div>

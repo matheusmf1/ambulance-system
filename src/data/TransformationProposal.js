@@ -29,11 +29,16 @@ export class TransformationProposal {
       //Set new document id
       this.data['id'] = idData['id'];
 
-      let file = this.data[ 'information_file' ]
-      this.data[ 'information_file' ] = file['name']
+      if ( this.data['information_file'] !== '' ) {
+        let file = this.data[ 'information_file' ]
+        this.data[ 'information_file' ] = file['name']
+        await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
+        await this.uploadFile( file )
+      }
 
-      await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
-      await this.uploadFile( file )
+      else {
+        await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
+      }
       
       return true
       
@@ -81,7 +86,7 @@ export class TransformationProposal {
   }
 
   uploadFile = async ( file ) => {
-    const storageRef = ref( storage, `${this.type}_transformationProposal/${file['name']}` );
+    const storageRef = ref( storage, `${this.type}_transformationProposal/${this.data['id']}/${file['name']}` );
 
     await uploadBytes( storageRef, file ).then((snapshot) => {
       console.log( "Feito upload do arquivo" )
