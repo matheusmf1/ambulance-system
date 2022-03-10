@@ -13,6 +13,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import './billsInfo.css';
 import { Bill } from "../../../data/Bill";
+import { storage, bucketName } from "../../../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillsPayInfo( props ) {
 
@@ -189,6 +191,26 @@ export default function BillsPayInfo( props ) {
                   />
                 </div>
               }
+
+              { installmentInfo.paymentStatus !== "paid" ? <></> :
+                <div className="form__input--halfWidth">
+                  <CustomTextField
+                    id="receiptFile"
+                    label="Comprovante"
+                    variant="outlined"
+                    disabled
+                    value={ installmentInfo.receiptFile === '' ? "Não disponivel" : installmentInfo.receiptFile }
+                    onClick={ () => {
+
+                      if( installmentInfo.receiptFile !== '' ) {
+                        let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_pay/${idRef}/receiptFile/${installmentInfo.installment}/${installmentInfo.receiptFile}`) )
+                          .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                      }
+
+                    }}
+                  />
+                </div>
+              }
             </div>
           </>
         );
@@ -350,8 +372,14 @@ export default function BillsPayInfo( props ) {
               id="billFile"
               label="Arquivo da conta"
               variant="outlined" 
-              value={data.billFile}
               disabled
+              value={ data.billFile === '' ? "Não disponivel" : data.billFile }
+              onClick={ () => {
+                if( data.billFile !== '' ) {
+                  let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_pay/${idRef}/billFile/${data.billFile}`) )
+                    .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                  }
+              }}
             />
           </div>
 

@@ -28,20 +28,18 @@ export class Bill {
       const idData = idSnap.data();
 
       //Set new document id
-      this.data['id'] = idData['id']
+      this.data['id'] = idData['id'];
 
       if ( this.file ) {
 
         const fileData = this.file['file'];
         const fileID = this.file['fileID'];
 
-        this.data[ fileID ] = fileData['name'];
-
         await this.uploadFile( fileData, fileID );
       }
       
       await setDoc( doc( db, `bills_${this.billType}`, `${this.data['id']}` ), this.data );
-          
+
       return true
       
     } catch (error) {
@@ -73,8 +71,6 @@ export class Bill {
         const fileData = this.file['file'];
         const fileID = this.file['fileID'];
 
-        this.data[ fileID ] = fileData['name'];
-
         await this.uploadFile( fileData, fileID );
       }
 
@@ -90,7 +86,32 @@ export class Bill {
 
   deleteBillFromFirebase = async () => {
     try {
+
+      const deleteRef = ref(storage, `bills_${this.billType}/${this.id}` );
+
+      const delete2 = async ( path ) => {
+
+        await listAll( path ).then( ( dir ) => {
+  
+          dir.items.map( fileRef => {
+            deleteObject( fileRef ).then( () => {
+            })
+            .catch((error) => {
+              console.error( error )
+            });
+          });
+
+          dir.prefixes.forEach( folderRef => delete2( folderRef ) )
+    
+          }).catch( ( error ) => {
+          console.error( error )
+        })
+      }
+
+      await delete2( deleteRef )
+
       await deleteDoc( doc( db, `bills_${this.billType}`, `/${this.id}` ) );
+
       return true
 
     } catch ( error ) {
@@ -106,19 +127,15 @@ export class Bill {
   
     await listAll( deleteRef ).then( ( listResult ) => {
 
-      console.log( listResult )
       listResult.items.map( item => {
-        deleteObject( item ).then( () => {
-          console.log( 'Deletado' )
-        })
+        deleteObject( item ).then( () => {})
         .catch((error) => {
-          console.log( 'Erro' )
           console.error( error )
         });
       })
 
     }).catch( ( error ) => {
-      console.log('Errrrroooooo')
+      console.log('Erro ao listar os objetos')
       console.error( error )
     })
 
@@ -127,5 +144,4 @@ export class Bill {
       console.log( "Feito upload do arquivo" )
     });
   }
-
 }

@@ -68,6 +68,30 @@ export default function BillPayModalEdit( props ) {
     setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
   }
 
+  const handleOnChangeInformation = (id) => (e) => {
+
+    if ( id === 'billFile' ) {      
+     
+      if ( e.target.files[0] ) {
+        setValues( { ...values, [id]: e.target.files[0]['name'] } );
+      
+        let data = {
+          file: e.target.files[0],
+          fileID: "billFile"
+        }
+        setBillFileData( data );
+      } 
+      else {
+        setValues( { ...values, [id]: '' } );
+        setBillFileData( null );
+      }
+
+    }
+    else {
+      setValues( { ...values, [id]: e.target.value } );
+    }
+  }
+
   const checkIfFileHasChanged = () => {
 
     if ( billFileData ) {
@@ -97,22 +121,6 @@ export default function BillPayModalEdit( props ) {
     }
 
     handleOpenCloseDialog()
-  }
-  
-  const handleOnChangeInformation = (id) => (e) => {
-
-    if ( id === 'billFile' ) {      
-      setValues( { ...values, [id]: e.target.files[0]['name'] } );
-      
-      let data = {
-        file: e.target.files[0],
-        fileID: "billFile"
-      }
-      setBillFileData( data );
-    }
-    else {
-      setValues( { ...values, [id]: e.target.value } );
-    }
   }
   
   return (
@@ -244,7 +252,6 @@ export default function BillPayModalEdit( props ) {
                 label="Arquivo da conta"
                 variant="outlined"
                 disabled
-                // value={ typeof values.billFile !== 'string' ? values.billFile['name'] : values.billFile }
                 value={ values.billFile }
                 onClick={ () => {
 

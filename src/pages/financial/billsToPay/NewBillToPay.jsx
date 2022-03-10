@@ -69,14 +69,20 @@ export default function NewBillToPay() {
     }
 
     else if ( id === 'billFile' ) {
-      // setData( { ...data, 'billFile': e.target.files[0] } )
-      setData( { ...data, [id]: e.target.files[0]['name'] } );
       
-      let data2 = {
-        file: e.target.files[0],
-        fileID: "billFile"
+      if ( e.target.files[0] ) {
+        setData( { ...data, [id]: e.target.files[0]['name'] } );
+      
+        let data2 = {
+          file: e.target.files[0],
+          fileID: id
+        }
+        setBillFileData( data2 );
+      } 
+      else {
+        setData( { ...data, [id]: '' } );
+        setBillFileData( null );
       }
-      setBillFileData( data2 );
     }
 
     else{

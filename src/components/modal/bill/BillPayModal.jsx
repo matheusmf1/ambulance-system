@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { React, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -56,26 +56,60 @@ export default function BillPayModal( props ) {
     }
   });
 
+  const [ receiptFileData, setReceiptFile ] = useState( null );
+
   const handleOpenCloseDialog = ( e ) => {
     setIsOpenModal( !isOpenModal )
   };
 
   const handleInstallmentInformation = ( id ) => ( e ) => {
-    setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
+
+    if ( id === "receiptFile" ) {
+
+      if ( e.target.files[0] ) {
+        setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.files[0]['name'] } );
+      
+        let data = {
+          file: e.target.files[0],
+          fileID: `${id}/${valuesInstallmentData['installment']}`,
+        }
+        setReceiptFile( data );
+      } 
+      else {
+        setValuesInstallmentData( { ...valuesInstallmentData, [id]: '' } ); 
+        setReceiptFile( null );
+      }
+    }
+    else {
+      setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
+    }
+  }
+
+  const handleOnChangeInformation = (id) => (e) => {
+    setValues( { ...values, [id]: e.target.value } );
+  }
+
+  const checkIfFileHasChanged = () => {
+
+    if ( receiptFileData ) {
+      return receiptFileData;
+    }
+    else {
+      return false;
+    }
   }
   
   
   const handleSubmit = async ( e ) => {
 
-    e.preventDefault()
-    console.log( data )
+    e.preventDefault() 
 
     valuesInstallmentData['amountPaid'] =  parseFloat(valuesInstallmentData['amountPaid']).toFixed(3).slice(0, -1)
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
 
-    const bill = new Bill( { data: values, id: values['id'], billType: "pay" } )
+    const bill = new Bill( { data: values, id: values['id'], billType: "pay",  file: checkIfFileHasChanged() } )
     let result = await bill.updateBillOnFirebase();
 
     if ( result ) {
@@ -89,16 +123,12 @@ export default function BillPayModal( props ) {
     handleOpenCloseDialog()
   }
   
-  const handleOnChangeInformation = (id) => (e) => {
-    setValues( { ...values, [id]: e.target.value } );
-  }
-  
+
   return (
     <>
       <button className="userListEdit modal__button" variant="outlined" onClick={handleOpenCloseDialog}>
         Dar baixa
       </button>
-
 
       <Dialog 
         open={isOpenModal}
@@ -268,7 +298,7 @@ export default function BillPayModal( props ) {
                   aria-label="add"
                   variant="extended">
 
-                  <AddIcon/> Comprovante
+                  <AddIcon/>  {  valuesInstallmentData['receiptFile'] !== '' ? valuesInstallmentData['receiptFile'] : "Comprovante" } 
                 </Fab>
               </label>
 
