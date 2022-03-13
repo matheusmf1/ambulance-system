@@ -60,12 +60,33 @@ export default function BillReceiveModal( props ) {
     }
   });
 
+  const [ receiptFileData, setReceiptFile ] = useState( null );
+
   const handleOpenCloseDialog = ( e ) => {
     setIsOpenModal( !isOpenModal )
   };
   
   const handleInstallmentInformation = ( id ) => ( e ) => {
-    setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
+
+    if ( id === "receiptFile" ) {
+
+      if ( e.target.files[0] ) {
+        setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.files[0]['name'] } );
+      
+        let data = {
+          file: e.target.files[0],
+          fileID: `${id}/${valuesInstallmentData['installment']}`,
+        }
+        setReceiptFile( data );
+      } 
+      else {
+        setValuesInstallmentData( { ...valuesInstallmentData, [id]: '' } ); 
+        setReceiptFile( null );
+      }
+    }
+    else {
+      setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
+    }
   }
   
   
@@ -73,6 +94,15 @@ export default function BillReceiveModal( props ) {
     setValues( { ...values, [id]: e.target.value } );
   }
 
+  const checkIfFileHasChanged = () => {
+
+    if ( receiptFileData ) {
+      return receiptFileData;
+    }
+    else {
+      return false;
+    }
+  }
 
   const handleSubmit = async ( e ) => {
 
@@ -83,7 +113,7 @@ export default function BillReceiveModal( props ) {
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
   
-    const bill = new Bill( { data: values, id: values['id'], billType: "receive" } )
+    const bill = new Bill( { data: values, id: values['id'], billType: "receive",  file: checkIfFileHasChanged() } )
     let result = await bill.updateBillOnFirebase();
 
     if ( result ) {
@@ -95,7 +125,6 @@ export default function BillReceiveModal( props ) {
     }
     
     handleOpenCloseDialog()
-
   }
   
   return (
@@ -258,7 +287,7 @@ export default function BillReceiveModal( props ) {
                   id="receiptFile"
                   name="receiptFile"
                   type="file"
-                  onChange={handleOnChangeInformation('receiptFile')}
+                  onChange={handleInstallmentInformation('receiptFile')}
                 />
                 
                 <Fab
@@ -267,7 +296,7 @@ export default function BillReceiveModal( props ) {
                   aria-label="add"
                   variant="extended">
 
-                  <AddIcon/> Comprovante
+                  <AddIcon/> { valuesInstallmentData['receiptFile'] !== '' ? valuesInstallmentData['receiptFile'] : "Comprovante" } 
                 </Fab>
               </label>
 

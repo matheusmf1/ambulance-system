@@ -282,7 +282,7 @@ export default function BillPayModalEdit( props ) {
                   variant="extended"
                 >
 
-                  <AddIcon /> Substituir arquivo
+                  <AddIcon /> Substituir Arquivo
                 </Fab>
               </label>
 

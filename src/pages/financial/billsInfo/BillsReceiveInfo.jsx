@@ -13,6 +13,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import './billsInfo.css';
 import { Bill } from "../../../data/Bill";
+import { storage, bucketName } from "../../../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillsReceiveInfo( props ) {
 
@@ -21,6 +23,7 @@ export default function BillsReceiveInfo( props ) {
   const [ hasInstallment, setHasInstallment ] = useState( false );
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
   const [ updateButton, setUpdateButton ] = useState( false );
+
 
   useEffect( () => {
 
@@ -188,6 +191,26 @@ export default function BillsReceiveInfo( props ) {
                 </div>
               }
 
+              { installmentInfo.paymentStatus !== "received" ? <></> :
+                <div className="form__input--halfWidth">
+                  <CustomTextField
+                    id="receiptFile"
+                    label="Comprovante"
+                    variant="outlined"
+                    disabled
+                    value={ installmentInfo.receiptFile === '' ? "Não disponivel" : installmentInfo.receiptFile }
+                    onClick={ () => {
+
+                      if( installmentInfo.receiptFile !== '' ) {
+                        let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_receive/${idRef}/receiptFile/${installmentInfo.installment}/${installmentInfo.receiptFile}`) )
+                          .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                      }
+
+                    }}
+                  />
+                </div>
+              }
+
             </div>
           </>
         );
@@ -341,10 +364,16 @@ export default function BillsReceiveInfo( props ) {
           <div className="form__input--halfWidth">
             <CustomTextField
               id="billFile"
-              label="Arquivo"
+              label="Arquivo da conta"
               variant="outlined" 
-              value={ data === '' ? '' : data.billFile }
               disabled
+              value={ data.billFile === '' ? "Não disponivel" : data.billFile }
+              onClick={ () => {
+                if( data.billFile !== '' ) {
+                  let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_receive/${idRef}/billFile/${data.billFile}`) )
+                    .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                  }
+              }}
             />
           </div>
 

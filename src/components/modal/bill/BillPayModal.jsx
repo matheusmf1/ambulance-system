@@ -298,7 +298,7 @@ export default function BillPayModal( props ) {
                   aria-label="add"
                   variant="extended">
 
-                  <AddIcon/>  {  valuesInstallmentData['receiptFile'] !== '' ? valuesInstallmentData['receiptFile'] : "Comprovante" } 
+                  <AddIcon/> { valuesInstallmentData['receiptFile'] !== '' ? valuesInstallmentData['receiptFile'] : "Comprovante" } 
                 </Fab>
               </label>
 
