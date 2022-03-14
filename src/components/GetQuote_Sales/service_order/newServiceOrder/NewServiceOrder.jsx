@@ -5,8 +5,11 @@ import './newServiceOrder.css'
 import logoRescue from '../../../../assets/images/logo-rescue.png';
 import { TableOS } from '../../../../components/tables/responsiveTable/table';
 import InputCpfCnpj from '../../../inputs/input--cpfCnpj';
-import InputPhoneNumber from '../../../inputs/input--phoneNumber'
-import InputCep from '../../../inputs/input--cep'
+import InputPhoneNumber from '../../../inputs/input--phoneNumber';
+import InputCep from '../../../inputs/input--cep';
+import { useHistory } from "react-router-dom"
+import { ServiceOrder } from "../../../../data/ServiceOrder";
+
 
 export default function NewServiceOrder( props ) {
 
@@ -27,7 +30,8 @@ export default function NewServiceOrder( props ) {
     }
   )
 
-  const [serviceOrderData, setServiceOrderData] = useState({
+  const [ serviceOrderData, setServiceOrderData ] = useState({
+    id: "",
     entryDate: "",
     clientNumber: "",
     companyName: "",
@@ -55,15 +59,15 @@ export default function NewServiceOrder( props ) {
 
     responsable: "",
 
-    tableDataProdutos: "",
-    tableDataServicos: "",
+    tableDataProdutos: {},
+    tableDataServicos: {},
     outputDate: "",
     requestedBy: "",
     status: "cancelado_naoAprovado"
 
   });
 
-  const [tableDataProdutos, setTableDataProdutos] = useState( {
+  const [ tableDataProdutos, setTableDataProdutos ] = useState( {
 
     "columns" : [
 
@@ -232,6 +236,7 @@ export default function NewServiceOrder( props ) {
   });
 
   const { session } = props
+  let history = useHistory();
 
   const defineStatusFieldOptions = ( session ) => {
     
@@ -256,17 +261,23 @@ export default function NewServiceOrder( props ) {
   }
 
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+    setServiceOrderData( { ...serviceOrderData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setServiceOrderData( { ...serviceOrderData, "cep": cep, "address": data['logradouro'], "city": data['localidade'], "state": data['uf'] } );
-  
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          setServiceOrderData( { ...serviceOrderData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
@@ -274,7 +285,6 @@ export default function NewServiceOrder( props ) {
       })
     }
 
-  
   }
 
   const installmentElements = () => setHasInstallment( !hasInstallment )
@@ -406,17 +416,22 @@ export default function NewServiceOrder( props ) {
     return serviceOrderData
 
   }
-  
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
     e.preventDefault()
 
-    console.log( tableDataProdutos )
-
     const finalData = unifyData()
-    finalData['id'] = '1'
-    console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+
+    const serviceOrder = new ServiceOrder( { data: finalData, type: session } )
+    const result = await serviceOrder.addServiceOrderToFirebase();
+
+    if ( result ) {
+      alert( "Ordem de Serviço cadastrada com sucesso" )
+      // history.push("/fornecedores")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
   }
 
   return (
@@ -504,7 +519,7 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onBlur={checkCep}/>
+                <InputCep onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">

@@ -2,9 +2,8 @@
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
-// import firebase from "firebase/app";
-// import "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4J5L0hx08BWtVJtXS5YU587usQLNjB6s",
@@ -19,7 +18,6 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-
-// firebase.initializeApp( firebaseConfig );
-
-// export default firebase;
+export const db = getFirestore();
+export const storage = getStorage(app);
+export const bucketName = "silene-pro.appspot.com";

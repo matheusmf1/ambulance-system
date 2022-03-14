@@ -20,6 +20,9 @@ import CustomTextField from '../../CustomTextField';
 import CustomFormControl from '../../CustomFormControl'
 import ptBrLocate from "date-fns/locale/pt-BR"
 
+import { Bill } from "../../../data/Bill";
+import { storage, bucketName } from "../../../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillReceiveModalEdit( props ) {
 
@@ -40,13 +43,12 @@ export default function BillReceiveModalEdit( props ) {
   });
   
   const [values, setValues] = useState({
-    id: `${data.id}`,
+    id: data.id,
     name: `${data.name}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
     additionalInformation: `${data.additionalInformation}`,
-    expenseType: `${data.expenseType}`,
     amountPay: `${data.amountPay}`,
 
     service: `${data.service}`,
@@ -58,6 +60,8 @@ export default function BillReceiveModalEdit( props ) {
     }
   });
 
+  const [ billFileData, setBillFileData ] = useState( null );
+
   const handleOpenCloseDialog = ( e ) => {
     setIsOpenModal( !isOpenModal )
   };
@@ -66,23 +70,61 @@ export default function BillReceiveModalEdit( props ) {
     setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
   }
 
-  const handleSubmit = ( e ) => {
+  const handleOnChangeInformation = (id) => (e) => {
+    
+    if ( id === 'billFile' ) {      
+     
+      if ( e.target.files[0] ) {
+        setValues( { ...values, [id]: e.target.files[0]['name'] } );
+      
+        let data = {
+          file: e.target.files[0],
+          fileID: "billFile"
+        }
+        setBillFileData( data );
+      } 
+      else {
+        setValues( { ...values, [id]: '' } );
+        setBillFileData( null );
+      }
+
+    }
+    else {
+      setValues( { ...values, [id]: e.target.value } );
+    }
+  }
+
+  const checkIfFileHasChanged = () => {
+
+    if ( billFileData ) {
+      return billFileData;
+    }
+    else {
+      return false;
+    }
+  }
+
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault()
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
-  
+    
+    const bill = new Bill( { data: values, id: values['id'], billType: "receive", file: checkIfFileHasChanged() } )
+    let result = await bill.updateBillOnFirebase();
 
-    console.log( '------ Nova alteracao -------' )
-    console.log( values )
+    if ( result ) {
+      alert( "Conta atualizada com sucesso" )
+      window.location.reload()
+    }
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+    }
     
     handleOpenCloseDialog()
   }
   
-  const handleOnChangeInformation = (id) => (e) => {
-    setValues( { ...values, [id]: e.target.value } );
-  }
   
   return (
     <>
@@ -122,7 +164,7 @@ export default function BillReceiveModalEdit( props ) {
                 disabled
                 label="Nº Serviço"
                 variant="outlined" 
-                defaultValue={values.serviceNumber}
+                value={values.serviceNumber}
               />
             </div>
 
@@ -168,7 +210,7 @@ export default function BillReceiveModalEdit( props ) {
 
                   <MenuItem value='boleto'>Boleto</MenuItem>
                   <MenuItem value='pix'>PIX</MenuItem>
-                  <MenuItem value='transferência'>Transferência</MenuItem>
+                  <MenuItem value='transferencia'>Transferência</MenuItem>
                   <MenuItem value='deposito'>Depósito</MenuItem>
                   <MenuItem value='cheque'>Cheque</MenuItem>
                   <MenuItem value='dinheiro'>Dinheiro</MenuItem>
@@ -202,8 +244,17 @@ export default function BillReceiveModalEdit( props ) {
                 id="billFile"
                 label="Arquivo da conta"
                 variant="outlined" 
-                defaultValue={values.billFile}
-                onChange={handleOnChangeInformation('billFile')}
+                disabled
+                value={ values.billFile }
+                onClick={ () => {
+
+                  if ( values.billFile !== '' ) {
+                    let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_receive/${values.id}/billFile/${values.billFile}`) )
+                    .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                    
+                  }
+                  
+                }}
               />
             </div>
 
@@ -214,6 +265,7 @@ export default function BillReceiveModalEdit( props ) {
                   id="upload-file"
                   name="upload-file"
                   type="file"
+                  onChange={handleOnChangeInformation('billFile')}
                 />
                 
                 <Fab
@@ -223,7 +275,7 @@ export default function BillReceiveModalEdit( props ) {
                   variant="extended"
                 >
 
-                  <AddIcon /> Comprovante
+                  <AddIcon /> Substituir Arquivo
                 </Fab>
               </label>
 
@@ -244,7 +296,6 @@ export default function BillReceiveModalEdit( props ) {
 
           <DialogActions>
             <Button onClick={handleOpenCloseDialog}>Cancelar</Button> 
-            {/* <Button onClick={handleInformation}>Ok</Button> */}
             <Button type="submit">Ok</Button>
           </DialogActions>
         

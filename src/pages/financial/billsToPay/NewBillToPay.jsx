@@ -1,8 +1,12 @@
 import React, {useState} from "react";
 
-import '../../customer/customerAdd/customerAdd.css'
+import '../../customer/customerAdd/customerAdd.css';
+import { Bill } from "../../../data/Bill";
+import { useHistory } from "react-router-dom";
 
 export default function NewBillToPay() {
+
+  const history = useHistory();
 
   const [ hasInstallment, setHasInstallment ] = useState(false)
 
@@ -33,12 +37,11 @@ export default function NewBillToPay() {
       paymentInfo: {
         installments: "1",
         installmentsData: []
-      },
-      
-      service: "VAZIO EM PAY",
-      serviceNumber: "VAZIO EM PAY"
+      }
     }
   )
+
+  const [ billFileData, setBillFileData ] = useState( null );
 
   const handleOnChangeInformation = (id) => (e) => {
     
@@ -63,6 +66,23 @@ export default function NewBillToPay() {
       }
 
       setData( { ...data, 'paymentInfo': paymentInfo } )
+    }
+
+    else if ( id === 'billFile' ) {
+      
+      if ( e.target.files[0] ) {
+        setData( { ...data, [id]: e.target.files[0]['name'] } );
+      
+        let data2 = {
+          file: e.target.files[0],
+          fileID: id
+        }
+        setBillFileData( data2 );
+      } 
+      else {
+        setData( { ...data, [id]: '' } );
+        setBillFileData( null );
+      }
     }
 
     else{
@@ -127,13 +147,32 @@ export default function NewBillToPay() {
 
   }
 
-  const handleAddInformation = ( e ) => {
+  const checkIfFileHasChanged = () => {
+
+    if ( billFileData ) {
+      return billFileData;
+    }
+    else {
+      return false;
+    }
+  }
+
+
+  const handleAddInformation = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
-    finalData['id'] = '1'
-    console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+    const bill = new Bill( { data: finalData, billType: finalData['billType'], file: checkIfFileHasChanged() } );
+
+    const result = await bill.addBillToFirebase();
+
+    if ( result ) {
+      alert( "Conta a ser paga cadastrada com sucesso" )
+      history.push("/financeiro/pagar")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
     
   }
 
@@ -204,14 +243,14 @@ export default function NewBillToPay() {
 
             <div className="form__input--halfWidth">
             <label className="form__input--label">Formas de Pagamento</label>
-                <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleOnChangeInformation('paymentType')}>
+              <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleOnChangeInformation('paymentType')}>
                   <option value="boleto">Boleto</option>
                   <option value="cheque">Cheque</option>
                   <option value="deposito">Depósito</option>
                   <option value="dinheiro">Dinheiro</option>
                   <option value="pix">PIX</option>
                   <option value="transferencia">Transferência</option>   
-                </select>  
+              </select>  
             </div>
 
             <div className="form__input--halfWidth">

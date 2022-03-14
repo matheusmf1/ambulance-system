@@ -8,22 +8,29 @@ import {
 
 import BusinessIcon from '@material-ui/icons/Business';
 import userImage from '../../../assets/images/user.png'
-import { tableEmployeeData } from '../../../assets/mock/tableEmployeeData';
 
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
+import { Employee } from "../../../data/Employee"
 
-const fetchUserData = ( id ) => {
-  return tableEmployeeData.filter( user => user.id === id )[0] 
-}
 
 export default function EmployeeInfo( props ) {
 
-  let userID = props.match.params.id;
-  let userData = fetchUserData( userID )
+  const [ data, setData ] = useState( '' );
+  const [ employeeData, setEmployeeData ] = useState( '' );
+  const [ idRef, setIdRef ] = useState( '' );
+  const [ bankData, setBankData ] = useState([])
 
-  const [bankData, setBankData] = useState([])
+  useEffect( () => {
+
+    let userID = props.match.params.id;
+
+    if ( !data ) {
+      fetchUserData( userID )
+    }
+
+  }, []);
 
   useEffect( () => {
     fetch('https://brasilapi.com.br/api/banks/v1')
@@ -35,62 +42,82 @@ export default function EmployeeInfo( props ) {
     .catch( error => console.error( error ))
   }, [])
 
-  const [ employeeData, setEmployeeData ] = useState({
-    id: `${userData['id']}`,
-    name: `${userData['name']}`,
-    birthday: `${userData['birthday']}`,
+  const fetchUserData = async ( id ) => {
     
-    gender: `${userData['gender']}`,
-    marital_status: `${userData['marital_status']}`,
+    setIdRef( id )
+    let billData = JSON.parse( localStorage.getItem( 'employeeInfo' ) );
 
-    cep: `${userData['cep']}`,
-    address: `${userData['address']}`,
-    addressNumber: `${userData['addressNumber']}`,
-    aditionalInformation: `${userData['aditionalInformation']}`,
-    neighborhood: `${userData['neighborhood']}`,
-    city: `${userData['city']}`,
-    state: `${userData['state']}`,
+    if ( billData ) {
+
+      if ( toString( billData['id'] ) !== toString( id ) ) {
+
+        console.log( "Feching data from firebase" )
+
+        const employee = new Employee( { id: id } )
+        const employeeData = await employee.getEmployeeFromFirebase();
+
+        if ( employeeData ) {
+          setData( employeeData )
+          setEmployeeData( employeeData )
+        }
+        else {
+          alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+          window.close();
+        }
+ 
+      }
+      else {
+        setData( billData )
+        setEmployeeData( billData )
+      }
+    } 
+    else {
+      console.log( "Feching data from firebase after updating" )
   
-    telephone: `${userData['telephone']}`,
-    mobile: `${userData['mobile']}`,
-    email: `${userData['email']}`,
+      const employee = new Employee( { id: id } )
+      const employeeData = await employee.getEmployeeFromFirebase();
 
-    rg: `${userData['rg']}`,
-    cpf: `${userData['cpf']}`,
-    job_role: `${userData['job_role']}`,
-    salary:`${userData['salary']}`,
-    transportation_voucher: `${userData['transportation_voucher']}`,
-    bank_number: `${userData['bank_number']}`,
-    bank_agency:`${userData['bank_agency']}`,
-    bank_accountType: `${userData['bank_accountType']}`,
-    bank_accountNumber: `${userData['bank_accountNumber']}`,
-    bank_pix: `${userData['bank_pix']}`,
-    moreInfo: `${userData['moreInfo']}`,
-  })
+      if ( employeeData ) {
+        setData( employeeData )
+        setEmployeeData( employeeData )
+      }
+      else {
+        alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+        window.close();
+      }
+    }
+
+  }
 
   const handleInformationChange = ( id ) => ( e ) => {
 
-    if ( id === 'birthday' ){
+    if ( id === 'birthday' ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
       setEmployeeData( { ...employeeData, [id]: `${new Date( formatedDate )}` } );
     }
     else {
       setEmployeeData( { ...employeeData, [id]: e.target.value } )
     }
-
   }
 
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );    
+    setEmployeeData( { ...employeeData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setEmployeeData( { ...employeeData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          setEmployeeData( { ...employeeData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
@@ -100,15 +127,24 @@ export default function EmployeeInfo( props ) {
 
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
     
     e.preventDefault();
-    
-    console.log( employeeData ) 
+    const employee = new Employee( { data: employeeData, id: idRef } )
+    const result = await employee.updateEmployeeOnFirebase();
+
+    if ( result ) {
+      alert( "Funcionário atualizado com sucesso" )
+      localStorage.removeItem( 'employeeInfo' )
+      window.location.reload()
+    }
+
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+    }
   }
 
   const infoMap = {
-
     masculino:"Masculino",
     feminino:"Feminino",
     outro:"Outro",
@@ -157,9 +193,9 @@ export default function EmployeeInfo( props ) {
               className="userShowImg"
             />
             <div className="userShowTopTitle">
-              <span className="userShowUsername"> { userData.name } </span>
-              <span className="userShowUserTitle">Cargo: { userData.job_role }</span>
-              <span className="userShowUserTitle">Código: { userData.id }</span>
+              <span className="userShowUsername"> { data.name } </span>
+              <span className="userShowUserTitle">Cargo: { data.job_role }</span>
+              <span className="userShowUserTitle">Código: { data.id }</span>
             </div>
           </div>
           
@@ -169,115 +205,115 @@ export default function EmployeeInfo( props ) {
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Nascimento:</h6> 
-              <span className="userShowInfoTitle">{ `${new Date( userData.birthday ).toLocaleDateString('pt-br')}`}</span>
+              <span className="userShowInfoTitle">{ `${new Date( data.birthday ).toLocaleDateString('pt-br')}`}</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Gênero:</h6> 
-              <span className="userShowInfoTitle">{ infoMap[ userData.gender ] }</span>
+              <span className="userShowInfoTitle">{ infoMap[ data.gender ] }</span>
             </div>
             
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Estado Civil:</h6> 
-              <span className="userShowInfoTitle">{ infoMap[ userData.marital_status ] }</span>
+              <span className="userShowInfoTitle">{ infoMap[ data.marital_status ] }</span>
             </div>
 
             <div className="userShowInfo">           
               <h6 className="userShowInfoTitle--Subtitle">RG:</h6> 
-              <span className="userShowInfoTitle">{ userData.rg }</span>
+              <span className="userShowInfoTitle">{ data.rg }</span>
             </div>
 
             <div className="userShowInfo">           
               <h6 className="userShowInfoTitle--Subtitle">CPF:</h6> 
-              <span className="userShowInfoTitle">{ userData.cpf }</span>
+              <span className="userShowInfoTitle">{ data.cpf }</span>
             </div>
 
 
             <div className="userShowInfo">
               <LocalPhone className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.telephone }</span>
+              <span className="userShowInfoTitle">{ data.telephone }</span>
             </div>     
 
             <div className="userShowInfo">
               <PhoneAndroid className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.mobile }</span>
+              <span className="userShowInfoTitle">{ data.mobile }</span>
             </div>
 
             <div className="userShowInfo">
               <MailOutline className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.email }</span>
+              <span className="userShowInfoTitle">{ data.email }</span>
             </div>
 
             <span className="userShowTitle">Informações Financeiras</span>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Salário:</h6> 
-              <span className="userShowInfoTitle"> R$ { userData.salary }</span>
+              <span className="userShowInfoTitle"> R$ { data.salary }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Vale Tranporte (total por dia):</h6> 
-              <span className="userShowInfoTitle">R$ { userData.transportation_voucher }</span>
+              <span className="userShowInfoTitle">R$ { data.transportation_voucher }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Instituição Financeira:</h6>
-              <span className="userShowInfoTitle">{ financialInstitution( userData.bank_number ) }</span>
-              {/* <span className="userShowInfoTitle">{ userData.bank_number }</span> */}
+              <span className="userShowInfoTitle">{ financialInstitution( data.bank_number ) }</span>
+              {/* <span className="userShowInfoTitle">{ data.bank_number }</span> */}
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Agência:</h6> 
-              <span className="userShowInfoTitle">{ userData.bank_agency }</span>
+              <span className="userShowInfoTitle">{ data.bank_agency }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Tipo de Conta:</h6> 
-              <span className="userShowInfoTitle">{ infoMap[ userData.bank_accountType ] }</span>
+              <span className="userShowInfoTitle">{ infoMap[ data.bank_accountType ] }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Número da Conta:</h6> 
-              <span className="userShowInfoTitle">{ userData.bank_accountNumber }</span>
+              <span className="userShowInfoTitle">{ data.bank_accountNumber }</span>
             </div>
 
             <div className="userShowInfo">
               <h6 className="userShowInfoTitle--Subtitle">Chave PIX:</h6> 
-              <span className="userShowInfoTitle">{ userData.bank_pix }</span>
+              <span className="userShowInfoTitle">{ data.bank_pix }</span>
             </div>
 
             <span className="userShowTitle">Endereço:</span>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">CEP:</h6> { userData.cep }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">CEP:</h6> { data.cep }</span>
             </div>            
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Endereço:</h6> { userData.address }, { userData.addressNumber }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Endereço:</h6> { data.address }, { data.addressNumber }</span>
             </div>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Complemento:</h6> { userData.aditionalInformation }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Complemento:</h6> { data.aditionalInformation }</span>
             </div>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Bairro:</h6> { userData.neighborhood }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Bairro:</h6> { data.neighborhood }</span>
             </div>
 
             <div className="userShowInfo">
               <BusinessIcon className="userShowIcon" />
-              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Cidade/Estado:</h6> { userData.city } - { userData.state }</span>
+              <span className="userShowInfoTitle"><h6 className="userShowInfoTitle--Subtitle">Cidade/Estado:</h6> { data.city } - { data.state }</span>
             </div>
 
             <span className="userShowTitle">Informações Adicionais</span>
 
             <div className="userShowInfo">
               <Info className="userShowIcon" />
-              <span className="userShowInfoTitle">{ userData.moreInfo } </span>
+              <span className="userShowInfoTitle">{ data.moreInfo } </span>
             </div>
 
           </div>
@@ -314,7 +350,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>Gênero</label>
-                  <select name="estados-brasil" className="userUpdateInput" defaultValue={employeeData['gender']} onChange={handleInformationChange('gender')} required>
+                  <select name="genero" className="userUpdateInput" value={employeeData['gender']} onChange={handleInformationChange('gender')} required>
                     <option value="masculino">Masculino</option>
                     <option value="feminino">Feminino</option>
                     <option value="outro">Outro</option>
@@ -390,7 +426,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>Tipo de Conta</label>
-                  <select name="estados-brasil" className="userUpdateInput" defaultValue={ employeeData.bank_accountType } onChange={handleInformationChange('bank_accountType')} required>
+                  <select name="contaBancaria" className="userUpdateInput" value={ employeeData.bank_accountType } onChange={handleInformationChange('bank_accountType')} required>
                     <option value="choose">Escolha o tipo da Conta</option>
                     <option value="corrente">Corrente</option>
                     <option value="poupanca">Poupança</option>
@@ -416,8 +452,7 @@ export default function EmployeeInfo( props ) {
                     <label>Nascimento</label>
                     <input
                       type="date"
-                      // defaultValue={ employeeData.birthday}
-                      defaultValue={ new Date(employeeData.birthday).toISOString().substring(0,10) }
+                      defaultValue={ employeeData.birthday ? new Date( employeeData.birthday ).toISOString().split("T")[0] : '' }
                       className="userUpdateInput"
                       onChange={handleInformationChange('birthday')}
                     />
@@ -425,12 +460,12 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>CPF</label>
-                  <InputCpfCnpj defaultValue={ employeeData.cnpj_cpf } className="userUpdateInput" onChange={handleInformationChange('cpf')}/>
+                  <InputCpfCnpj defaultValue={ employeeData.cpf } className="userUpdateInput" onChange={handleInformationChange('cpf')}/>
                 </div>
 
                 <div className="userUpdateItem">
                   <label>Estado Civil</label>
-                  <select name="estados-brasil" className="userUpdateInput" defaultValue={employeeData['marital_status']} onChange={handleInformationChange('marital_status')} required>
+                  <select name="estado-civil" className="userUpdateInput" value={employeeData['marital_status']} onChange={handleInformationChange('marital_status')} required>
                     <option value="solteiro">Solteiro(a)</option>
                     <option value="casado">Casado(a)</option>
                     <option value="divorciado">Divorciado(a)</option>
@@ -446,7 +481,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>CEP</label>
-                  <InputCep defaultValue={ employeeData.cep } className="userUpdateInput" onBlur={checkCep} />
+                  <InputCep defaultValue={ employeeData.cep } className="userUpdateInput" onChange={checkCep} />
                 </div>
 
                 <div className="userUpdateItem">
@@ -471,7 +506,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>Estado</label>
-                  <select name="estados-brasil" className="userUpdateInput" defaultValue={employeeData['state']} onChange={handleInformationChange('state')} required>
+                  <select name="estados-brasil" className="userUpdateInput" value={employeeData['state']} onChange={handleInformationChange('state')} required>
                       <option value="AC">Acre</option>
                       <option value="AL">Alagoas</option>
                       <option value="AP">Amapá</option>
@@ -514,7 +549,7 @@ export default function EmployeeInfo( props ) {
 
                 <div className="userUpdateItem">
                   <label>Instituição Financeira</label>                
-                  <select name="estados-brasil" className="userUpdateInput" defaultValue={parseInt(employeeData['bank_number'])} onChange={handleInformationChange('bank_number')} required>
+                  <select name="estados-brasil" className="userUpdateInput" value={parseInt(employeeData['bank_number'])} onChange={handleInformationChange('bank_number')} required>
                       {
                         bankData.map( (data, key) => {
                           return (<option value={data['code']} key={key}>{data['code']} - {data['name']}</option>);
@@ -563,5 +598,3 @@ export default function EmployeeInfo( props ) {
 
   )
 }
-
-

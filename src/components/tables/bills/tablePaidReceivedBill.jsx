@@ -1,64 +1,21 @@
-import React, {useState} from "react";
+import { React, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
-import throttle from "lodash/throttle";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
-
 import DeleteModal from "../../modal/deleteModal";
 
 export const TablePaidReceivedBill = ( props ) => {
 
-  const { tableName, columns, data, billInfoLink, linkCadastro } = props;
+  const { tableName, columns, data, billInfoLink, linkCadastro, collection2, setCollection2, handleDelete, searchPlaceholderName } = props;
 
   const countPerPage = 5;
-  const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [collection, setCollection] = React.useState(
-    cloneDeep(data.slice(0, countPerPage))
-  );
-
-  const searchData = React.useRef( throttle(val => { 
-    
-    const query = val.toLowerCase();
-    setCurrentPage(1);
-  
-    const dataSearch = cloneDeep( 
-      data
-        // .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.dueDate.toLowerCase().indexOf(query) > -1 || item.amountPay.toLowerCase().indexOf(query) > -1 || item.paymentType.toLowerCase().indexOf(query) > -1 )
-        .filter(item => item.name.toLowerCase().indexOf(query) > -1 || item.amountPay.toLowerCase().indexOf(query) > -1 )
-        .slice(0, countPerPage)
-      );
-
-    setCollection(dataSearch);
-    }, 400)
-  );
-
-  // AQUI ESTA O PROBLEMA DE DUPLA RENDERIRACAO
-  React.useEffect(() => {
-    if ( !searchValue ) {
-      updatePage(1);
-    } else {
-      searchData.current(searchValue);
-    }
-
-  }, [searchValue]);
 
   const updatePage = (p) => {
     setCurrentPage(p);
     const to = countPerPage * p;
     const from = to - countPerPage;
-    setCollection(cloneDeep(data.slice(from, to)));
-  };
-
-  const headRow = () => {
-    return Object.values( columns ).map((title, index) => (
-      <td key={index}>{title}</td>
-    ));
-  };
-
-  const tableData = () => {
-    return collection.map((key, index) => tableRows({ key, index }));
+    setCollection2(cloneDeep(data.slice(from, to)));
   };
 
   const tableRows = ( { index, key } ) => {
@@ -102,7 +59,7 @@ export const TablePaidReceivedBill = ( props ) => {
         let paymentNames = {
           'boleto': "Boleto",
           'pix': "PIX",
-          'transferência': "Transferência",
+          'transferencia': "Transferência",
           'deposito': "Depósito",
           'cheque': "Cheque",
           'dinheiro': "Dinheiro"
@@ -122,20 +79,54 @@ export const TablePaidReceivedBill = ( props ) => {
   
   }
 
+  const tableData = () => {
+    return collection2.map((key, index) => tableRows({ key, index }));
+  };
+
+  const headRow = () => {
+    return Object.values( columns ).map((title, index) => (
+      <td key={index}>{title}</td>
+    ));
+  };
+
   const createActionButtons = ( i, rowData ) => {
     
     let {id} = rowData
+    let localStorageName = () => {
+
+      switch( billInfoLink ) {
+
+        case "/financeiro/pagas":
+          return 'billInfo';
+
+        case "/financeiro/recebidos":
+          return 'billInfo';
+          
+        default:
+          return null
+      }
+    }
     return <td key={i}>
 
       <a href={`${billInfoLink}/${id}`} target="_blank" rel="noreferrer">
-        <button className="userListEdit modal__button" variant="outlined" onClick={ () => { localStorage.setItem('billInfo', JSON.stringify(rowData)) }}>
+        <button className="userListEdit modal__button" variant="outlined" onClick={ () => { localStorage.setItem( localStorageName(), JSON.stringify(rowData)) }}>
           Visualizar
         </button>
       </a>
 
-      <DeleteModal id={id}/>
+      <DeleteModal id={id} deleteFunction={handleDelete} collection={collection2} setCollection={setCollection2} />
 
     </td>;  
+  }
+
+  const searchMethod = ( value ) => {
+    
+    return cloneDeep( data.filter( item => 
+        item.name.toLowerCase().indexOf( value ) > -1 ||
+        item.amountPay.toLowerCase().indexOf( value ) > -1
+      )
+      .slice(0, countPerPage)
+    );
   }
 
   return (
@@ -148,9 +139,13 @@ export const TablePaidReceivedBill = ( props ) => {
           
           <input
             className="table__titleAndSearch--search"
-            placeholder="Procurar empresa, valor total..."
-            value={searchValue}
-            onChange={e => setSearchValue(e.target.value)}
+            placeholder={ searchPlaceholderName }
+            
+            onChange={ e => {
+              let value = e.target.value
+              let dataSearch = searchMethod( value.toLowerCase() )
+              setCollection2(dataSearch);               
+            }}
           />
 
           <a href={linkCadastro} className="table__button--add">								  
@@ -158,7 +153,6 @@ export const TablePaidReceivedBill = ( props ) => {
           </a>
 
         </div>
-
 
       </div>
       

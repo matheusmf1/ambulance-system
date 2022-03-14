@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import { React, useState } from 'react'
 
 import '../service_order/newServiceOrder/newServiceOrder.css';
 
 import logoRescue from '../../../assets/images/logo-rescue.png';
-import InputFile from '../../../components/inputs/input--file';
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
+import { TransformationProposal } from "../../../data/TransformationProposal";
+import { useHistory } from "react-router-dom";
 
 export default function NewTransformationProposal( props ) {
+
+  let history = useHistory();
 
   const [ transformationProposalData, setTransformationProposalData ] = useState({
     entryDate: "",
@@ -55,28 +58,37 @@ export default function NewTransformationProposal( props ) {
     }
   )
 
-  const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+
+  const [ billFileData, setBillFileData ] = useState( null );
 
   const { session } = props
 
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+    setTransformationProposalData( { ...transformationProposalData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setTransformationProposalData( { ...transformationProposalData, "cep": cep, "address": data['logradouro'], "city": data['localidade'], "state": data['uf'] } );
-  
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          setTransformationProposalData( { ...transformationProposalData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
+
   }
 
   const defineStatusFieldOptions = ( session ) => {
@@ -167,6 +179,23 @@ export default function NewTransformationProposal( props ) {
       setTransformationProposalData( { ...transformationProposalData, 'paymentInfo': paymentInfo } )
     }
 
+    else if ( id === 'information_file' ) {
+      
+      if ( e.target.files[0] ) {
+        setTransformationProposalData( { ...transformationProposalData, [id]: e.target.files[0]['name'] } );
+      
+        let data2 = {
+          file: e.target.files[0],
+          fileID: id
+        }
+        setBillFileData( data2 );
+      } 
+      else {
+        setTransformationProposalData( { ...transformationProposalData, [id]: '' } );
+        setBillFileData( null );
+      }
+    }
+
     else {
       setTransformationProposalData( {...transformationProposalData, [ id ]: e.target.value } )
     }
@@ -229,45 +258,64 @@ export default function NewTransformationProposal( props ) {
 
   }
 
-  const handleSubmit = ( e ) => {
+  const checkIfFileHasChanged = () => {
+
+    if ( billFileData ) {
+      return billFileData;
+    }
+    else {
+      return false;
+    }
+  }
+
+  const handleSubmit = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
-    finalData['id'] = '1'
-    console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+
+    const transformationProposal = new TransformationProposal( { data: finalData, type: session, file: checkIfFileHasChanged() } );
+    const result = await transformationProposal.addTransformationProposalToFirebase();
+
+    if ( result ) {
+      alert( "Proposta de Transformação cadastrada com sucesso" )
+      // history.push( `/${session}` )
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
+    
   }
 
 
   return (
   
-    <main class="form__container">
+    <main className="form__container">
       
       <h4 className="os__container--title">Nova Proposta de Tranformação</h4>
 
       {/* HEADER */}
       <div className="os__header--container">
 
-        <div class="os__header--containerImage">
-          <img src={logoRescue} alt="" class="os__header--image" />
+        <div className="os__header--containerImage">
+          <img src={logoRescue} alt="" className="os__header--image" />
 
-          <div class="os__header--content">
+          <div className="os__header--content">
 
             <h6>Rescue Transformação de veículos especiais Eireli</h6>
 
-            <h6 class="info">CNPJ: 33.972.355/0001-00</h6>
-            <h6 class="info">Rua Machado, 55 Vila Sorocabana</h6>
-            <h6 class="info">Guarulhos/SP - CEP: 07025-210</h6>
+            <h6 className="info">CNPJ: 33.972.355/0001-00</h6>
+            <h6 className="info">Rua Machado, 55 Vila Sorocabana</h6>
+            <h6 className="info">Guarulhos/SP - CEP: 07025-210</h6>
 
           </div>
 
         </div>
         
-        <div class="os__header--content">
+        <div className="os__header--content">
 
-          <h6 class="info">(11) 2847-0356 - (11) 95651-2030</h6>
-          <h6 class="info">adm@rescueveiculosespeciais.com.br</h6>
-          <h6 class="info">www.rescueveiculosespeciais.com.br</h6>
+          <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
+          <h6 className="info">adm@rescueveiculosespeciais.com.br</h6>
+          <h6 className="info">www.rescueveiculosespeciais.com.br</h6>
 
           <div className='os__header--responsableInfo'>
             <h6 className="info">Responsável:</h6>
@@ -278,9 +326,9 @@ export default function NewTransformationProposal( props ) {
       </div>
 
 
-      <div class="form__content">
+      <div className="form__content">
         <form onSubmit={handleSubmit}>
-          <div class="form__content--inputs">
+          <div className="form__content--inputs">
 
             {/* INFO INICIAL */}
             <div className="osForm__content--container">
@@ -288,7 +336,7 @@ export default function NewTransformationProposal( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Proposta Nº</label>
+                  <label className="form__input--labelInLine">Proposta de Transformação</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
@@ -299,14 +347,14 @@ export default function NewTransformationProposal( props ) {
               </div>
 
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">Código do Cliente*</label>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">Código do Cliente*</label>
                 <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
               </div>
 
-              <div class="form__input--halfWidth">
-                <label class="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input class="form__input" type="text" placeholder="Nome do responsável"/>
+              <div className="form__input--halfWidth">
+                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
+                <input className="form__input" type="text" placeholder="Nome do responsável"/>
               </div>
 
               <div className="form__input--halfWidth">
@@ -316,12 +364,12 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')}/>
+                <InputCpfCnpj onChange={handleInformationChange('cpf')} required={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onBlur={checkCep}/>
+                <InputCep onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">
@@ -383,30 +431,29 @@ export default function NewTransformationProposal( props ) {
             <div className="osForm__content--container">
               <h6 className="os__content--title">Informações</h6>
               
-              <div class="osForm__input">
-                <label class="form__input--label">Veículo*</label>
-                <input class="form__input" type="text" placeholder="Veículo" onChange={handleInformationChange('information_vehicle')} required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Veículo*</label>
+                <input className="form__input" type="text" placeholder="Veículo" onChange={handleInformationChange('information_vehicle')} required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Marca*</label>
-                <input class="form__input" type="text" placeholder="Marca" onChange={handleInformationChange('information_brand')} required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Marca*</label>
+                <input className="form__input" type="text" placeholder="Marca" onChange={handleInformationChange('information_brand')} required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Modelo*</label>
-                <input class="form__input" type="text" placeholder="Modelo" onChange={handleInformationChange('information_model')} required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Modelo*</label>
+                <input className="form__input" type="text" placeholder="Modelo" onChange={handleInformationChange('information_model')} required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Chassi*</label>
-                <input class="form__input" type="text" placeholder="Chassi" onChange={handleInformationChange('information_chassi')} required/>
+              <div className="osForm__input">
+                <label className="form__input--label">Chassi*</label>
+                <input className="form__input" type="text" placeholder="Chassi" onChange={handleInformationChange('information_chassi')} required/>
               </div>
 
-              <div class="osForm__input">
-                <label class="form__input--label">Arquivo</label>
-                <input class="form__input" type="file" onChange={handleInformationChange('information_file')}/>
-                {/* <InputFile/> */}
+              <div className="osForm__input">
+                <label className="form__input--label">Arquivo</label>
+                <input className="form__input" type="file" onChange={handleInformationChange('information_file')}/>
               </div>
 
             </div>
@@ -455,22 +502,22 @@ export default function NewTransformationProposal( props ) {
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')}/>
+                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')} required/>
                 <h3 className="info">Solicitado por:</h3>
               </div>
 
               <div className="os__signatureBankInfo--content">
 
                 <h6>DADOS BANCÁRIOS</h6>
-                <h6 class="info">BANCO BRADESCO</h6>
-                <h6 class="info">AG: 0593</h6>
-                <h6 class="info">C/C: 20.867-1</h6>
-                <h6 class="info">Rescue Transformação de veículos especiais Eireli</h6>
-                <h6 class="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
+                <h6 className="info">BANCO BRADESCO</h6>
+                <h6 className="info">AG: 0593</h6>
+                <h6 className="info">C/C: 20.867-1</h6>
+                <h6 className="info">Rescue Transformação de veículos especiais Eireli</h6>
+                <h6 className="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')}/>
+                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')} required/>
                 </div>
 
               </div>
@@ -482,11 +529,11 @@ export default function NewTransformationProposal( props ) {
 
           
          
-          <div class="footer__button--container">
+          <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" class="form__button form__button--add">Adicionar</button>
-              <button type="reset" class="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" className="form__button form__button--add">Adicionar</button>
+              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
             </div>
 
             <div className="footer__button--status">

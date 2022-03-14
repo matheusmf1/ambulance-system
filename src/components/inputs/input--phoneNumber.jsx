@@ -9,7 +9,7 @@ export default function InputPhoneNumber( props ) {
     <InputMask
       mask={mask}
       className={className ? className: "form__input"}
-      defaultValue={defaultValue}
+      value={ defaultValue ? defaultValue : undefined }
       type="tel"
       placeholder={placeholder}
       onChange={ ( e ) => {

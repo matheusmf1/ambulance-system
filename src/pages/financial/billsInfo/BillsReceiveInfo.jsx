@@ -1,5 +1,4 @@
-import React, {useState} from "react";
-
+import {React, useState, useEffect} from "react";
 import CustomTextField from "../../../components/CustomTextField";
 import CustomFormControl from "../../../components/CustomFormControl";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -12,90 +11,101 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import './billsInfo.css'
+import './billsInfo.css';
+import { Bill } from "../../../data/Bill";
+import { storage, bucketName } from "../../../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillsReceiveInfo( props ) {
 
-  let billID = props.match.params.id;
-  console.log( billID )
+  const [ data, setData ] = useState( '' );
+  const [ idRef, setIdRef ] = useState( '' );
+  const [ hasInstallment, setHasInstallment ] = useState( false );
+  const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
+  const [ updateButton, setUpdateButton ] = useState( false );
 
-  const billData = JSON.parse( localStorage.getItem('billInfo') );
-  console.log( billData );
 
-  const installmentsNumber = billData['paymentInfo']['installments']
-  const firstInstallment = billData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0]
+  useEffect( () => {
 
-  const [ hasInstallment, setHasInstallment ] = useState( installmentsNumber === "1"? false : true )
+    let billID = props.match.params.id;
 
-  const [ valuesInstallmentData, setValuesInstallmentData ] = useState({
-    installmentAmountPay: `${firstInstallment.installmentAmountPay}`,
-    dueDate: `${firstInstallment.dueDate}`,
-    receiptFile: `${firstInstallment.receiptFile}`,
-    paymentDate: `${firstInstallment.paymentDate}`,
-    amountPaid: `${firstInstallment.amountPaid}`,
-    paymentType: `${firstInstallment.paymentType}`,
-    installment: `${firstInstallment.installment}`,
-    paymentStatus: `${firstInstallment.paymentStatus}`
-  });
-
-  const [ data, setData ] = useState(
-    {
-      id: `${billData.id}`,
-      name: `${billData.name}`,
-      billType: `${billData.billType}`,
-      documentNumber: `${billData.documentNumber}`,
-      billFile: `${billData.billFile}`,
-      additionalInformation: `${billData.additionalInformation}`,
-      expenseType: `${billData.expenseType}`,
-      amountPay:`${billData.amountPay}`,
-  
-      paymentInfo: {
-        installments: `${billData['paymentInfo']['installments']}`,
-        installmentsData: billData['paymentInfo']['installmentsData'],
-      },
-      
-      service: `${billData.service}`,
-      serviceNumber: `${billData.serviceNumber}`
+    if ( !data ) {
+      fetchUserData( billID )
     }
-  )
+
+  }, []);
+
+  const fetchUserData = async ( id ) => {
+
+    setIdRef( id )
+    let billData = JSON.parse( localStorage.getItem( 'billInfo' ) );
+
+    if ( billData ) {
+
+      if ( toString( billData['id'] ) !== toString( id ) ) {
+
+        console.log( "Feching data from firebase" )
+
+        const bill = new Bill( { id: id, billType: "receive" } )
+        const billData = await bill.getBillFromFirebase();
+
+        if ( billData ) {
+          setData( billData );
+          setHasInstallment( billData['paymentInfo']['installments'] === "1"? false : true );
+          const firstInstallment = billData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+          setValuesInstallmentData( firstInstallment );
+        }
+        else {
+          alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+          window.close();
+        }
+ 
+      }
+      else {
+        setData( billData );
+        setHasInstallment( billData['paymentInfo']['installments'] === "1"? false : true );
+        const firstInstallment = billData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+        setValuesInstallmentData( firstInstallment );
+      }
+    } 
+    else {
+      console.log( "Feching data from firebase after updating" )
+  
+      const bill = new Bill( { id: id, billType: "receive" } );
+      const billData = await bill.getBillFromFirebase();
+
+      if ( billData ) {
+        setData( billData );
+        setHasInstallment( billData['paymentInfo']['installments'] === "1"? false : true );
+        const firstInstallment = billData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0]
+        setValuesInstallmentData( firstInstallment );
+      }
+      else {
+        alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+        window.close();
+      }
+    }
+
+  }
 
   const handleOnChangeInformation = (id) => (e) => {
-    
-    if ( id === 'dueDate' ) {
-      let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
-      setValuesInstallmentData( { valuesInstallmentData, [id]: `${new Date( formatedDate )}` } );
+
+    setData( { ...data, [id]: e.target.value } );
+
+    if ( !updateButton ) {
+      setUpdateButton( true );
     }
-
-    else if ( id === 'amountPay' ) {
-      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
-      setData( { ...data, [id]: amount } );
-    }
-
-    else if ( id === 'paymentType' ) {
-      setValuesInstallmentData( { valuesInstallmentData, [id]: e.target.value } );
-    }
-
-    else if ( id === 'installments' ) {
-      let paymentInfo = {
-        installments: `${e.target.value}`,
-        installmentsData: [] 
-      }
-
-      setData( { ...data, 'paymentInfo': paymentInfo } )
-    }
-
-    else{
-      setData( { ...data, [id]: e.target.value } );
-    }
-
-
   }
 
   const renderInstallment = () => {
 
+    var totalReceived = 0;
+
     if ( hasInstallment ) {
 
-      let renderIntalmentsInfo = data['paymentInfo']['installmentsData'].map( installmentInfo => {
+      let renderIntalmentsInfo = data['paymentInfo']['installmentsData'].map( (installmentInfo, index )  => {
+
+        installmentInfo['paymentStatus'] === 'received' ? totalReceived += parseFloat(installmentInfo.amountPaid) : totalReceived += 0;
 
         return(
           <>
@@ -108,7 +118,7 @@ export default function BillsReceiveInfo( props ) {
                   label={ `Valor da parcela ${installmentInfo.installment} / ${data.paymentInfo.installments}` }
                   disabled
                   variant="outlined" 
-                  defaultValue={installmentInfo.installmentAmountPay}
+                  value={installmentInfo.installmentAmountPay}
                   InputProps={
                     {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
                   }
@@ -123,9 +133,7 @@ export default function BillsReceiveInfo( props ) {
                     disabled
                     value={ installmentInfo.dueDate }
                     inputFormat="dd/MM/yyyy"
-                    onChange={ (newValue) => {
-                      setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
-                    }} 
+                    onChange={ (newValue) => {}}
                     renderInput={(params) => <CustomTextField {...params}/>}
                   />
                 </LocalizationProvider>
@@ -161,9 +169,7 @@ export default function BillsReceiveInfo( props ) {
                       disabled
                       value={ installmentInfo.paymentDate }
                       inputFormat="dd/MM/yyyy"
-                      onChange={ (newValue) => {
-                        setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
-                      }} 
+                      onChange={ (newValue) => {}}
                       renderInput={(params) => <CustomTextField {...params}/>}
                     />
                   </LocalizationProvider>
@@ -177,7 +183,7 @@ export default function BillsReceiveInfo( props ) {
                     label="Valor Recebido"
                     disabled
                     variant="outlined" 
-                    defaultValue={installmentInfo.amountPaid}
+                    value={installmentInfo.amountPaid}
                     InputProps={
                       {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
                     }
@@ -185,6 +191,25 @@ export default function BillsReceiveInfo( props ) {
                 </div>
               }
 
+              { installmentInfo.paymentStatus !== "received" ? <></> :
+                <div className="form__input--halfWidth">
+                  <CustomTextField
+                    id="receiptFile"
+                    label="Comprovante"
+                    variant="outlined"
+                    disabled
+                    value={ installmentInfo.receiptFile === '' ? "Não disponivel" : installmentInfo.receiptFile }
+                    onClick={ () => {
+
+                      if( installmentInfo.receiptFile !== '' ) {
+                        let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_receive/${idRef}/receiptFile/${installmentInfo.installment}/${installmentInfo.receiptFile}`) )
+                          .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                      }
+
+                    }}
+                  />
+                </div>
+              }
 
             </div>
           </>
@@ -192,10 +217,46 @@ export default function BillsReceiveInfo( props ) {
 
       })
 
-      return renderIntalmentsInfo
+      return(
+        <>
+          {renderIntalmentsInfo}
+
+          <h3 className="renderInstallments__container--title">Total recebido: R$ { totalReceived }</h3>
+          <h3 className="renderInstallments__container--title">Saldo a receber: R$ { parseFloat( data.amountPay ) - totalReceived }</h3>
+        </>
+      );
     }
     else {
       return <></>
+    }
+  }
+
+  const renderUpdateButton = () => {
+
+    if ( updateButton ) {
+      return(      
+        <div className='bill_button--container'>
+          <button onClick={handleSubmit} className="userUpdateButton">Atualizar</button>
+        </div>
+      );
+    } else return <></>
+  }
+
+  const handleSubmit = async ( e ) => {
+
+    e.preventDefault();
+
+    const bill = new Bill( { data: data, id: idRef, billType: "receive" } )
+    const result = await bill.updateBillOnFirebase();
+
+    if ( result ) {
+      alert( "Conta atualizada com sucesso" )
+      localStorage.removeItem( 'billInfo' )
+      window.location.reload()
+    }
+
+    else {
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
     }
   }
 
@@ -217,7 +278,7 @@ export default function BillsReceiveInfo( props ) {
               label="Empresa"
               disabled
               variant="outlined" 
-              defaultValue={data.name}
+              value={ data === '' ? '' : data.name }
             />
           </div>
 
@@ -229,9 +290,7 @@ export default function BillsReceiveInfo( props ) {
                 disabled
                 value={ valuesInstallmentData.dueDate }
                 inputFormat="dd/MM/yyyy"
-                onChange={ (newValue) => {
-                  setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
-                }} 
+                onChange={ (newValue) => {}}
                 renderInput={(params) => <CustomTextField {...params}/>}
               />
             </LocalizationProvider>
@@ -243,7 +302,7 @@ export default function BillsReceiveInfo( props ) {
               label={ data.billType === "paid" ? "Valor Total a Pagar" : "Valor Total a Receber"}
               disabled
               variant="outlined" 
-              defaultValue={data.amountPay}
+              value={data.amountPay}
               InputProps={
                 {startAdornment: <InputAdornment position="start">R$</InputAdornment>}
               }
@@ -257,14 +316,14 @@ export default function BillsReceiveInfo( props ) {
               <Select
                 labelId="formaPagamento-label"
                 id="paymentType"
-                value={valuesInstallmentData.paymentType}
+                value={ valuesInstallmentData === '' ? '' : valuesInstallmentData.paymentType }
                 label="Formas de pagamento"
                 disabled
               >
 
                 <MenuItem value='boleto'>Boleto</MenuItem>
                 <MenuItem value='pix'>PIX</MenuItem>
-                <MenuItem value='transferência'>Transferência</MenuItem>
+                <MenuItem value='transferencia'>Transferência</MenuItem>
                 <MenuItem value='deposito'>Depósito</MenuItem>
                 <MenuItem value='cheque'>Cheque</MenuItem>
                 <MenuItem value='dinheiro'>Dinheiro</MenuItem>
@@ -280,7 +339,7 @@ export default function BillsReceiveInfo( props ) {
               <Select
                 labelId="formaPagamento-label"
                 id="paymentType"
-                value={data.service}
+                value={ data === '' ? '' : data.service}
                 label="Serviço"
                 disabled
               >
@@ -297,7 +356,7 @@ export default function BillsReceiveInfo( props ) {
               id="documentNumber"
               label="Número do Serviço"
               variant="outlined" 
-              defaultValue={data.serviceNumber}
+              value={ data === '' ? '' : data.serviceNumber}
               disabled
             />
           </div>
@@ -305,10 +364,16 @@ export default function BillsReceiveInfo( props ) {
           <div className="form__input--halfWidth">
             <CustomTextField
               id="billFile"
-              label="Arquivo"
+              label="Arquivo da conta"
               variant="outlined" 
-              defaultValue={data.billFile}
               disabled
+              value={ data.billFile === '' ? "Não disponivel" : data.billFile }
+              onClick={ () => {
+                if( data.billFile !== '' ) {
+                  let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_receive/${idRef}/billFile/${data.billFile}`) )
+                    .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+                  }
+              }}
             />
           </div>
 
@@ -324,7 +389,7 @@ export default function BillsReceiveInfo( props ) {
                 disabled
               >
 
-                <MenuItem value={true}>Sim - nº { data['paymentInfo']['installments'] }</MenuItem>
+                <MenuItem value={true}>Sim - nº {  data === '' ? '' : data['paymentInfo']['installments'] }</MenuItem>
                 <MenuItem value={false}>Não</MenuItem>
               </Select>
 
@@ -339,11 +404,13 @@ export default function BillsReceiveInfo( props ) {
               id="additionalInformation"
               label="Informações adicionais"
               multiline
-              value={data.additionalInformation}
+              value={ data === '' ? '' : data.additionalInformation }
               rows={4}
               onChange={handleOnChangeInformation('additionalInformation')}
             />
           </div>
+
+          { renderUpdateButton() }
 
         </div>
 

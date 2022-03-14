@@ -7,7 +7,8 @@ import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
 import InputCpfCnpj from '../../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../inputs/input--phoneNumber'
-import InputCep from '../../../inputs/input--cep'
+import InputCep from '../../../inputs/input--cep';
+import { ProductSale } from "../../../../data/ProductSale";
 
 export default function NewProductsSale( props ) {
 
@@ -149,20 +150,24 @@ export default function NewProductsSale( props ) {
   
   const { session } = props
 
-
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
-    console.log( cep )
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+    setProductSaleData( { ...productSaleData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setProductSaleData( { ...productSaleData, "cep": cep, "address": data['logradouro'], "city": data['localidade'], "state": data['uf'] } );
-  
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          setProductSaleData( { ...productSaleData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
@@ -322,15 +327,22 @@ export default function NewProductsSale( props ) {
 
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
     e.preventDefault()
 
-    console.log( tableDataProdutos )
-
     const finalData = unifyData()
-    finalData['id'] = '1'
     console.log( finalData )
-    console.log( 'SAVE DATA FIREBASE' )
+
+    const productSale = new ProductSale( { data: finalData, type: session } )
+    const result = await productSale.addProductSaleToFirebase();
+
+    if ( result ) {
+      alert( "Venda de Produto cadastrada com sucesso" )
+      // history.push("/fornecedores")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
   }
 
   return (
@@ -416,7 +428,7 @@ export default function NewProductsSale( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP</label>
-                <InputCep onBlur={checkCep}/>
+                <InputCep onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">

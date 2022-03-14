@@ -3,18 +3,16 @@ import InputMask from 'react-input-mask';
 
 export default function InputCep( props ) {
 
-  const { onBlur, className, defaultValue } = props;
+  const { onChange, className, defaultValue } = props;
 
   return(
     <InputMask
       mask="99999-999"
       className={className ? className: "form__input"}
-      defaultValue={defaultValue}
+      value={ defaultValue ? defaultValue : null }
       type="text"
       placeholder="Informe o CEP"
-      onBlur={ ( e ) => {
-        onBlur( e )
-      } }
+      onChange={ ( e ) => { onChange( e ) } }
       required/>
   )
 }

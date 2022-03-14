@@ -1,9 +1,11 @@
 import {React, useState} from 'react'
 
-import './customerAdd.css';
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
+import { useHistory } from "react-router-dom"
+import './customerAdd.css';
+import { Customer } from '../../../data/Customer';
 
 export default function CustomerAdd() {
 
@@ -29,35 +31,59 @@ export default function CustomerAdd() {
     },
   );
 
+  let history = useHistory();
+
   const handleInformationChange = ( id ) => ( e ) => {
     setCustomerData( { ...customerData, [id]: e.target.value } )
   }
 
   const checkCep = ( e ) => {
-    let cep = e.target.value.replace( /\D/g, '' );
 
-    if ( cep ) {
+    let cep = e.target.value.replace( /\D/g, '' );
+    console.log( cep )
+    
+    setCustomerData( { ...customerData, "cep": cep } );
+
+    if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then( response => {
         if (response.ok)
           return response.json()
       })
       .then( data => {
-        setCustomerData( { ...customerData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
-  
+        if ( data.erro ) {
+          throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
+        }
+        else {
+          console.log( data )
+          setCustomerData( { ...customerData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+        }
       })
       .catch( error => {
         console.error( error )
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
+
   }
 
-  const handleSubmit = ( e ) => {
+  const handleSubmit = async ( e ) => {
 
     e.preventDefault();
+  
+    const customer = new Customer( { data: customerData } );
 
-    console.log( customerData ) 
+    const result = await customer.addCustomerToFirebase();
+
+    if ( result ) {
+      alert( "Cliente cadastrado com sucesso" )
+      history.push("/clientes")
+    }
+    else {
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+    }
+
+    
   }
 
   return (
@@ -115,7 +141,7 @@ export default function CustomerAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">CEP*</label>
-              <InputCep onBlur={checkCep} />
+              <InputCep onChange={checkCep} />
             </div>
 
             <div className="form__input--halfWidth">
@@ -125,7 +151,7 @@ export default function CustomerAdd() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Número*</label>
-              <input className="form__input" type="text" placeholder="Informe o número" onChange={handleInformationChange('addressNumber')} required/>
+              <input className="form__input" type="number" placeholder="Informe o número" onChange={handleInformationChange('addressNumber')} required/>
             </div>
 
             <div className="form__input--halfWidth">
@@ -146,6 +172,7 @@ export default function CustomerAdd() {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Estado*</label>
               <select name="estados-brasil" className="form__input" defaultValue={customerData['state']} onChange={handleInformationChange('state')}>
+                  <option value="empty">Escolha uma opção</option>
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>
