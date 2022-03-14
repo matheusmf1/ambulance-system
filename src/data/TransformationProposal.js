@@ -1,13 +1,14 @@
 import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
 import { db, storage } from "../firebase";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, deleteObject, listAll } from "firebase/storage";
 
 export class TransformationProposal {
 
-  constructor ( { data, id, type } ) {
+  constructor ( { data, id, type, file = false } ) {
     this.data = data;
     this.id = id;
     this.type = type;
+    this.file = file;
   }
 
   addTransformationProposalToFirebase = async () => {
@@ -29,16 +30,15 @@ export class TransformationProposal {
       //Set new document id
       this.data['id'] = idData['id'];
 
-      if ( this.data['information_file'] !== '' ) {
-        let file = this.data[ 'information_file' ]
-        this.data[ 'information_file' ] = file['name']
-        await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
-        await this.uploadFile( file )
+      if ( this.file ) {
+
+        const fileData = this.file['file'];
+        const fileID = this.file['fileID'];
+
+        await this.uploadFile( fileData, fileID );
       }
 
-      else {
-        await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
-      }
+      await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -65,6 +65,15 @@ export class TransformationProposal {
   updateTransformationProposalOnFirebase = async () => {
     try {
       const docRef = doc( db, `${this.type}_transformationProposal`, this.id );
+      
+      if ( this.file ) {
+
+        const fileData = this.file['file'];
+        const fileID = this.file['fileID'];
+
+        await this.uploadFile( fileData, fileID );
+      }
+      
       await updateDoc( docRef, this.data );
       return true
       
@@ -76,7 +85,32 @@ export class TransformationProposal {
 
   deleteTransformationProposalFromFirebase = async () => {
     try {
+      
+      const deleteRef = ref(storage, `${this.type}_transformationProposal/${this.id}` );
+
+      const delete2 = async ( path ) => {
+
+        await listAll( path ).then( ( dir ) => {
+  
+          dir.items.map( fileRef => {
+            deleteObject( fileRef ).then( () => {
+            })
+            .catch((error) => {
+              console.error( error )
+            });
+          });
+
+          dir.prefixes.forEach( folderRef => delete2( folderRef ) )
+    
+          }).catch( ( error ) => {
+          console.error( error )
+        })
+      }
+
+      await delete2( deleteRef )
+
       await deleteDoc( doc( db, `${this.type}_transformationProposal`, `/${this.id}` ) );
+      
       return true
 
     } catch ( error ) {
@@ -85,8 +119,25 @@ export class TransformationProposal {
     }
   }
 
-  uploadFile = async ( file ) => {
+  uploadFile = async ( file, fileID ) => {
     const storageRef = ref( storage, `${this.type}_transformationProposal/${this.data['id']}/${file['name']}` );
+
+    const deleteRef = ref(storage, `${this.type}_transformationProposal/${this.data['id']}/${fileID}/` );
+  
+    await listAll( deleteRef ).then( ( listResult ) => {
+
+      listResult.items.map( item => {
+        deleteObject( item ).then( () => {})
+        .catch((error) => {
+          console.error( error )
+        });
+      })
+
+    }).catch( ( error ) => {
+      console.log('Erro ao listar os objetos')
+      console.error( error )
+    })
+
 
     await uploadBytes( storageRef, file ).then((snapshot) => {
       console.log( "Feito upload do arquivo" )

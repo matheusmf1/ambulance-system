@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import { React, useState } from 'react'
 
 import '../service_order/newServiceOrder/newServiceOrder.css';
 
 import logoRescue from '../../../assets/images/logo-rescue.png';
-import InputFile from '../../../components/inputs/input--file';
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
@@ -59,7 +58,9 @@ export default function NewTransformationProposal( props ) {
     }
   )
 
-  const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+
+  const [ billFileData, setBillFileData ] = useState( null );
 
   const { session } = props
 
@@ -179,7 +180,20 @@ export default function NewTransformationProposal( props ) {
     }
 
     else if ( id === 'information_file' ) {
-      setTransformationProposalData( { ...transformationProposalData, 'information_file': e.target.files[0] } )
+      
+      if ( e.target.files[0] ) {
+        setTransformationProposalData( { ...transformationProposalData, [id]: e.target.files[0]['name'] } );
+      
+        let data2 = {
+          file: e.target.files[0],
+          fileID: id
+        }
+        setBillFileData( data2 );
+      } 
+      else {
+        setTransformationProposalData( { ...transformationProposalData, [id]: '' } );
+        setBillFileData( null );
+      }
     }
 
     else {
@@ -244,12 +258,22 @@ export default function NewTransformationProposal( props ) {
 
   }
 
+  const checkIfFileHasChanged = () => {
+
+    if ( billFileData ) {
+      return billFileData;
+    }
+    else {
+      return false;
+    }
+  }
+
   const handleSubmit = async ( e ) => {
     e.preventDefault()
 
     const finalData = unifyData()
 
-    const transformationProposal = new TransformationProposal( { data: finalData, type: session } )
+    const transformationProposal = new TransformationProposal( { data: finalData, type: session, file: checkIfFileHasChanged() } );
     const result = await transformationProposal.addTransformationProposalToFirebase();
 
     if ( result ) {
@@ -430,7 +454,6 @@ export default function NewTransformationProposal( props ) {
               <div className="osForm__input">
                 <label className="form__input--label">Arquivo</label>
                 <input className="form__input" type="file" onChange={handleInformationChange('information_file')}/>
-                {/* <InputFile/> */}
               </div>
 
             </div>
