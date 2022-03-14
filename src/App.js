@@ -28,6 +28,8 @@ import BillPaidList from "./pages/financial/billsPaid/BillPaidList";
 import BillReceivedList from "./pages/financial/billsReceived/BillReceivedList";
 import BillsPayInfo from "./pages/financial/billsInfo/BillsPayInfo";
 import BillsReceiveInfo from "./pages/financial/billsInfo/BillsReceiveInfo";
+import QuoteList from "./pages/getQuote/list_visualization/QuoteList";
+import SalesList from "./pages/sales/list_visualization/SalesList";
 
 function App() {
   return (
@@ -70,6 +72,10 @@ function App() {
             <SalesTransformationProposal/>
           </Route>
 
+          <Route exact path="/vendas">
+            <SalesList/>
+          </Route>
+
           {/* FORNECEDOR */}
           <Route exact path="/fornecedores">
             <SupplierList/>
@@ -104,6 +110,10 @@ function App() {
 
           <Route exact path="/orcamento/nova-transformacao">
             <GetQuoteTransformationProposal/>
+          </Route>
+
+          <Route exact path="/orcamentos">
+            <QuoteList/>
           </Route>
 
           {/* FINANCEIRO */}
