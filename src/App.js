@@ -28,8 +28,8 @@ import BillPaidList from "./pages/financial/billsPaid/BillPaidList";
 import BillReceivedList from "./pages/financial/billsReceived/BillReceivedList";
 import BillsPayInfo from "./pages/financial/billsInfo/BillsPayInfo";
 import BillsReceiveInfo from "./pages/financial/billsInfo/BillsReceiveInfo";
-import QuoteList from "./pages/getQuote/list_visualization/QuoteList";
-import SalesList from "./pages/sales/list_visualization/SalesList";
+import QuoteSalesList from "./pages/getQuote/list_visualization/QuoteSalesList.jsx";
+import TransformationProposalInfo from "./components/GetQuote_Sales/transformation_proposal/TransformationProposalInfo";
 
 function App() {
   return (
@@ -72,9 +72,12 @@ function App() {
             <SalesTransformationProposal/>
           </Route>
 
+          <Route exact path="/venda/transformacao/:id" component={TransformationProposalInfo}/>
+
           <Route exact path="/vendas">
-            <SalesList/>
+            <QuoteSalesList/>
           </Route>
+
 
           {/* FORNECEDOR */}
           <Route exact path="/fornecedores">
@@ -112,12 +115,14 @@ function App() {
             <GetQuoteTransformationProposal/>
           </Route>
 
+          <Route exact path="/orcamento/transformacao/:id" component={TransformationProposalInfo}/>
+
           <Route exact path="/orcamentos">
-            <QuoteList/>
+            <QuoteSalesList/>
           </Route>
 
           {/* FINANCEIRO */}
-          <Route exact path="/financeiro/pagas/:id" component={BillsPayInfo}/>          
+          <Route exact path="/financeiro/pagas/:id" component={BillsPayInfo}/>
 
           <Route exact path="/financeiro/pagas">
             <BillPaidList/>

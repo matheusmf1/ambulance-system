@@ -4,10 +4,9 @@ import { ref, uploadBytes, deleteObject, listAll } from "firebase/storage";
 
 export class TransformationProposal {
 
-  constructor ( { data, id, type, file = false } ) {
+  constructor ( { data, id, file = false } ) {
     this.data = data;
     this.id = id;
-    this.type = type;
     this.file = file;
   }
 
@@ -38,7 +37,11 @@ export class TransformationProposal {
         await this.uploadFile( fileData, fileID );
       }
 
-      await setDoc( doc( db, `${this.type}_transformationProposal`, `${this.data['id']}` ), this.data );
+      if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
+        this.data['mainService'] = "venda";
+      }
+
+      await setDoc( doc( db, `orcamento_venda_transformationProposal`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -51,7 +54,7 @@ export class TransformationProposal {
   getTransformationProposalFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `${this.type}_transformationProposal`, this.id );
+      const docRef = doc( db, `orcamento_venda_transformationProposal`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -64,14 +67,20 @@ export class TransformationProposal {
 
   updateTransformationProposalOnFirebase = async () => {
     try {
-      const docRef = doc( db, `${this.type}_transformationProposal`, this.id );
+      const docRef = doc( db, `orcamento_venda_transformationProposal`, `${this.id}` );
       
       if ( this.file ) {
+        console.log('tem file')
+        console.log( this.file )
 
         const fileData = this.file['file'];
         const fileID = this.file['fileID'];
 
         await this.uploadFile( fileData, fileID );
+      }
+
+      if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
+        this.data['mainService'] = "venda";
       }
       
       await updateDoc( docRef, this.data );
@@ -86,7 +95,7 @@ export class TransformationProposal {
   deleteTransformationProposalFromFirebase = async () => {
     try {
       
-      const deleteRef = ref(storage, `${this.type}_transformationProposal/${this.id}` );
+      const deleteRef = ref(storage, `orcamento_venda_transformationProposal/${this.id}` );      
 
       const delete2 = async ( path ) => {
 
@@ -109,7 +118,7 @@ export class TransformationProposal {
 
       await delete2( deleteRef )
 
-      await deleteDoc( doc( db, `${this.type}_transformationProposal`, `/${this.id}` ) );
+      await deleteDoc( doc( db, `orcamento_venda_transformationProposal`, `/${this.id}` ) );
       
       return true
 
@@ -120,9 +129,9 @@ export class TransformationProposal {
   }
 
   uploadFile = async ( file, fileID ) => {
-    const storageRef = ref( storage, `${this.type}_transformationProposal/${this.data['id']}/${file['name']}` );
+    const storageRef = ref( storage, `orcamento_venda_transformationProposal/${this.data['id']}/${fileID}/${file['name']}` );
 
-    const deleteRef = ref(storage, `${this.type}_transformationProposal/${this.data['id']}/${fileID}/` );
+    const deleteRef = ref(storage, `orcamento_venda_transformationProposal/${this.data['id']}/${fileID}/` );
   
     await listAll( deleteRef ).then( ( listResult ) => {
 
@@ -143,6 +152,5 @@ export class TransformationProposal {
       console.log( "Feito upload do arquivo" )
     });
   }
-
 
 }

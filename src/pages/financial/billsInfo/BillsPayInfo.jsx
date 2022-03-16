@@ -48,7 +48,6 @@ export default function BillsPayInfo( props ) {
 
         const bill = new Bill( { id: id, billType: "pay" } )
         const billData = await bill.getBillFromFirebase();
-        console.log( billData )
 
         if ( billData ) {
           setData( billData );

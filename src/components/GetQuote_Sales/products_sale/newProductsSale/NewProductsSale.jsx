@@ -16,6 +16,7 @@ export default function NewProductsSale( props ) {
   const [ hasInstallment, setHasInstallment ] = useState(false)
   
   const [ productSaleData, setProductSaleData ] = useState({
+    serviceType: "productSale",
     entryDate: "",
     clientNumber: "",
     companyName: "",

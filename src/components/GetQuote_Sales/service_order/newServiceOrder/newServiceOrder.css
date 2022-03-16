@@ -230,6 +230,10 @@
   background-color: #fff;
 }
 
+.cursor__pointer {
+  cursor: pointer;
+}
+
 
 @media (max-width: 768.00px) {
 
@@ -281,8 +285,8 @@
     height: auto;
   }
 
-  .osForm__content--container {
+  /* .osForm__content--container {
     flex-direction: column;
-  }
+  } */
 
 }

@@ -31,6 +31,7 @@ export default function NewServiceOrder( props ) {
   )
 
   const [ serviceOrderData, setServiceOrderData ] = useState({
+    serviceType: "serviceOrder",
     id: "",
     entryDate: "",
     clientNumber: "",
