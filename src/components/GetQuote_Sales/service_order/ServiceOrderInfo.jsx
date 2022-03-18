@@ -1,271 +1,116 @@
-import {React, useState} from 'react'
+import { React, useState, useEffect } from 'react'
+import logoRescue from '../../../assets/images/logo-rescue.png';
+import { TableOS } from '../../tables/responsiveTable/table';
+import InputCpfCnpj from '../../inputs/input--cpfCnpj';
+import InputPhoneNumber from '../../inputs/input--phoneNumber';
+import InputCep from '../../inputs/input--cep';
+import { useHistory } from "react-router-dom"
+import { ServiceOrder } from "../../../data/ServiceOrder";
 
-import './newServiceOrder.css'
+export default function ServiceOrderInfo( props ) {
 
-import logoRescue from '../../../../assets/images/logo-rescue.png';
-import { TableOS } from '../../../../components/tables/responsiveTable/table';
-import InputCpfCnpj from '../../../inputs/input--cpfCnpj';
-import InputPhoneNumber from '../../../inputs/input--phoneNumber';
-import InputCep from '../../../inputs/input--cep';
-import { useHistory } from "react-router-dom";
-import { ServiceOrder } from "../../../../data/ServiceOrder";
+  const [ data, setData ] = useState( '' );
+  const [ idRef, setIdRef ] = useState( '' );
+  const [ hasInstallment, setHasInstallment ] = useState( false );
+  const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
 
-
-export default function NewServiceOrder( props ) {
+  const [ tableDataProdutos, setTableDataProdutos ] = useState( null );
+  const [ tableDataServicos, setTableDataServicos ] = useState( null );
+  const [ hasTableData, setHasTableData ] = useState( false );
 
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
   const [valorTotalServico, setValorTotalServico] = useState(0);
-  const [ hasInstallment, setHasInstallment ] = useState(false)
-
-  const [ installment, setInstallment ] = useState(
-    {
-      installmentAmountPay: "",
-      dueDate: '',          
-      receiptFile: "",
-      paymentDate: "",
-      amountPaid: "",
-      paymentType: "pix",
-      installment: "1",
-      paymentStatus: "toPay"
-    }
-  )
-
-  const [ serviceOrderData, setServiceOrderData ] = useState({
-    serviceType: "serviceOrder",
-    mainService: "",
-    id: "",
-    entryDate: "",
-    clientNumber: "",
-    companyName: "",
-    cpf: "",
   
-    cep: "",
-    address: "",
-    
-    city: "",
-    state: "SP",   
-    email: "",
-    telephone: "",
-    equipament_vehicle : "",
-    equipament_brand : "",
-    equipament_model : "",
-    equipament_plate : "",
-    equipament_prefix : "",
-
-    amountPay : "",
-
-    paymentInfo: {
-      installments: "1",
-      installmentsData: []
-    },
-
-    responsable: "",
-
-    tableDataProdutos: {},
-    tableDataServicos: {},
-    outputDate: "",
-    requestedBy: "",
-    status: "cancelado_naoAprovado"
-
-  });
-
-  const [ tableDataProdutos, setTableDataProdutos ] = useState( {
-
-    "columns" : [
-
-      {
-        Header: "Item",
-        accessor: "item",
-        Cell: 'TableInputText',
-        colSpan: 1,
-      },
   
-      {
-        Header: "Código",
-        accessor: "codigo",
-        Cell: 'TableInputText',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "Nome",
-        accessor: "nome",
-        Cell: 'TableInputText',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "UND.",
-        accessor: "unidade",
-        Cell: 'TableInputText',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "QTD.",
-        accessor: "quantidade",
-        Cell: 'TableInputNumber',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "VR. UNIT.",
-        accessor: "valorUnitario",
-        Cell: 'TableInputNumber',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "SubTotal",
-        accessor: "",
-        Cell: 'TableText',
-        id: "subTotal",
-        colSpan: 1,
-      }
-    ],
+  const history = useHistory();
+  const pathName = props.match.url;
+  const sessionName = pathName.split( "/" )[1];
 
-    "initialData" : [{
-      item: 1,
-      codigo: '',
-      nome: '',
-      unidade: '',
-      valorUnitario: 0,
-      quantidade: 1
-    }],
+  useEffect( () => {
 
-    "somaTotalRow": [ 'quantidade', 'subTotal' ],
+    let userID = props.match.params.id;
 
-    "somaTotalTextAndItens": [
-      {
-        colSpan: 4,
-        text: 'Total de Produtos',
-        variable: ''
-      },
-      {
-        colSpan: 1,
-        text: '',
-        variable: 'quantidade'
-      },
-      {
-        colSpan: 1,
-        text: '',
-        variable: ''
-      },
-      {
-        colSpan: 1,
-        text: 'R$',
-        variable: 'subTotal'
-      }
-  
-    ]
-
-  });
-
-  const [ tableDataServicos, setTableDataServicos ] = useState({
-
-    "columns" : [
-
-      {
-        Header: "Item",
-        accessor: "item",
-        Cell: 'TableInputText',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "Nome",
-        accessor: "nome",
-        Cell: 'TableInputText',
-        colSpan: 3,
-      },
-  
-      {
-        Header: "QTD.",
-        accessor: "quantidade",
-        Cell: 'TableInputNumber',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "VR. UNIT.",
-        accessor: "valorUnitario",
-        Cell: 'TableInputNumber',
-        colSpan: 1,
-      },
-  
-      {
-        Header: "SubTotal",
-        accessor: row => row.valorUnitario * row.quantidade,
-        Cell: 'TableText',
-        id: "subTotal",
-        colSpan: 1,
-      }
-    ],
-
-    "initialData" : [{
-      item: 1,
-      nome: '',
-      quantidade: 1,
-      valorUnitario: 0
-    }],
-
-    "somaTotalRow": [ 'quantidade', 'subTotal' ],
-
-    "somaTotalTextAndItens": [
-      {
-        colSpan: 4,
-        text: 'Total de Serviços',
-        variable: ''
-      },
-      {
-        colSpan: 1,
-        text: '',
-        variable: 'quantidade'
-      },
-      {
-        colSpan: 1,
-        text: '',
-        variable: ''
-      },
-      {
-        colSpan: 1,
-        text: 'R$',
-        variable: 'subTotal'
-      }
-  
-    ]
-
-  });
-
-  const { session } = props
-  let history = useHistory();
-
-  const defineStatusFieldOptions = ( session ) => {
-    
-    if ( session === 'venda' ) {
-      return (
-        <select className="form__input" defaultValue={serviceOrderData['status']} onChange={handleInformationChange( 'status' )}>
-          <option value="cancelado_naoAprovado">Cancelado</option>
-          <option value="emAndamento">Em Andamento</option>
-          <option value="concluido">Concluído</option>
-        </select>       
-      );
+    if ( !data ) {
+      fetchUserData( userID )
     }
 
-    else if ( session === 'orcamento' ) {
-      return (
-        <select className="form__input" defaultValue={serviceOrderData['status']} onChange={handleInformationChange( 'status' )}>
-          <option value="cancelado_naoAprovado">Não Aprovado</option>
-          <option value="aprovado">Aprovado</option>
-        </select>       
-      );
+  }, []);
+
+
+  const fetchUserData = async ( id ) => {
+
+    setIdRef( id )
+    let serviceData = JSON.parse( localStorage.getItem( 'quoteSalesInfo' ) );
+    console.log( serviceData );
+
+    if ( serviceData ) {
+
+      if ( serviceData['id'].toString() !== id.toString() ) {
+
+        console.log( "Feching data from firebase" )
+
+        const service = new ServiceOrder( { id: id } )
+        const serviceData = await service.getServiceOrderFromFirebase();
+
+        if ( serviceData ) {
+          setData( serviceData )
+          setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
+          const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+          setValuesInstallmentData( firstInstallment );
+
+          setTableDataProdutos( serviceData['tableDataProdutos'] );
+          setTableDataServicos( serviceData['tableDataServicos'] );
+  
+          setHasTableData( true )
+        }
+        else {
+          alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+          window.close();
+        }
+ 
+      }
+      else {
+        setData( serviceData )
+        setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
+        const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+        setValuesInstallmentData( firstInstallment );
+
+        setTableDataProdutos( serviceData['tableDataProdutos'] );
+        setTableDataServicos( serviceData['tableDataServicos'] );
+
+        setHasTableData( true )
+      }
+    } 
+    else {
+      console.log( "Feching data from firebase after updating" )
+  
+      const service = new ServiceOrder( { id: id } )
+        const serviceData = await service.getServiceOrderFromFirebase();
+
+      if ( serviceData ) {
+        setData( serviceData )
+        setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
+        const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+        setValuesInstallmentData( firstInstallment );
+
+        setTableDataProdutos( serviceData['tableDataProdutos'] );
+        setTableDataServicos( serviceData['tableDataServicos'] );
+
+        setHasTableData( true )
+      }
+      else {
+        alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+        window.close();
+      }
     }
+
   }
+
 
   const checkCep = ( e ) => {
 
     let cep = e.target.value.replace( /\D/g, '' );
-    setServiceOrderData( { ...serviceOrderData, "cep": cep } );
+    setData( { ...data, "cep": cep } );
 
     if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
@@ -273,12 +118,12 @@ export default function NewServiceOrder( props ) {
         if (response.ok)
           return response.json()
       })
-      .then( data => {
-        if ( data.erro ) {
+      .then( dataCep => {
+        if ( dataCep.erro ) {
           throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
         }
         else {
-          setServiceOrderData( { ...serviceOrderData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+          setData( { ...data, "cep": cep, "address": dataCep['logradouro'], "neighborhood": dataCep['bairro'], "city": dataCep['localidade'], "state": dataCep['uf'] } );
         }
       })
       .catch( error => {
@@ -286,21 +131,42 @@ export default function NewServiceOrder( props ) {
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
+  }
 
+  const defineStatusFieldOptions = () => {
+    
+    if ( sessionName === 'venda' ) {
+      return (
+        <select className="form__input" value={data['status']} onChange={handleInformationChange( 'status' )}>
+          <option value="cancelado_naoAprovado">Cancelado</option>
+          <option value="aprovado">Aprovado Orçamento</option>
+          <option value="emAndamento">Em Andamento</option>
+          <option value="concluido">Concluído</option>
+        </select>       
+      );
+    }
+
+    else if ( sessionName === 'orcamento' ) {
+      return (
+        <select className="form__input" value={data['status']} onChange={handleInformationChange( 'status' )}>
+          <option value="cancelado_naoAprovado">Não Aprovado</option>
+          <option value="aprovado">Aprovado</option>
+        </select>       
+      );
+    }
   }
 
   const installmentElements = () => setHasInstallment( !hasInstallment )
 
-
   const renderInstallment = () => {
     if ( hasInstallment ){
 
-      let totalAmount = serviceOrderData['amountPay']
+      let totalAmount = data['amountPay']
       if ( isNaN(totalAmount) ) {
         totalAmount = 0
       }
       
-      let installmentsNumber = serviceOrderData[ 'paymentInfo']['installments']
+      let installmentsNumber = data[ 'paymentInfo']['installments']
       let amountPerInstallment = parseFloat( 0 ).toFixed(3).slice(0, -1)
       if ( installmentsNumber > 0 ) {
         amountPerInstallment = parseFloat( totalAmount / installmentsNumber ).toFixed(3).slice(0, -1)
@@ -310,7 +176,7 @@ export default function NewServiceOrder( props ) {
         <>
           <div className="form__input--halfWidth">
             <label className="form__input--label"> Número de Parcelas:</label>
-            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" onChange={handleInformationChange('installments')}/>
+            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" value={ parseInt(data['paymentInfo']['installments'])} onChange={handleInformationChange('installments')}/>
           </div>
 
           <div className="form__input--halfWidth">
@@ -333,19 +199,19 @@ export default function NewServiceOrder( props ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
 
       if ( id === "entryDate" || id === "outputDate" )
-        setServiceOrderData( { ...serviceOrderData, [id]: `${new Date( formatedDate )}` } );
+        setData( { ...data, [id]: `${new Date( formatedDate )}` } );
       
       else
-        setInstallment( { ...installment, [id]: `${new Date( formatedDate )}` } );
+        setValuesInstallmentData( { ...valuesInstallmentData, [id]: `${new Date( formatedDate )}` } );
     }
 
     else if ( id === 'amountPay' ) {
-      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
-      setServiceOrderData( { ...serviceOrderData, [id]: amount } )
+      // let amount = parseFloat( e.target.value.toString() ).toFixed(2)
+      setData( { ...data, [id]: e.target.value.toString() } )
     }
 
     else if ( id === 'paymentType' ) {
-      setInstallment( { ...installment, [id]: e.target.value } );
+      setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
     }
 
     else if ( id === 'installments' ) {
@@ -354,20 +220,20 @@ export default function NewServiceOrder( props ) {
         installmentsData: [] 
       }
 
-      setServiceOrderData( { ...serviceOrderData, 'paymentInfo': paymentInfo } )
+      setData( { ...data, 'paymentInfo': paymentInfo } )
     }
 
     else {
-      setServiceOrderData( { ...serviceOrderData, [id]: e.target.value } )
+      setData( { ...data, [id]: e.target.value } )
     }
   }
 
   const unifyData = () => {
 
-    const totalInstallments = parseInt( serviceOrderData['paymentInfo']['installments'] )
+    const totalInstallments = parseInt( data['paymentInfo']['installments'] )
     let installmentAmountPay = 0
     if ( totalInstallments !== 0 ) {
-      installmentAmountPay = parseFloat( serviceOrderData['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
+      installmentAmountPay = parseFloat( data['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
     }
 
     const installmentDataArray = []
@@ -379,12 +245,12 @@ export default function NewServiceOrder( props ) {
         receiptFile: '',
         paymentDate: '',
         amountPaid: "",
-        paymentType: `${installment['paymentType']}`,
+        paymentType: `${valuesInstallmentData['paymentType']}`,
         installment: `${i + 1}`,
         paymentStatus: "toPay"
       }
     
-      let date = new Date( installment['dueDate'] )
+      let date = new Date( valuesInstallmentData['dueDate'] )
       let day = parseInt(date.getDate())
       let month = parseInt(date.getMonth()) + 1
       let year = parseInt(date.getFullYear())
@@ -412,7 +278,7 @@ export default function NewServiceOrder( props ) {
       installmentsData: installmentDataArray
     }
 
-    serviceOrderData['paymentInfo'] = paymentInfo
+    data['paymentInfo'] = paymentInfo;
 
     tableDataProdutos['columns'].forEach( item => {
 
@@ -435,24 +301,41 @@ export default function NewServiceOrder( props ) {
       }
     })
     
-    serviceOrderData['tableDataProdutos'] = tableDataProdutos;
-    serviceOrderData['tableDataServicos'] = tableDataServicos;
-    serviceOrderData['mainService'] = session;
-    return serviceOrderData
+    data['tableDataProdutos'] = tableDataProdutos;
+    data['tableDataServicos'] = tableDataServicos;
+    return data
+
+  }
+
+  const renderTable1 = () => {
+
+    if ( hasTableData ) {
+      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
+    }
+
+  }
+
+  const renderTable2 = () => {
+
+    if ( hasTableData ) {
+      return <TableOS tableData={ tableDataServicos } setTableData={setTableDataServicos} setValorTotal={setValorTotalServico}/>
+    }
 
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const finalData = unifyData();
+    console.log( finalData )
 
-    const serviceOrder = new ServiceOrder( { data: finalData } )
-    const result = await serviceOrder.addServiceOrderToFirebase();
+    const serviceOrder = new ServiceOrder( { data: finalData, id: idRef } );
+    const result = await serviceOrder.updateServiceOrderOnFirebase();
 
     if ( result ) {
       alert( "Ordem de Serviço cadastrada com sucesso" )
-      history.push( `/${session}s` );
+      localStorage.removeItem( 'quoteSalesInfo' );
+      history.push( `/${sessionName}s` );
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
@@ -482,8 +365,7 @@ export default function NewServiceOrder( props ) {
           </div>
 
         </div>
-
-        
+       
         <div className="os__header--content">
 
           <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
@@ -492,7 +374,7 @@ export default function NewServiceOrder( props ) {
 
           <div className='os__header--responsableInfo'>
             <h6 className="info">Responsável:</h6>
-            <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('responsable')}/>
+            <input className='os__header--responsableInput' type="text" value={data['responsable']} onChange={handleInformationChange('responsable')}/>
           </div>
 
         </div>
@@ -509,14 +391,12 @@ export default function NewServiceOrder( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  {/* <label className="form__input--labelInLine" htmlFor="os-number">Ordem de Serviço Nº</label>
-                  <input className="osForm__input--OSnumber" id="os-number" type="number" required/> */}
-                  <label className="form__input--labelInLine">Ordem de Serviço</label>
+                  <label className="form__input--labelInLine">{`Ordem de Serviço ${data['id']}`}</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Entrada</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('entryDate')} required />
+                  <input className="osForm__input--date" type="date" value={ data.entryDate ? new Date( data.entryDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('entryDate')} required />
                 </div>
 
               </div>
@@ -524,7 +404,7 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
+                <input className="form__input" type="text" placeholder="Nome do responsável" value={data.clientNumber} onChange={handleInformationChange('clientNumber')} required/>
               </div>
 
               <div className="form__input--halfWidth">
@@ -534,32 +414,32 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={data.companyName} onChange={handleInformationChange('companyName')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CPF/CNPJ*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')}/>
+                <InputCpfCnpj onChange={handleInformationChange('cpf')} defaultValue={data.cpf} required={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onChange={checkCep}/>
+                <InputCep onChange={checkCep} defaultValue={data.cep}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={serviceOrderData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={data['address']} onChange={handleInformationChange('address')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={serviceOrderData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={data['city']} onChange={handleInformationChange('city')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" defaultValue={serviceOrderData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={data['state']} onChange={handleInformationChange('state')}>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -592,12 +472,12 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={data['email']} onChange={handleInformationChange('email')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={data['telephone']} onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 
@@ -608,28 +488,28 @@ export default function NewServiceOrder( props ) {
 
               <div className="osForm__input">
                 <label className="form__input--label">Veículo*</label>
-                <input className="form__input" type="text" placeholder="Veículo" onChange={handleInformationChange('equipament_vehicle')} required/>
+                <input className="form__input" type="text" placeholder="Veículo" value={data['equipament_vehicle']} onChange={handleInformationChange('equipament_vehicle')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Marca*</label>
-                <input className="form__input" type="text" placeholder="Marca" onChange={handleInformationChange('equipament_brand')} required/>
+                <input className="form__input" type="text" placeholder="Marca" value={data['equipament_brand']} onChange={handleInformationChange('equipament_brand')} required/>
               </div>
 
 
               <div className="osForm__input">
                 <label className="form__input--label">Modelo*</label>
-                <input className="form__input" type="text" placeholder="Modelo" onChange={handleInformationChange('equipament_model')} required/>
+                <input className="form__input" type="text" placeholder="Modelo" value={data['equipament_model']} onChange={handleInformationChange('equipament_model')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Placa*</label>
-                <input className="form__input" type="text" placeholder="Placa" onChange={handleInformationChange('equipament_plate')} required/>
+                <input className="form__input" type="text" placeholder="Placa" value={data['equipament_plate']} onChange={handleInformationChange('equipament_plate')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Prefixo</label>
-                <input className="form__input" type="text" placeholder="Prefixo" onChange={handleInformationChange('equipament_prefix')}/>
+                <input className="form__input" type="text" placeholder="Prefixo" value={data['equipament_prefix']} onChange={handleInformationChange('equipament_prefix')}/>
               </div>
 
             </div>
@@ -637,13 +517,13 @@ export default function NewServiceOrder( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-              <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
+              { renderTable1() }
             </div>
 
             {/* SERVICOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Serviços</h6>
-              <TableOS tableData={tableDataServicos} setTableData={setTableDataServicos} setValorTotal={setValorTotalServico}/>
+              { renderTable2() }
               <h3 className="os__content--sumTableTitle">Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
             </div>
 
@@ -653,17 +533,17 @@ export default function NewServiceOrder( props ) {
               
               <div className="osForm__input">
                 <label className="form__input--label">Vencimento*</label>
-                <input className="form__input" type="date" placeholder="Vencimento" onChange={handleInformationChange('dueDate')} required/>
+                <input className="form__input" type="date" placeholder="Vencimento" value={ valuesInstallmentData.dueDate ? new Date( valuesInstallmentData.dueDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('dueDate')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Valor*</label>
-                <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" onChange={handleInformationChange('amountPay')} required/>
+                <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" value={ data['amountPay'] } onChange={handleInformationChange('amountPay')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Formas de Pagamento*</label>
-                <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleInformationChange('paymentType')}>
+                <select name="forma-pagamento" className="form__input" value={ valuesInstallmentData.paymentType ? valuesInstallmentData.paymentType : '' } onChange={handleInformationChange('paymentType')}>
                   <option value="boleto">Boleto</option>
                   <option value="cheque">Cheque</option>
                   <option value="deposito">Depósito</option>
@@ -675,9 +555,9 @@ export default function NewServiceOrder( props ) {
 
               <div className="osForm__input">
                 <label className="form__input--label">Parcelas</label>
-                <select name="forma-pagamento" className="form__input" defaultValue="nao" onChange={installmentElements} >
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
+                <select name="forma-pagamento" className="form__input" value={ hasInstallment } onChange={installmentElements} >
+                  <option value={true}>Sim</option>
+                  <option value={false}>Não</option>
                 </select>  
               </div>
 
@@ -689,7 +569,7 @@ export default function NewServiceOrder( props ) {
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')}/>
+                <input className='os__header--responsableInput' type="text" value={ data['requestedBy'] } onChange={handleInformationChange('requestedBy')}/>
                 <h3 className="info">Solicitado por:</h3>
               </div>
 
@@ -705,9 +585,8 @@ export default function NewServiceOrder( props ) {
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')}/>
+                  <input className="osForm__input--date" type="date" value={ data.outputDate ? new Date( data.outputDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('outputDate')}/>
                 </div>
-
 
               </div>
 
@@ -719,13 +598,12 @@ export default function NewServiceOrder( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Adicionar</button>
-              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" className="form__button form__button--add">Atualizar</button>
             </div>
 
             <div className="footer__button--status">
               <label>STATUS</label>
-              { defineStatusFieldOptions( session ) }
+              { defineStatusFieldOptions( sessionName ) }
             </div>
 
           </div>

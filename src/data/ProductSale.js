@@ -3,10 +3,9 @@ import { db } from "../firebase";
 
 export class ProductSale {
 
-  constructor ( { data, id, type } ) {
+  constructor ( { data, id } ) {
     this.data = data;
     this.id = id;
-    this.type = type;
   }
 
   addProductSaleToFirebase = async () => {
@@ -28,17 +27,11 @@ export class ProductSale {
       //Set new document id
       this.data['id'] = idData['id']
 
-      //Necessary to convert to string because it has a function inside of its properties
-      //Remember to convert to json when fetch data
-      let { tableDataProdutos, ...data } = this.data      
-      tableDataProdutos = JSON.stringify( tableDataProdutos )
-
-      let obj = {
-        ...data,
-        "tableDataProdutos": tableDataProdutos
+      if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
+        this.data['mainService'] = "venda";
       }
 
-      await setDoc( doc( db, `${this.type}_productsSale`, `${this.data['id']}` ), obj );
+      await setDoc( doc( db, `orcamento_venda_productsSale`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -51,7 +44,7 @@ export class ProductSale {
   getProductSaleFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `${this.type}_productsSale`, this.id );
+      const docRef = doc( db, `orcamento_venda_productsSale`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -64,7 +57,12 @@ export class ProductSale {
 
   updateProductSaleOnFirebase = async () => {
     try {
-      const docRef = doc( db, `${this.type}_productsSale`, this.id );
+      const docRef = doc( db, `orcamento_venda_productsSale`, `${this.id}` );
+
+      if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
+        this.data['mainService'] = "venda";
+      }
+      
       await updateDoc( docRef, this.data );
       return true
       
@@ -76,7 +74,7 @@ export class ProductSale {
 
   deleteProductSaleFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, `${this.type}_productsSale`, `/${this.id}` ) );
+      await deleteDoc( doc( db, `orcamento_venda_productsSale`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {

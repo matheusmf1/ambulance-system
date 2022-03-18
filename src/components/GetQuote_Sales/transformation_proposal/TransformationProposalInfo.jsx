@@ -1,75 +1,98 @@
-import { React, useState } from 'react'
-
-import '../service_order/newServiceOrder/newServiceOrder.css';
-
+import { React, useState, useEffect } from 'react';
 import logoRescue from '../../../assets/images/logo-rescue.png';
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
 import { TransformationProposal } from "../../../data/TransformationProposal";
 import { useHistory } from "react-router-dom";
+import { storage, bucketName } from "../../../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
+import { Fab } from "@material-ui/core";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
-export default function NewTransformationProposal( props ) {
+import '../service_order/newServiceOrder/newServiceOrder.css';
 
-  let history = useHistory();
+export default function TransformationProposalInfo( props ) {
 
-  const [ transformationProposalData, setTransformationProposalData ] = useState({
-    serviceType: "transformationProposal",
-    mainService: "",
-    entryDate: "",
-    clientNumber: "",
-    companyName: "",
-    cpf: "",
+  const [ data, setData ] = useState( '' );
+  const [ idRef, setIdRef ] = useState( '' );
+  const [ hasInstallment, setHasInstallment ] = useState( false );
+  const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
+  const [ serviceFileData, setServiceFileData ] = useState( null );
   
-    cep: "",
-    address: "",
-    
-    city: "",
-    state: "SP",
-    email: "",
-    telephone: "",
-    amountPay : "",
+  const history = useHistory();
+  const pathName = props.match.url;
+  const sessionName = pathName.split( "/" )[1];
 
-    information_vehicle : "",
-    information_brand : "",
-    information_model : "",
-    information_chassi : "",
-    information_file : "",
+  useEffect( () => {
 
-    paymentInfo: {
-      installments: "1",
-      installmentsData: []
-    },
+    let userID = props.match.params.id;
 
-    responsable: "",
-    outputDate: "",
-    requestedBy: "",
-    status: "cancelado_naoAprovado"
-  });
-
-  const [ installment, setInstallment ] = useState(
-    {
-      installmentAmountPay: "",
-      dueDate: '',          
-      receiptFile: "",
-      paymentDate: "",
-      amountPaid: "",
-      paymentType: "pix",
-      installment: "1",
-      paymentStatus: "toPay"
+    if ( !data ) {
+      fetchUserData( userID )
     }
-  )
 
-  const [ hasInstallment, setHasInstallment ] = useState(false);
+  }, []);
 
-  const [ billFileData, setBillFileData ] = useState( null );
 
-  const { session } = props
+  const fetchUserData = async ( id ) => {
+
+    setIdRef( id )
+    let serviceData = JSON.parse( localStorage.getItem( 'quoteSalesInfo' ) );
+    console.log( serviceData )
+
+    if ( serviceData ) {
+
+      if ( serviceData['id'].toString() !== id.toString() ) {
+
+        console.log( "Feching data from firebase" )
+
+        const service = new TransformationProposal( { id: id } )
+        const serviceData = await service.getTransformationProposalFromFirebase();
+
+        if ( serviceData ) {
+          setData( serviceData )
+          setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
+          const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+          setValuesInstallmentData( firstInstallment );
+        }
+        else {
+          alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+          window.close();
+        }
+ 
+      }
+      else {
+        setData( serviceData )
+        setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
+        const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+        setValuesInstallmentData( firstInstallment );
+      }
+    } 
+    else {
+      console.log( "Feching data from firebase after updating" )
+  
+      const service = new TransformationProposal( { id: id } )
+      const serviceData = await service.getTransformationProposalFromFirebase();
+
+      if ( serviceData ) {
+        setData( serviceData )
+        setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
+        const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
+        setValuesInstallmentData( firstInstallment );
+      }
+      else {
+        alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
+        window.close();
+      }
+    }
+
+  }
 
   const checkCep = ( e ) => {
 
     let cep = e.target.value.replace( /\D/g, '' );
-    setTransformationProposalData( { ...transformationProposalData, "cep": cep } );
+    setData( { ...data, "cep": cep } );
 
     if ( cep.length === 8 ) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
@@ -77,12 +100,12 @@ export default function NewTransformationProposal( props ) {
         if (response.ok)
           return response.json()
       })
-      .then( data => {
-        if ( data.erro ) {
+      .then( dataCep => {
+        if ( dataCep.erro ) {
           throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
         }
         else {
-          setTransformationProposalData( { ...transformationProposalData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
+          setData( { ...data, "cep": cep, "address": dataCep['logradouro'], "neighborhood": dataCep['bairro'], "city": dataCep['localidade'], "state": dataCep['uf'] } );
         }
       })
       .catch( error => {
@@ -90,24 +113,24 @@ export default function NewTransformationProposal( props ) {
         alert( 'Não foi possível encontrar o CEP informado, por favor tente novamente' )
       })
     }
-
   }
 
-  const defineStatusFieldOptions = ( session ) => {
+  const defineStatusFieldOptions = () => {
     
-    if ( session === 'venda' ) {
+    if ( sessionName === 'venda' ) {
       return (
-        <select className="form__input" defaultValue={transformationProposalData['status']} onChange={handleInformationChange( 'status' )}>
+        <select className="form__input" value={data['status']} onChange={handleInformationChange( 'status' )}>
           <option value="cancelado_naoAprovado">Cancelado</option>
+          <option value="aprovado">Aprovado Orçamento</option>
           <option value="emAndamento">Em Andamento</option>
           <option value="concluido">Concluído</option>
         </select>       
       );
     }
 
-    else if ( session === 'orcamento' ) {
+    else if ( sessionName === 'orcamento' ) {
       return (
-        <select className="form__input" defaultValue={transformationProposalData['status']} onChange={handleInformationChange( 'status' )}>
+        <select className="form__input" value={data['status']} onChange={handleInformationChange( 'status' )}>
           <option value="cancelado_naoAprovado">Não Aprovado</option>
           <option value="aprovado">Aprovado</option>
         </select>       
@@ -118,14 +141,15 @@ export default function NewTransformationProposal( props ) {
   const installmentElements = () => setHasInstallment( !hasInstallment )
 
   const renderInstallment = () => {
-    if ( hasInstallment ){
+    
+    if ( hasInstallment ) {
 
-      let totalAmount = transformationProposalData['amountPay']
+      let totalAmount = data['amountPay']
       if ( isNaN(totalAmount) ) {
         totalAmount = 0
       }
       
-      let installmentsNumber = transformationProposalData[ 'paymentInfo']['installments']
+      let installmentsNumber = data[ 'paymentInfo']['installments']
       let amountPerInstallment = parseFloat( 0 ).toFixed(3).slice(0, -1)
       if ( installmentsNumber > 0 ) {
         amountPerInstallment = parseFloat( totalAmount / installmentsNumber ).toFixed(3).slice(0, -1)
@@ -135,7 +159,7 @@ export default function NewTransformationProposal( props ) {
         <>
           <div className="form__input--halfWidth">
             <label className="form__input--label"> Número de Parcelas:</label>
-            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" defaultValue={ parseInt(transformationProposalData['paymentInfo']['installments'])} onChange={handleInformationChange('installments')}/>
+            <input className="form__input" type="number" required placeholder="Informe o nº de parcelas" min="1" value={ parseInt(data['paymentInfo']['installments'])} onChange={handleInformationChange('installments')}/>
           </div>
 
           <div className="form__input--halfWidth">
@@ -157,19 +181,14 @@ export default function NewTransformationProposal( props ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
 
       if ( id === "entryDate" || id === "outputDate" )
-      setTransformationProposalData( { ...transformationProposalData, [id]: `${new Date( formatedDate )}` } );
+        setData( { ...data, [id]: `${new Date( formatedDate )}` } );
       
       else
-        setInstallment( { ...installment, [id]: `${new Date( formatedDate )}` } );
-    }
-
-    else if ( id === 'amountPay' ) {
-      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
-      setTransformationProposalData( { ...transformationProposalData, [id]: amount } )
+        setValuesInstallmentData( { ...valuesInstallmentData, [id]: `${new Date( formatedDate )}` } );
     }
 
     else if ( id === 'paymentType' ) {
-      setInstallment( { ...installment, [id]: e.target.value } );
+      setValuesInstallmentData( { ...valuesInstallmentData, [id]: e.target.value } );
     }
 
     else if ( id === 'installments' ) {
@@ -178,38 +197,38 @@ export default function NewTransformationProposal( props ) {
         installmentsData: [] 
       }
 
-      setTransformationProposalData( { ...transformationProposalData, 'paymentInfo': paymentInfo } )
+      setData( { ...data, 'paymentInfo': paymentInfo } )
     }
 
     else if ( id === 'information_file' ) {
       
       if ( e.target.files[0] ) {
-        setTransformationProposalData( { ...transformationProposalData, [id]: e.target.files[0]['name'] } );
+        setData( { ...data, [id]: e.target.files[0]['name'] } );
       
         let data2 = {
           file: e.target.files[0],
           fileID: id
         }
-        setBillFileData( data2 );
+        setServiceFileData( data2 );
       } 
       else {
-        setTransformationProposalData( { ...transformationProposalData, [id]: '' } );
-        setBillFileData( null );
+        setData( { ...data, [id]: '' } );
+        setServiceFileData( null );
       }
     }
 
     else {
-      setTransformationProposalData( {...transformationProposalData, [ id ]: e.target.value } )
+      setData( {...data, [ id ]: e.target.value } )
     }
 
   }
 
   const unifyData = () => {
 
-    const totalInstallments = parseInt( transformationProposalData['paymentInfo']['installments'] )
+    const totalInstallments = parseInt( data['paymentInfo']['installments'] )
     let installmentAmountPay = 0
     if ( totalInstallments !== 0 ) {
-      installmentAmountPay = parseFloat( transformationProposalData['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
+      installmentAmountPay = parseFloat( data['amountPay'] / totalInstallments ).toFixed(3).slice(0, -1)
     }
 
     const installmentDataArray = []
@@ -221,12 +240,12 @@ export default function NewTransformationProposal( props ) {
         receiptFile: '',
         paymentDate: '',
         amountPaid: "",
-        paymentType: `${installment['paymentType']}`,
+        paymentType: `${valuesInstallmentData['paymentType']}`,
         installment: `${i + 1}`,
         paymentStatus: "toPay"
       }
     
-      let date = new Date( installment['dueDate'] )
+      let date = new Date( valuesInstallmentData['dueDate'] )
       let day = parseInt(date.getDate())
       let month = parseInt(date.getMonth()) + 1
       let year = parseInt(date.getFullYear())
@@ -254,17 +273,16 @@ export default function NewTransformationProposal( props ) {
       installmentsData: installmentDataArray
     }
 
-    transformationProposalData['paymentInfo'] = paymentInfo 
-    transformationProposalData['mainService'] = session 
+    data['paymentInfo'] = paymentInfo 
     
-    return transformationProposalData
+    return data
 
   }
 
   const checkIfFileHasChanged = () => {
 
-    if ( billFileData ) {
-      return billFileData;
+    if ( serviceFileData ) {
+      return serviceFileData;
     }
     else {
       return false;
@@ -275,13 +293,15 @@ export default function NewTransformationProposal( props ) {
     e.preventDefault()
 
     const finalData = unifyData();
+    console.log( finalData )
 
-    const transformationProposal = new TransformationProposal( { data: finalData, file: checkIfFileHasChanged() } );
-    const result = await transformationProposal.addTransformationProposalToFirebase();
+    const transformationProposal = new TransformationProposal( { data: finalData, id: idRef, file: checkIfFileHasChanged() } );
+    const result = await transformationProposal.updateTransformationProposalOnFirebase();
 
     if ( result ) {
-      alert( "Proposta de Transformação cadastrada com sucesso" )
-      history.push( `/${session}s` )
+      alert( "Proposta de Transformação atualizada com sucesso" )
+      localStorage.removeItem( 'quoteSalesInfo' )
+      history.push( `/${sessionName}s` )
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
@@ -289,6 +309,55 @@ export default function NewTransformationProposal( props ) {
     
   }
 
+  const renderFileLinkOrInput = () => {
+
+    if ( data['information_file'] !== '' ) {
+
+      return (
+        <>
+          <div className="osForm__input" onClick={ () => {
+            let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/orcamento_venda_transformationProposal/${idRef}/information_file/${data['information_file']}`) )
+            .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
+          }}>
+            <label className="form__input--label">Arquivo</label>
+            <input className="form__input cursor__pointer" type="text" value={ data['information_file'] } disabled />
+          </div>
+
+          <div className="osForm__input">
+            <label className="form__input--label">Alterar Arquivo</label>
+            <label htmlFor="upload-file">
+              <input
+                style={{ display: "none" }}
+                id="upload-file"
+                name="upload-file"
+                type="file"
+                onChange={ handleInformationChange('information_file') }
+              />
+                  
+              <Fab
+                className='modal__upload--button'
+                component="span"
+                aria-label="add"
+                variant="extended"
+              >
+
+                <FileUploadIcon /> Substituir
+              </Fab>
+            </label>
+          </div>
+        </>      
+      );
+    }
+    else {
+
+      return(
+        <div className="osForm__input">
+          <label className="form__input--label">Arquivo</label>
+          <input className="form__input" type="file" onChange={handleInformationChange('information_file')}/>
+        </div>
+      );
+    }
+  }
 
   return (
   
@@ -322,12 +391,11 @@ export default function NewTransformationProposal( props ) {
 
           <div className='os__header--responsableInfo'>
             <h6 className="info">Responsável:</h6>
-            <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('responsable')}/>
+            <input className='os__header--responsableInput' type="text" value={ data['responsable'] } onChange={handleInformationChange('responsable')}/>
           </div>
         </div>
 
       </div>
-
 
       <div className="form__content">
         <form onSubmit={handleSubmit}>
@@ -339,20 +407,19 @@ export default function NewTransformationProposal( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Proposta de Transformação</label>
+                  <label className="form__input--labelInLine">{`Proposta de Transformação ${data['id']}`}</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Data Entrada</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('entryDate')} required />
+                  <label className="form__input--labelInLine">Data Entrada</label>        
+                  <input className="osForm__input--date" type="date" value={ data.entryDate ? new Date( data.entryDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('entryDate')} required />
                 </div>
 
               </div>
 
-
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
+                <input className="form__input" type="text" placeholder="Nome do responsável" value={data.clientNumber} onChange={handleInformationChange('clientNumber')} required/>
               </div>
 
               <div className="form__input--halfWidth">
@@ -362,32 +429,32 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={data.companyName} onChange={handleInformationChange('companyName')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')} required={true}/>
+                <InputCpfCnpj onChange={handleInformationChange('cpf')} defaultValue={data.cpf} required={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onChange={checkCep}/>
+                <InputCep onChange={checkCep} defaultValue={data.cep}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={transformationProposalData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={data['address']} onChange={handleInformationChange('address')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={transformationProposalData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={data['city']} onChange={handleInformationChange('city')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" defaultValue={transformationProposalData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={data['state']} onChange={handleInformationChange('state')}>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -420,12 +487,12 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={data['email']} onChange={handleInformationChange('email')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={ data['telephone'] } onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 
@@ -436,28 +503,25 @@ export default function NewTransformationProposal( props ) {
               
               <div className="osForm__input">
                 <label className="form__input--label">Veículo*</label>
-                <input className="form__input" type="text" placeholder="Veículo" onChange={handleInformationChange('information_vehicle')} required/>
+                <input className="form__input" type="text" placeholder="Veículo" value={ data['information_vehicle'] } onChange={handleInformationChange('information_vehicle')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Marca*</label>
-                <input className="form__input" type="text" placeholder="Marca" onChange={handleInformationChange('information_brand')} required/>
+                <input className="form__input" type="text" placeholder="Marca" value={ data['information_brand'] } onChange={handleInformationChange('information_brand')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Modelo*</label>
-                <input className="form__input" type="text" placeholder="Modelo" onChange={handleInformationChange('information_model')} required/>
+                <input className="form__input" type="text" placeholder="Modelo" value={ data['information_model'] } onChange={handleInformationChange('information_model')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Chassi*</label>
-                <input className="form__input" type="text" placeholder="Chassi" onChange={handleInformationChange('information_chassi')} required/>
+                <input className="form__input" type="text" placeholder="Chassi" value={ data['information_chassi'] } onChange={handleInformationChange('information_chassi')} required/>
               </div>
 
-              <div className="osForm__input">
-                <label className="form__input--label">Arquivo</label>
-                <input className="form__input" type="file" onChange={handleInformationChange('information_file')}/>
-              </div>
+              { renderFileLinkOrInput() }
 
             </div>
 
@@ -468,17 +532,17 @@ export default function NewTransformationProposal( props ) {
 
               <div className="osForm__input">
                 <label className="form__input--label">Vencimento*</label>
-                <input className="form__input" type="date" placeholder="Vencimento" onChange={handleInformationChange('dueDate')} required/>
+                <input className="form__input" type="date" placeholder="Vencimento" value={ valuesInstallmentData.dueDate ? new Date( valuesInstallmentData.dueDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('dueDate')} required/>
               </div>
 
               <div className="osForm__input">
-                <label className="form__input--label">Valor*</label>
-                <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" onChange={handleInformationChange('amountPay')} required/>
+                <label className="form__input--label">Valor Total*</label>
+                <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" value={ data['amountPay'] } onChange={handleInformationChange('amountPay')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Formas de Pagamento*</label>
-                <select name="forma-pagamento" className="form__input" defaultValue={installment.paymentType} onChange={handleInformationChange('paymentType')}>
+                <select name="forma-pagamento" className="form__input" value={ valuesInstallmentData.paymentType ? valuesInstallmentData.paymentType : '' } onChange={handleInformationChange('paymentType')}>
                   <option value="boleto">Boleto</option>
                   <option value="cheque">Cheque</option>
                   <option value="deposito">Depósito</option>
@@ -490,9 +554,9 @@ export default function NewTransformationProposal( props ) {
 
               <div className="osForm__input">
                 <label className="form__input--label">Parcelas</label>
-                <select name="forma-pagamento" className="form__input" defaultValue="nao" onChange={installmentElements} >
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
+                <select name="forma-pagamento" className="form__input" value={ hasInstallment } onChange={installmentElements} >
+                  <option value={true}>Sim</option>
+                  <option value={false}>Não</option>
                 </select>  
               </div>
 
@@ -505,7 +569,7 @@ export default function NewTransformationProposal( props ) {
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input className='os__header--responsableInput' type="text" onChange={handleInformationChange('requestedBy')} required/>
+                <input className='os__header--responsableInput' type="text" value={ data['requestedBy'] } onChange={handleInformationChange('requestedBy')} required/>
                 <h3 className="info">Solicitado por:</h3>
               </div>
 
@@ -520,13 +584,12 @@ export default function NewTransformationProposal( props ) {
 
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" onChange={handleInformationChange('outputDate')} required/>
+                  <input className="osForm__input--date" type="date" value={ data.outputDate ? new Date( data.outputDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('outputDate')} required/>
                 </div>
 
               </div>
 
             </div>
-
 
           </div>
 
@@ -535,13 +598,12 @@ export default function NewTransformationProposal( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Adicionar</button>
-              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" className="form__button form__button--add">Atualizar</button>
             </div>
 
             <div className="footer__button--status">
               <label>STATUS</label>
-              { defineStatusFieldOptions( session ) }
+              { defineStatusFieldOptions( ) }
             </div>    
 
           </div>

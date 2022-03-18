@@ -42,13 +42,12 @@ export default function BillsPayInfo( props ) {
 
     if ( billData ) {
 
-      if ( toString( billData['id'] ) !== toString( id ) ) {
+      if ( billData['id'].toString() !== id.toString() ) {
 
         console.log( "Feching data from firebase" )
 
         const bill = new Bill( { id: id, billType: "pay" } )
         const billData = await bill.getBillFromFirebase();
-        console.log( billData )
 
         if ( billData ) {
           setData( billData );

@@ -219,13 +219,13 @@ toogleMenuBars.forEach( icon => {
 										<span className="sidebar__submenu--title">Transformação</span>
 									</a>
 								</li>
-						
-								{/* <li className="">
-									<a href="">
+
+								<li>
+									<a href="/vendas">
 										<RemoveOutlinedIcon/>
-										<span className="sidebar__submenu--title">Lista de OS</span>
+										<span className="sidebar__submenu--title">Visualização</span>
 									</a>
-								</li> */}
+								</li>
 						
 							</ul>
 						</li>
@@ -263,17 +263,17 @@ toogleMenuBars.forEach( icon => {
 									</a>
 								</li>
 						
-								{/* <li className="">
-									<a href="">
+								<li>
+									<a href="/orcamentos">
 										<RemoveOutlinedIcon/>
-										<span className="sidebar__submenu--title">Lista de OS</span>
+										<span className="sidebar__submenu--title">Visualização</span>
 									</a>
-								</li> */}
+								</li>
 						
 							</ul>
 						</li>
 
-						{/* ORCAMENTO */}
+						{/* FINANCEIRO */}
 						<li className="sidebar__menu--listItens">
 							<a>
 								<PaymentsOutlined/>

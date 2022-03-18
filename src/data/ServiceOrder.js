@@ -3,10 +3,9 @@ import { db } from "../firebase";
 
 export class ServiceOrder {
 
-  constructor ( { data, id, type } ) {
+  constructor ( { data, id } ) {
     this.data = data;
     this.id = id;
-    this.type = type;
   }
 
   addServiceOrderToFirebase = async () => {
@@ -26,21 +25,13 @@ export class ServiceOrder {
       const idData = idSnap.data();
 
       //Set new document id
-      this.data['id'] = idData['id']
+      this.data['id'] = idData['id'];
 
-      //Necessary to convert to string because it has a function inside of its properties
-      //Remember to convert to json when fetch data
-      let { tableDataProdutos, tableDataServicos, ...data } = this.data      
-      tableDataProdutos = JSON.stringify( tableDataProdutos )
-      tableDataServicos = JSON.stringify( tableDataServicos )
-
-      let obj = {
-        ...data,
-        "tableDataProdutos": tableDataProdutos,
-        "tableDataServicos": tableDataServicos
+      if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
+        this.data['mainService'] = "venda";
       }
 
-      await setDoc( doc( db, `${this.type}_serviceOrder`, `${this.data['id']}` ), obj );
+      await setDoc( doc( db, `orcamento_venda_serviceOrder`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -53,7 +44,7 @@ export class ServiceOrder {
   getServiceOrderFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `${this.type}_serviceOrder`, this.id );
+      const docRef = doc( db, `orcamento_venda_serviceOrder`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -66,7 +57,12 @@ export class ServiceOrder {
 
   updateServiceOrderOnFirebase = async () => {
     try {
-      const docRef = doc( db, `${this.type}_serviceOrder`, this.id );
+      const docRef = doc( db, `orcamento_venda_serviceOrder`, `${this.id}` );
+
+      if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
+        this.data['mainService'] = "venda";
+      }
+
       await updateDoc( docRef, this.data );
       return true
       
@@ -78,7 +74,7 @@ export class ServiceOrder {
 
   deleteServiceOrderFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, `${this.type}_serviceOrder`, `/${this.id}` ) );
+      await deleteDoc( doc( db, `orcamento_venda_serviceOrder`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {
@@ -86,6 +82,5 @@ export class ServiceOrder {
       return false
     }
   }
-
 
 }
