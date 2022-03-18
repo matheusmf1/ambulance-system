@@ -1,0 +1,32 @@
+.modal__container {
+  padding: 10px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.modal__title {
+  border-bottom: 1px solid #dcdfe8;
+}
+
+.modal__description {
+  padding: 20px 24px !important;
+}
+
+/* File upload button */
+.modal__upload--button {
+  border-radius: 10px !important;
+  background-color: #457ccede !important;
+  color: white !important;
+  width: -webkit-fill-available !important;
+  width: -moz-available !important;
+  width: fill-available !important;
+}
+
+.modal__upload--button:hover{
+  background-color: #3d79d2 !important;
+}
+
+.modal__button {
+  margin: 0
+}
