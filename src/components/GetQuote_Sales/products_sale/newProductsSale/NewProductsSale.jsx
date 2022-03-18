@@ -1,4 +1,4 @@
-import {React, useState } from 'react'
+import { React, useState } from 'react'
 
 import '../../service_order/newServiceOrder/newServiceOrder.css';
 
@@ -8,6 +8,7 @@ import { TableOS } from '../../../../components/tables/responsiveTable/table';
 import InputCpfCnpj from '../../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../inputs/input--phoneNumber'
 import InputCep from '../../../inputs/input--cep';
+import { useHistory } from "react-router-dom"
 import { ProductSale } from "../../../../data/ProductSale";
 
 export default function NewProductsSale( props ) {
@@ -17,6 +18,7 @@ export default function NewProductsSale( props ) {
   
   const [ productSaleData, setProductSaleData ] = useState({
     serviceType: "productSale",
+    mainService: "",
     entryDate: "",
     clientNumber: "",
     companyName: "",
@@ -105,7 +107,7 @@ export default function NewProductsSale( props ) {
   
       {
         Header: "SubTotal",
-        accessor: row => row.valorUnitario * row.quantidade,
+        accessor: "",
         Cell: 'TableText',
         id: "subTotal",
         colSpan: 1,
@@ -149,7 +151,8 @@ export default function NewProductsSale( props ) {
 
   });
   
-  const { session } = props
+  const { session } = props;
+  let history = useHistory();
 
   const checkCep = ( e ) => {
 
@@ -322,7 +325,20 @@ export default function NewProductsSale( props ) {
     }
 
     productSaleData['paymentInfo'] = paymentInfo
-    productSaleData['tableDataProdutos'] = tableDataProdutos
+    
+    tableDataProdutos['columns'].forEach( item => {
+
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    })
+
+    productSaleData['tableDataProdutos'] = tableDataProdutos;
+    productSaleData['mainService'] = session;
     
     return productSaleData
 
@@ -331,15 +347,15 @@ export default function NewProductsSale( props ) {
   const handleSubmit = async ( e ) => {
     e.preventDefault()
 
-    const finalData = unifyData()
+    const finalData = unifyData();
     console.log( finalData )
 
-    const productSale = new ProductSale( { data: finalData, type: session } )
+    const productSale = new ProductSale( { data: finalData } )
     const result = await productSale.addProductSaleToFirebase();
 
     if ( result ) {
       alert( "Venda de Produto cadastrada com sucesso" )
-      // history.push("/fornecedores")
+      history.push( `/${session}s` );
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
@@ -396,7 +412,7 @@ export default function NewProductsSale( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Nº da Venda:</label>
+                  <label className="form__input--labelInLine">Venda</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">

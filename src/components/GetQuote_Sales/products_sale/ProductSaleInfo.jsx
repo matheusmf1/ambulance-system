@@ -1,24 +1,23 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect } from 'react'
 import logoRescue from '../../../assets/images/logo-rescue.png';
+import { TableOS } from '../../tables/responsiveTable/table';
+
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
-import InputPhoneNumber from '../../inputs/input--phoneNumber';
+import InputPhoneNumber from '../../inputs/input--phoneNumber'
 import InputCep from '../../inputs/input--cep';
-import { TransformationProposal } from "../../../data/TransformationProposal";
-import { useHistory } from "react-router-dom";
-import { storage, bucketName } from "../../../firebase";
-import { ref, getDownloadURL } from "firebase/storage";
-import { Fab } from "@material-ui/core";
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { useHistory } from "react-router-dom"
+import { ProductSale } from "../../../data/ProductSale";
 
-import '../service_order/newServiceOrder/newServiceOrder.css';
-
-export default function TransformationProposalInfo( props ) {
+export default function ProductSaleInfo( props ) {
 
   const [ data, setData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
   const [ hasInstallment, setHasInstallment ] = useState( false );
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
-  const [ serviceFileData, setServiceFileData ] = useState( null );
+
+  const [ tableDataProdutos, setTableDataProdutos ] = useState( null );
+  const [ hasTableData, setHasTableData ] = useState( false );
+  const [valorTotalProduto, setValorTotalProduto] = useState(0);
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -39,7 +38,6 @@ export default function TransformationProposalInfo( props ) {
 
     setIdRef( id )
     let serviceData = JSON.parse( localStorage.getItem( 'quoteSalesInfo' ) );
-    console.log( serviceData )
 
     if ( serviceData ) {
 
@@ -47,14 +45,17 @@ export default function TransformationProposalInfo( props ) {
 
         console.log( "Feching data from firebase" )
 
-        const service = new TransformationProposal( { id: id } )
-        const serviceData = await service.getTransformationProposalFromFirebase();
+        const service = new ProductSale( { id: id } )
+        const serviceData = await service.getProductSaleFromFirebase();
 
         if ( serviceData ) {
           setData( serviceData )
           setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
           const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
           setValuesInstallmentData( firstInstallment );
+
+          setTableDataProdutos( serviceData['tableDataProdutos'] );
+          setHasTableData( true )
         }
         else {
           alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -67,19 +68,25 @@ export default function TransformationProposalInfo( props ) {
         setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
         const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
         setValuesInstallmentData( firstInstallment );
+
+        setTableDataProdutos( serviceData['tableDataProdutos'] );
+        setHasTableData( true )
       }
     } 
     else {
       console.log( "Feching data from firebase after updating" )
   
-      const service = new TransformationProposal( { id: id } )
-      const serviceData = await service.getTransformationProposalFromFirebase();
+      const service = new  ProductSale( { id: id } )
+        const serviceData = await service.getProductSaleFromFirebase();
 
       if ( serviceData ) {
         setData( serviceData )
         setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
         const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
         setValuesInstallmentData( firstInstallment );
+
+        setTableDataProdutos( serviceData['tableDataProdutos'] );
+        setHasTableData( true )
       }
       else {
         alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -88,6 +95,7 @@ export default function TransformationProposalInfo( props ) {
     }
 
   }
+  
 
   const checkCep = ( e ) => {
 
@@ -105,7 +113,7 @@ export default function TransformationProposalInfo( props ) {
           throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
         }
         else {
-          setData( { ...data, "cep": cep, "address": dataCep['logradouro'], "neighborhood": dataCep['bairro'], "city": dataCep['localidade'], "state": dataCep['uf'] } );
+          setData( { ...data, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
         }
       })
       .catch( error => {
@@ -141,8 +149,7 @@ export default function TransformationProposalInfo( props ) {
   const installmentElements = () => setHasInstallment( !hasInstallment )
 
   const renderInstallment = () => {
-    
-    if ( hasInstallment ) {
+    if ( hasInstallment ){
 
       let totalAmount = data['amountPay']
       if ( isNaN(totalAmount) ) {
@@ -181,10 +188,15 @@ export default function TransformationProposalInfo( props ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
 
       if ( id === "entryDate" || id === "outputDate" )
-        setData( { ...data, [id]: `${new Date( formatedDate )}` } );
+      setData( { ...data, [id]: `${new Date( formatedDate )}` } );
       
       else
         setValuesInstallmentData( { ...valuesInstallmentData, [id]: `${new Date( formatedDate )}` } );
+    }
+
+    else if ( id === 'amountPay' ) {
+      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
+      setData( { ...data, [id]: amount } )
     }
 
     else if ( id === 'paymentType' ) {
@@ -198,23 +210,6 @@ export default function TransformationProposalInfo( props ) {
       }
 
       setData( { ...data, 'paymentInfo': paymentInfo } )
-    }
-
-    else if ( id === 'information_file' ) {
-      
-      if ( e.target.files[0] ) {
-        setData( { ...data, [id]: e.target.files[0]['name'] } );
-      
-        let data2 = {
-          file: e.target.files[0],
-          fileID: id
-        }
-        setServiceFileData( data2 );
-      } 
-      else {
-        setData( { ...data, [id]: '' } );
-        setServiceFileData( null );
-      }
     }
 
     else {
@@ -273,19 +268,28 @@ export default function TransformationProposalInfo( props ) {
       installmentsData: installmentDataArray
     }
 
-    data['paymentInfo'] = paymentInfo 
+    data['paymentInfo'] = paymentInfo
+    
+    tableDataProdutos['columns'].forEach( item => {
+
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    })
+
+    data['tableDataProdutos'] = tableDataProdutos
     
     return data
 
   }
 
-  const checkIfFileHasChanged = () => {
-
-    if ( serviceFileData ) {
-      return serviceFileData;
-    }
-    else {
-      return false;
+  const renderTable = () => {
+    if ( hasTableData ) {
+      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
     }
   }
 
@@ -293,69 +297,16 @@ export default function TransformationProposalInfo( props ) {
     e.preventDefault()
 
     const finalData = unifyData();
-    console.log( finalData )
 
-    const transformationProposal = new TransformationProposal( { data: finalData, id: idRef, file: checkIfFileHasChanged() } );
-    const result = await transformationProposal.updateTransformationProposalOnFirebase();
+    const productSale = new ProductSale( { data: finalData, id: idRef } )
+    const result = await productSale.updateProductSaleOnFirebase();
 
     if ( result ) {
-      alert( "Proposta de Transformação atualizada com sucesso" )
-      localStorage.removeItem( 'quoteSalesInfo' )
-      history.push( `/${sessionName}s` )
+      alert( "Venda de Produto atualizada com sucesso" )
+      history.push( `/${sessionName}s` );
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
-    }
-    
-  }
-
-  const renderFileLinkOrInput = () => {
-
-    if ( data['information_file'] !== '' ) {
-
-      return (
-        <>
-          <div className="osForm__input" onClick={ () => {
-            let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/orcamento_venda_transformationProposal/${idRef}/information_file/${data['information_file']}`) )
-            .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
-          }}>
-            <label className="form__input--label">Arquivo</label>
-            <input className="form__input cursor__pointer" type="text" value={ data['information_file'] } disabled />
-          </div>
-
-          <div className="osForm__input">
-            <label className="form__input--label">Alterar Arquivo</label>
-            <label htmlFor="upload-file">
-              <input
-                style={{ display: "none" }}
-                id="upload-file"
-                name="upload-file"
-                type="file"
-                onChange={ handleInformationChange('information_file') }
-              />
-                  
-              <Fab
-                className='modal__upload--button'
-                component="span"
-                aria-label="add"
-                variant="extended"
-              >
-
-                <FileUploadIcon /> Substituir
-              </Fab>
-            </label>
-          </div>
-        </>      
-      );
-    }
-    else {
-
-      return(
-        <div className="osForm__input">
-          <label className="form__input--label">Arquivo</label>
-          <input className="form__input" type="file" onChange={handleInformationChange('information_file')}/>
-        </div>
-      );
+      alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." )
     }
   }
 
@@ -363,7 +314,7 @@ export default function TransformationProposalInfo( props ) {
   
     <main className="form__container">
       
-      <h4 className="os__container--title">Nova Proposta de Tranformação</h4>
+      <h4 className="os__container--title">Nova Venda de Produto</h4>
 
       {/* HEADER */}
       <div className="os__header--container">
@@ -382,20 +333,21 @@ export default function TransformationProposalInfo( props ) {
           </div>
 
         </div>
-        
+     
         <div className="os__header--content">
 
           <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
           <h6 className="info">adm@rescueveiculosespeciais.com.br</h6>
           <h6 className="info">www.rescueveiculosespeciais.com.br</h6>
-
+          
           <div className='os__header--responsableInfo'>
             <h6 className="info">Responsável:</h6>
-            <input className='os__header--responsableInput' type="text" value={ data['responsable'] } onChange={handleInformationChange('responsable')}/>
+            <input className='os__header--responsableInput' type="text" value={data['responsable']} onChange={handleInformationChange('responsable')}/>
           </div>
-        </div>
 
+        </div>
       </div>
+
 
       <div className="form__content">
         <form onSubmit={handleSubmit}>
@@ -407,11 +359,11 @@ export default function TransformationProposalInfo( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">{`Proposta de Transformação ${data['id']}`}</label>
+                  <label className="form__input--labelInLine">{`Nº da Venda: ${data['id']}`}</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Data Entrada</label>        
+                  <label className="form__input--labelInLine">Data Entrada</label>
                   <input className="osForm__input--date" type="date" value={ data.entryDate ? new Date( data.entryDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('entryDate')} required />
                 </div>
 
@@ -419,7 +371,7 @@ export default function TransformationProposalInfo( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" value={data.clientNumber} onChange={handleInformationChange('clientNumber')} required/>
+                <input className="form__input" type="text" placeholder="Código do cliente" value={data.clientNumber} onChange={handleInformationChange('clientNumber')} required/>
               </div>
 
               <div className="form__input--halfWidth">
@@ -438,7 +390,7 @@ export default function TransformationProposalInfo( props ) {
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">CEP*</label>
+                <label className="form__input--label">CEP</label>
                 <InputCep onChange={checkCep} defaultValue={data.cep}/>
               </div>
 
@@ -446,6 +398,7 @@ export default function TransformationProposalInfo( props ) {
                 <label className="form__input--label">Endereço*</label>
                 <input className="form__input" type="text" placeholder="Informe o endereço" value={data['address']} onChange={handleInformationChange('address')} required/>
               </div>
+
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
@@ -455,33 +408,33 @@ export default function TransformationProposalInfo( props ) {
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
                 <select name="estados-brasil" className="form__input" value={data['state']} onChange={handleInformationChange('state')}>
-                    <option value="AC">Acre</option>
-                    <option value="AL">Alagoas</option>
-                    <option value="AP">Amapá</option>
-                    <option value="AM">Amazonas</option>
-                    <option value="BA">Bahia</option>
-                    <option value="CE">Ceará</option>
-                    <option value="DF">Distrito Federal</option>
-                    <option value="ES">Espírito Santo</option>
-                    <option value="GO">Goiás</option>
-                    <option value="MA">Maranhão</option>
-                    <option value="MT">Mato Grosso</option>
-                    <option value="MS">Mato Grosso do Sul</option>
-                    <option value="MG">Minas Gerais</option>
-                    <option value="PA">Pará</option>
-                    <option value="PB">Paraíba</option>
-                    <option value="PR">Paraná</option>
-                    <option value="PE">Pernambuco</option>
-                    <option value="PI">Piauí</option>
-                    <option value="RJ">Rio de Janeiro</option>
-                    <option value="RN">Rio Grande do Norte</option>
-                    <option value="RS">Rio Grande do Sul</option>
-                    <option value="RO">Rondônia</option>
-                    <option value="RR">Roraima</option>
-                    <option value="SC">Santa Catarina</option>
-                    <option value="SP">São Paulo</option>
-                    <option value="SE">Sergipe</option>
-                    <option value="TO">Tocantins</option>
+                  <option value="AC">Acre</option>
+                  <option value="AL">Alagoas</option>
+                  <option value="AP">Amapá</option>
+                  <option value="AM">Amazonas</option>
+                  <option value="BA">Bahia</option>
+                  <option value="CE">Ceará</option>
+                  <option value="DF">Distrito Federal</option>
+                  <option value="ES">Espírito Santo</option>
+                  <option value="GO">Goiás</option>
+                  <option value="MA">Maranhão</option>
+                  <option value="MT">Mato Grosso</option>
+                  <option value="MS">Mato Grosso do Sul</option>
+                  <option value="MG">Minas Gerais</option>
+                  <option value="PA">Pará</option>
+                  <option value="PB">Paraíba</option>
+                  <option value="PR">Paraná</option>
+                  <option value="PE">Pernambuco</option>
+                  <option value="PI">Piauí</option>
+                  <option value="RJ">Rio de Janeiro</option>
+                  <option value="RN">Rio Grande do Norte</option>
+                  <option value="RS">Rio Grande do Sul</option>
+                  <option value="RO">Rondônia</option>
+                  <option value="RR">Roraima</option>
+                  <option value="SC">Santa Catarina</option>
+                  <option value="SP">São Paulo</option>
+                  <option value="SE">Sergipe</option>
+                  <option value="TO">Tocantins</option>
                 </select>              
               </div>
 
@@ -492,51 +445,29 @@ export default function TransformationProposalInfo( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={ data['telephone'] } onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={data['telephone']} onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 
 
-            {/* INFORMACOES  */}
+            {/* PRODUTOS */}
             <div className="osForm__content--container">
-              <h6 className="os__content--title">Informações</h6>
-              
-              <div className="osForm__input">
-                <label className="form__input--label">Veículo*</label>
-                <input className="form__input" type="text" placeholder="Veículo" value={ data['information_vehicle'] } onChange={handleInformationChange('information_vehicle')} required/>
-              </div>
-
-              <div className="osForm__input">
-                <label className="form__input--label">Marca*</label>
-                <input className="form__input" type="text" placeholder="Marca" value={ data['information_brand'] } onChange={handleInformationChange('information_brand')} required/>
-              </div>
-
-              <div className="osForm__input">
-                <label className="form__input--label">Modelo*</label>
-                <input className="form__input" type="text" placeholder="Modelo" value={ data['information_model'] } onChange={handleInformationChange('information_model')} required/>
-              </div>
-
-              <div className="osForm__input">
-                <label className="form__input--label">Chassi*</label>
-                <input className="form__input" type="text" placeholder="Chassi" value={ data['information_chassi'] } onChange={handleInformationChange('information_chassi')} required/>
-              </div>
-
-              { renderFileLinkOrInput() }
-
+              <h6 className="os__content--title">Produtos</h6>
+              { renderTable() }
             </div>
 
 
             {/* DADOS PAGAMENTO */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Dados do Pagamento</h6>
-
+              
               <div className="osForm__input">
                 <label className="form__input--label">Vencimento*</label>
                 <input className="form__input" type="date" placeholder="Vencimento" value={ valuesInstallmentData.dueDate ? new Date( valuesInstallmentData.dueDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('dueDate')} required/>
               </div>
 
               <div className="osForm__input">
-                <label className="form__input--label">Valor Total*</label>
+                <label className="form__input--label">Valor*</label>
                 <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" value={ data['amountPay'] } onChange={handleInformationChange('amountPay')} required/>
               </div>
 
@@ -560,16 +491,15 @@ export default function TransformationProposalInfo( props ) {
                 </select>  
               </div>
 
-               { renderInstallment() }
+              { renderInstallment() }
 
             </div>
-
            
             {/* ASSINATURA E DADOS BANCARIOS */}
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input className='os__header--responsableInput' type="text" value={ data['requestedBy'] } onChange={handleInformationChange('requestedBy')} required/>
+                <input className='os__header--responsableInput' type="text" value={ data['requestedBy'] } onChange={handleInformationChange('requestedBy')}/>
                 <h3 className="info">Solicitado por:</h3>
               </div>
 
@@ -582,9 +512,10 @@ export default function TransformationProposalInfo( props ) {
                 <h6 className="info">Rescue Transformação de veículos especiais Eireli</h6>
                 <h6 className="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
 
+
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" value={ data.outputDate ? new Date( data.outputDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('outputDate')} required/>
+                  <input className="osForm__input--date" type="date" value={ data.outputDate ? new Date( data.outputDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('outputDate')}/>
                 </div>
 
               </div>
@@ -593,7 +524,6 @@ export default function TransformationProposalInfo( props ) {
 
           </div>
 
-          
          
           <div className="footer__button--container">
             
@@ -603,12 +533,13 @@ export default function TransformationProposalInfo( props ) {
 
             <div className="footer__button--status">
               <label>STATUS</label>
-              { defineStatusFieldOptions( ) }
-            </div>    
+              { defineStatusFieldOptions( sessionName ) }
+            </div>       
 
           </div>
 
         </form>
+
       </div>
 
     </main>

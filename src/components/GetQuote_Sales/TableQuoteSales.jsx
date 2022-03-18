@@ -71,7 +71,7 @@ export const TableQuoteSales = ( props ) => {
 
     let {id} = rowData
     const localStorageName = () => {
-
+      
       switch( rowData['serviceType'] ) {
 
         case "serviceOrder":
@@ -98,7 +98,7 @@ export const TableQuoteSales = ( props ) => {
         serviceName = "os";
       }
       else if ( serviceType === "productSale" ) {
-        serviceName = "";
+        serviceName = "venda_produto";
       }
 
       return `${session}/${serviceName}/${id}`

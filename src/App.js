@@ -30,7 +30,8 @@ import BillsPayInfo from "./pages/financial/billsInfo/BillsPayInfo";
 import BillsReceiveInfo from "./pages/financial/billsInfo/BillsReceiveInfo";
 import QuoteSalesList from "./pages/getQuote/list_visualization/QuoteSalesList.jsx";
 import TransformationProposalInfo from "./components/GetQuote_Sales/transformation_proposal/TransformationProposalInfo";
-import ServiceOrderInfo from "./components/GetQuote_Sales/service_order/ServiceOrderInfo.jsx"
+import ServiceOrderInfo from "./components/GetQuote_Sales/service_order/ServiceOrderInfo.jsx";
+import ProductSaleInfo from "./components/GetQuote_Sales/products_sale/ProductSaleInfo.jsx";
 
 function App() {
   return (
@@ -70,6 +71,8 @@ function App() {
           <Route path="/venda/nova-venda">
             <ProductSale/>
           </Route>
+
+          <Route exact path="/venda/venda_produto/:id" component={ProductSaleInfo}/>
 
           <Route path="/venda/nova-transformacao">
             <SalesTransformationProposal/>
@@ -115,6 +118,8 @@ function App() {
           <Route exact path="/orcamento/nova-venda">
             <GetQuoteProductSale/>
           </Route>
+
+          <Route exact path="/orcamento/venda_produto/:id" component={ProductSaleInfo}/>
 
           <Route exact path="/orcamento/nova-transformacao">
             <GetQuoteTransformationProposal/>

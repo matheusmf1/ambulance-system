@@ -7,7 +7,7 @@ import { TableOS } from '../../../../components/tables/responsiveTable/table';
 import InputCpfCnpj from '../../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../inputs/input--phoneNumber';
 import InputCep from '../../../inputs/input--cep';
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import { ServiceOrder } from "../../../../data/ServiceOrder";
 
 

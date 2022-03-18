@@ -43,8 +43,8 @@ export default class QuoteSalesList extends Component {
       this.session = "venda";
     }
 
-    const productsSale = collection( db, `${this.session}_productsSale` )
-    const queryResult1 = query( productsSale, orderBy("id") );
+    const productsSale = collection( db, `orcamento_venda_productsSale` )
+    const queryResult1 = query( productsSale, where("mainService", "==", `${this.session}`) );
     const docSnap1 = await getDocs( queryResult1 );
 
     const serviceOrder = collection( db, `orcamento_venda_serviceOrder` )

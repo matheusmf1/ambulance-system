@@ -158,7 +158,6 @@ export default function ServiceOrderInfo( props ) {
 
   const installmentElements = () => setHasInstallment( !hasInstallment )
 
-
   const renderInstallment = () => {
     if ( hasInstallment ){
 
@@ -335,6 +334,7 @@ export default function ServiceOrderInfo( props ) {
 
     if ( result ) {
       alert( "Ordem de Serviço cadastrada com sucesso" )
+      localStorage.removeItem( 'quoteSalesInfo' );
       history.push( `/${sessionName}s` );
     }
     else {
@@ -517,19 +517,13 @@ export default function ServiceOrderInfo( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-
               { renderTable1() }
-              {/* <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/> */}
-
             </div>
 
             {/* SERVICOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Serviços</h6>
-              
               { renderTable2() }
-              
-              {/* <TableOS tableData={ tableDataServicos } setTableData={setTableDataServicos} setValorTotal={setValorTotalServico}/> */}
               <h3 className="os__content--sumTableTitle">Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
             </div>
 
