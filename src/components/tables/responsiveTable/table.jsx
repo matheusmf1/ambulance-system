@@ -4,7 +4,7 @@ import { useTable } from "react-table";
 
 import './table.css';
 
-const TableInputNumber = props => {
+const TableInputNumber = (props) => {
   // console.log("TableInputNumber", props);
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
@@ -19,7 +19,7 @@ const TableInputText = props => {
 };
 
 const TableText = props => {
-  // console.log("TableInputText", props);
+  // console.log("TableText", props);
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
   return <h5 onChange={onChange} className="tableOS__subTotal">R$ {cell.value}</h5>;
@@ -32,12 +32,25 @@ const ReactTable = memo( props => {
   const { tableData, setTableData, setValorTotal } = props;
   const { initialData, somaTotalRow, somaTotalTextAndItens } = tableData;
 
-  const tableColumns = tableData.columns
-
+  const tableColumns = tableData.columns;
   tableColumns.forEach( item => {
-    item['Cell'] = eval( item[ 'Cell' ] )
-  });
 
+    if ( item['Header'] === "SubTotal" ) {
+      item[ 'accessor' ] = row => row.valorUnitario * row.quantidade
+      item['Cell'] = TableText;
+    }
+
+    else if ( item['Cell'] === "TableInputText" ) {
+      item['Cell'] = TableInputText;
+    }
+    else if ( item['Cell'] === "TableInputNumber" ) {
+      item['Cell'] = TableInputNumber;
+    }
+    else if ( item['Cell'] === "TableText" ) {
+      item['Cell'] = TableText;
+    }
+
+  });
 
   const columns = useMemo( () => tableColumns, [tableColumns] );
 
@@ -70,7 +83,7 @@ const ReactTable = memo( props => {
   const addRow = () => {
     let old = tableData['initialData']
     let newData = [...old, updateItemNumberAddRow( old )]  
-    setTableData( { ...tableData,  "initialData": newData } )
+    setTableData( { ...tableData, "initialData": newData } )
   }
 
   const updateData = (rowIndex, columnID, value) => {
@@ -129,9 +142,12 @@ const ReactTable = memo( props => {
 
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <td data-label={ cell.column.Header } colSpan={ cell.column.colSpan }  {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                ))}
+                {row.cells.map(cell => {
+
+                  return(
+                    <td data-label={ cell.column.Header } colSpan={ cell.column.colSpan }  {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
+                })}
               </tr>
             );
           })}

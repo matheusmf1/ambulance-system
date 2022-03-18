@@ -70,9 +70,6 @@ export class TransformationProposal {
       const docRef = doc( db, `orcamento_venda_transformationProposal`, `${this.id}` );
       
       if ( this.file ) {
-        console.log('tem file')
-        console.log( this.file )
-
         const fileData = this.file['file'];
         const fileID = this.file['fileID'];
 

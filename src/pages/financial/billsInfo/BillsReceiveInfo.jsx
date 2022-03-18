@@ -42,7 +42,7 @@ export default function BillsReceiveInfo( props ) {
 
     if ( billData ) {
 
-      if ( toString( billData['id'] ) !== toString( id ) ) {
+      if ( billData['id'].toString() !== id.toString() ) {
 
         console.log( "Feching data from firebase" )
 

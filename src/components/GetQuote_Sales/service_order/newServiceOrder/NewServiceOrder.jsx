@@ -32,6 +32,7 @@ export default function NewServiceOrder( props ) {
 
   const [ serviceOrderData, setServiceOrderData ] = useState({
     serviceType: "serviceOrder",
+    mainService: "",
     id: "",
     entryDate: "",
     clientNumber: "",
@@ -116,7 +117,7 @@ export default function NewServiceOrder( props ) {
   
       {
         Header: "SubTotal",
-        accessor: row => row.valorUnitario * row.quantidade,
+        accessor: "",
         Cell: 'TableText',
         id: "subTotal",
         colSpan: 1,
@@ -255,7 +256,7 @@ export default function NewServiceOrder( props ) {
       return (
         <select className="form__input" defaultValue={serviceOrderData['status']} onChange={handleInformationChange( 'status' )}>
           <option value="cancelado_naoAprovado">Não Aprovado</option>
-          <option value="Aprovado">Aprovado</option>
+          <option value="aprovado">Aprovado</option>
         </select>       
       );
     }
@@ -412,8 +413,31 @@ export default function NewServiceOrder( props ) {
     }
 
     serviceOrderData['paymentInfo'] = paymentInfo
-    serviceOrderData['tableDataProdutos'] = tableDataProdutos
-    serviceOrderData['tableDataServicos'] = tableDataServicos
+
+    tableDataProdutos['columns'].forEach( item => {
+
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    })
+
+    tableDataServicos['columns'].forEach( item => {
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    })
+    
+    serviceOrderData['tableDataProdutos'] = tableDataProdutos;
+    serviceOrderData['tableDataServicos'] = tableDataServicos;
+    serviceOrderData['mainService'] = session;
     return serviceOrderData
 
   }
@@ -421,14 +445,14 @@ export default function NewServiceOrder( props ) {
   const handleSubmit = async ( e ) => {
     e.preventDefault()
 
-    const finalData = unifyData()
+    const finalData = unifyData();
 
-    const serviceOrder = new ServiceOrder( { data: finalData, type: session } )
+    const serviceOrder = new ServiceOrder( { data: finalData } )
     const result = await serviceOrder.addServiceOrderToFirebase();
 
     if ( result ) {
       alert( "Ordem de Serviço cadastrada com sucesso" )
-      // history.push("/fornecedores")
+      history.push( `/${session}s` );
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )

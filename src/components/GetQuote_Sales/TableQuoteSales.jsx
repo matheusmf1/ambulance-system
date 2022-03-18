@@ -2,8 +2,6 @@ import { React, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
-
-import { DeleteOutline } from "@material-ui/icons";
 import DeleteModal from "../modal/deleteModal";
 
 export const TableQuoteSales = ( props ) => {
@@ -97,7 +95,7 @@ export const TableQuoteSales = ( props ) => {
         serviceName = "transformacao";
       }
       else if ( serviceType === "serviceOrder" ) {
-        serviceName = "";
+        serviceName = "os";
       }
       else if ( serviceType === "productSale" ) {
         serviceName = "";

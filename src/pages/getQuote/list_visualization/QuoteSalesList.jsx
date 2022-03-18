@@ -47,12 +47,10 @@ export default class QuoteSalesList extends Component {
     const queryResult1 = query( productsSale, orderBy("id") );
     const docSnap1 = await getDocs( queryResult1 );
 
-    const serviceOrder = collection( db, `${this.session}_serviceOrder` )
-    const queryResult2 = query( serviceOrder, orderBy("id") );
+    const serviceOrder = collection( db, `orcamento_venda_serviceOrder` )
+    const queryResult2 = query( serviceOrder, where("mainService", "==", `${this.session}`) );
     const docSnap2 = await getDocs( queryResult2 );
     
-    // const transformationProposal = collection( db, `${this.session}_transformationProposal` )
-    // const queryResult3 = query( transformationProposal, orderBy("id") );
     const transformationProposal = collection( db, `orcamento_venda_transformationProposal` )
     const queryResult3 = query( transformationProposal, where("mainService", "==", `${this.session}`), orderBy("id") );
     const docSnap3 = await getDocs( queryResult3 );

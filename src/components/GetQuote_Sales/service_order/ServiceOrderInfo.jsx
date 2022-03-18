@@ -1,24 +1,26 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect } from 'react'
 import logoRescue from '../../../assets/images/logo-rescue.png';
+import { TableOS } from '../../tables/responsiveTable/table';
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
-import { TransformationProposal } from "../../../data/TransformationProposal";
-import { useHistory } from "react-router-dom";
-import { storage, bucketName } from "../../../firebase";
-import { ref, getDownloadURL } from "firebase/storage";
-import { Fab } from "@material-ui/core";
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { useHistory } from "react-router-dom"
+import { ServiceOrder } from "../../../data/ServiceOrder";
 
-import '../service_order/newServiceOrder/newServiceOrder.css';
-
-export default function TransformationProposalInfo( props ) {
+export default function ServiceOrderInfo( props ) {
 
   const [ data, setData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
   const [ hasInstallment, setHasInstallment ] = useState( false );
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
-  const [ serviceFileData, setServiceFileData ] = useState( null );
+
+  const [ tableDataProdutos, setTableDataProdutos ] = useState( null );
+  const [ tableDataServicos, setTableDataServicos ] = useState( null );
+  const [ hasTableData, setHasTableData ] = useState( false );
+
+  const [valorTotalProduto, setValorTotalProduto] = useState(0);
+  const [valorTotalServico, setValorTotalServico] = useState(0);
+  
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -39,7 +41,7 @@ export default function TransformationProposalInfo( props ) {
 
     setIdRef( id )
     let serviceData = JSON.parse( localStorage.getItem( 'quoteSalesInfo' ) );
-    console.log( serviceData )
+    console.log( serviceData );
 
     if ( serviceData ) {
 
@@ -47,14 +49,19 @@ export default function TransformationProposalInfo( props ) {
 
         console.log( "Feching data from firebase" )
 
-        const service = new TransformationProposal( { id: id } )
-        const serviceData = await service.getTransformationProposalFromFirebase();
+        const service = new ServiceOrder( { id: id } )
+        const serviceData = await service.getServiceOrderFromFirebase();
 
         if ( serviceData ) {
           setData( serviceData )
           setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
           const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
           setValuesInstallmentData( firstInstallment );
+
+          setTableDataProdutos( serviceData['tableDataProdutos'] );
+          setTableDataServicos( serviceData['tableDataServicos'] );
+  
+          setHasTableData( true )
         }
         else {
           alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -67,19 +74,29 @@ export default function TransformationProposalInfo( props ) {
         setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
         const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
         setValuesInstallmentData( firstInstallment );
+
+        setTableDataProdutos( serviceData['tableDataProdutos'] );
+        setTableDataServicos( serviceData['tableDataServicos'] );
+
+        setHasTableData( true )
       }
     } 
     else {
       console.log( "Feching data from firebase after updating" )
   
-      const service = new TransformationProposal( { id: id } )
-      const serviceData = await service.getTransformationProposalFromFirebase();
+      const service = new ServiceOrder( { id: id } )
+        const serviceData = await service.getServiceOrderFromFirebase();
 
       if ( serviceData ) {
         setData( serviceData )
         setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
         const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
         setValuesInstallmentData( firstInstallment );
+
+        setTableDataProdutos( serviceData['tableDataProdutos'] );
+        setTableDataServicos( serviceData['tableDataServicos'] );
+
+        setHasTableData( true )
       }
       else {
         alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -88,6 +105,7 @@ export default function TransformationProposalInfo( props ) {
     }
 
   }
+
 
   const checkCep = ( e ) => {
 
@@ -140,9 +158,9 @@ export default function TransformationProposalInfo( props ) {
 
   const installmentElements = () => setHasInstallment( !hasInstallment )
 
+
   const renderInstallment = () => {
-    
-    if ( hasInstallment ) {
+    if ( hasInstallment ){
 
       let totalAmount = data['amountPay']
       if ( isNaN(totalAmount) ) {
@@ -173,9 +191,10 @@ export default function TransformationProposalInfo( props ) {
       return <></>
     }
 
+
   }
 
-  const handleInformationChange = (id) => ( e ) => {
+  const handleInformationChange = ( id ) => ( e ) => {
 
     if ( id === "entryDate" || id === "dueDate" || id === "outputDate" ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
@@ -185,6 +204,11 @@ export default function TransformationProposalInfo( props ) {
       
       else
         setValuesInstallmentData( { ...valuesInstallmentData, [id]: `${new Date( formatedDate )}` } );
+    }
+
+    else if ( id === 'amountPay' ) {
+      // let amount = parseFloat( e.target.value.toString() ).toFixed(2)
+      setData( { ...data, [id]: e.target.value.toString() } )
     }
 
     else if ( id === 'paymentType' ) {
@@ -200,27 +224,9 @@ export default function TransformationProposalInfo( props ) {
       setData( { ...data, 'paymentInfo': paymentInfo } )
     }
 
-    else if ( id === 'information_file' ) {
-      
-      if ( e.target.files[0] ) {
-        setData( { ...data, [id]: e.target.files[0]['name'] } );
-      
-        let data2 = {
-          file: e.target.files[0],
-          fileID: id
-        }
-        setServiceFileData( data2 );
-      } 
-      else {
-        setData( { ...data, [id]: '' } );
-        setServiceFileData( null );
-      }
-    }
-
     else {
-      setData( {...data, [ id ]: e.target.value } )
+      setData( { ...data, [id]: e.target.value } )
     }
-
   }
 
   const unifyData = () => {
@@ -273,88 +279,66 @@ export default function TransformationProposalInfo( props ) {
       installmentsData: installmentDataArray
     }
 
-    data['paymentInfo'] = paymentInfo 
+    data['paymentInfo'] = paymentInfo;
+
+    tableDataProdutos['columns'].forEach( item => {
+
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    })
+
+    tableDataServicos['columns'].forEach( item => {
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    })
     
+    data['tableDataProdutos'] = tableDataProdutos;
+    data['tableDataServicos'] = tableDataServicos;
     return data
 
   }
 
-  const checkIfFileHasChanged = () => {
+  const renderTable1 = () => {
 
-    if ( serviceFileData ) {
-      return serviceFileData;
+    if ( hasTableData ) {
+      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
     }
-    else {
-      return false;
+
+  }
+
+  const renderTable2 = () => {
+
+    if ( hasTableData ) {
+      return <TableOS tableData={ tableDataServicos } setTableData={setTableDataServicos} setValorTotal={setValorTotalServico}/>
     }
+
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const finalData = unifyData();
     console.log( finalData )
 
-    const transformationProposal = new TransformationProposal( { data: finalData, id: idRef, file: checkIfFileHasChanged() } );
-    const result = await transformationProposal.updateTransformationProposalOnFirebase();
+    const serviceOrder = new ServiceOrder( { data: finalData, id: idRef } );
+    const result = await serviceOrder.updateServiceOrderOnFirebase();
 
     if ( result ) {
-      alert( "Proposta de Transformação atualizada com sucesso" )
-      history.push( `/${sessionName}s` )
+      alert( "Ordem de Serviço cadastrada com sucesso" )
+      history.push( `/${sessionName}s` );
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
-    }
-    
-  }
-
-  const renderFileLinkOrInput = () => {
-
-    if ( data['information_file'] !== '' ) {
-
-      return (
-        <>
-          <div className="osForm__input" onClick={ () => {
-            let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/orcamento_venda_transformationProposal/${idRef}/information_file/${data['information_file']}`) )
-            .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
-          }}>
-            <label className="form__input--label">Arquivo</label>
-            <input className="form__input cursor__pointer" type="text" value={ data['information_file'] } disabled />
-          </div>
-
-          <div className="osForm__input">
-            <label className="form__input--label">Alterar Arquivo</label>
-            <label htmlFor="upload-file">
-              <input
-                style={{ display: "none" }}
-                id="upload-file"
-                name="upload-file"
-                type="file"
-                onChange={ handleInformationChange('information_file') }
-              />
-                  
-              <Fab
-                className='modal__upload--button'
-                component="span"
-                aria-label="add"
-                variant="extended"
-              >
-
-                <FileUploadIcon /> Substituir
-              </Fab>
-            </label>
-          </div>
-        </>      
-      );
-    }
-    else {
-
-      return(
-        <div className="osForm__input">
-          <label className="form__input--label">Arquivo</label>
-          <input className="form__input" type="file" onChange={handleInformationChange('information_file')}/>
-        </div>
-      );
     }
   }
 
@@ -362,13 +346,13 @@ export default function TransformationProposalInfo( props ) {
   
     <main className="form__container">
       
-      <h4 className="os__container--title">Nova Proposta de Tranformação</h4>
+      <h4 className="os__container--title">Nova Ordem de Serviço</h4>
 
       {/* HEADER */}
       <div className="os__header--container">
 
         <div className="os__header--containerImage">
-          <img src={logoRescue} alt="" className="os__header--image" />
+          <img src={logoRescue} alt="logo empresa Rescue" className="os__header--image"/>
 
           <div className="os__header--content">
 
@@ -381,7 +365,7 @@ export default function TransformationProposalInfo( props ) {
           </div>
 
         </div>
-        
+       
         <div className="os__header--content">
 
           <h6 className="info">(11) 2847-0356 - (11) 95651-2030</h6>
@@ -390,11 +374,12 @@ export default function TransformationProposalInfo( props ) {
 
           <div className='os__header--responsableInfo'>
             <h6 className="info">Responsável:</h6>
-            <input className='os__header--responsableInput' type="text" value={ data['responsable'] } onChange={handleInformationChange('responsable')}/>
+            <input className='os__header--responsableInput' type="text" value={data['responsable']} onChange={handleInformationChange('responsable')}/>
           </div>
-        </div>
 
+        </div>
       </div>
+
 
       <div className="form__content">
         <form onSubmit={handleSubmit}>
@@ -406,15 +391,16 @@ export default function TransformationProposalInfo( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">{`Proposta de Transformação ${data['id']}`}</label>
+                  <label className="form__input--labelInLine">{`Ordem de Serviço ${data['id']}`}</label>
                 </div>
 
                 <div className="osForm__titleWithDate--title">
-                  <label className="form__input--labelInLine">Data Entrada</label>        
+                  <label className="form__input--labelInLine">Data Entrada</label>
                   <input className="osForm__input--date" type="date" value={ data.entryDate ? new Date( data.entryDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('entryDate')} required />
                 </div>
 
               </div>
+
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
@@ -432,7 +418,7 @@ export default function TransformationProposalInfo( props ) {
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">CNPJ/CPF*</label>
+                <label className="form__input--label">CPF/CNPJ*</label>
                 <InputCpfCnpj onChange={handleInformationChange('cpf')} defaultValue={data.cpf} required={true}/>
               </div>
 
@@ -491,51 +477,73 @@ export default function TransformationProposalInfo( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={ data['telephone'] } onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={data['telephone']} onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 
-
-            {/* INFORMACOES  */}
+            {/* EQUIPAMENTO */}
             <div className="osForm__content--container">
-              <h6 className="os__content--title">Informações</h6>
               
+              <h6 className="os__content--title">Equipamento</h6>
+
               <div className="osForm__input">
                 <label className="form__input--label">Veículo*</label>
-                <input className="form__input" type="text" placeholder="Veículo" value={ data['information_vehicle'] } onChange={handleInformationChange('information_vehicle')} required/>
+                <input className="form__input" type="text" placeholder="Veículo" value={data['equipament_vehicle']} onChange={handleInformationChange('equipament_vehicle')} required/>
               </div>
 
               <div className="osForm__input">
                 <label className="form__input--label">Marca*</label>
-                <input className="form__input" type="text" placeholder="Marca" value={ data['information_brand'] } onChange={handleInformationChange('information_brand')} required/>
+                <input className="form__input" type="text" placeholder="Marca" value={data['equipament_brand']} onChange={handleInformationChange('equipament_brand')} required/>
               </div>
+
 
               <div className="osForm__input">
                 <label className="form__input--label">Modelo*</label>
-                <input className="form__input" type="text" placeholder="Modelo" value={ data['information_model'] } onChange={handleInformationChange('information_model')} required/>
+                <input className="form__input" type="text" placeholder="Modelo" value={data['equipament_model']} onChange={handleInformationChange('equipament_model')} required/>
               </div>
 
               <div className="osForm__input">
-                <label className="form__input--label">Chassi*</label>
-                <input className="form__input" type="text" placeholder="Chassi" value={ data['information_chassi'] } onChange={handleInformationChange('information_chassi')} required/>
+                <label className="form__input--label">Placa*</label>
+                <input className="form__input" type="text" placeholder="Placa" value={data['equipament_plate']} onChange={handleInformationChange('equipament_plate')} required/>
               </div>
 
-              { renderFileLinkOrInput() }
+              <div className="osForm__input">
+                <label className="form__input--label">Prefixo</label>
+                <input className="form__input" type="text" placeholder="Prefixo" value={data['equipament_prefix']} onChange={handleInformationChange('equipament_prefix')}/>
+              </div>
 
             </div>
 
+            {/* PRODUTOS */}
+            <div className="osForm__content--container">
+              <h6 className="os__content--title">Produtos</h6>
+
+              { renderTable1() }
+              {/* <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/> */}
+
+            </div>
+
+            {/* SERVICOS */}
+            <div className="osForm__content--container">
+              <h6 className="os__content--title">Serviços</h6>
+              
+              { renderTable2() }
+              
+              {/* <TableOS tableData={ tableDataServicos } setTableData={setTableDataServicos} setValorTotal={setValorTotalServico}/> */}
+              <h3 className="os__content--sumTableTitle">Total da Ordem de Serviço R$ { ( parseFloat(valorTotalProduto)  + parseFloat(valorTotalServico) ) } </h3>        
+            </div>
 
             {/* DADOS PAGAMENTO */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Dados do Pagamento</h6>
-
+              
               <div className="osForm__input">
                 <label className="form__input--label">Vencimento*</label>
                 <input className="form__input" type="date" placeholder="Vencimento" value={ valuesInstallmentData.dueDate ? new Date( valuesInstallmentData.dueDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('dueDate')} required/>
               </div>
 
               <div className="osForm__input">
-                <label className="form__input--label">Valor Total*</label>
+                <label className="form__input--label">Valor*</label>
                 <input className="form__input" type="number" min="1" step=".01" placeholder="Valor" value={ data['amountPay'] } onChange={handleInformationChange('amountPay')} required/>
               </div>
 
@@ -559,16 +567,15 @@ export default function TransformationProposalInfo( props ) {
                 </select>  
               </div>
 
-               { renderInstallment() }
+              { renderInstallment() }
 
             </div>
-
            
             {/* ASSINATURA E DADOS BANCARIOS */}
             <div className="osForm__content--container">
 
               <div className="os__signatureField--container">
-                <input className='os__header--responsableInput' type="text" value={ data['requestedBy'] } onChange={handleInformationChange('requestedBy')} required/>
+                <input className='os__header--responsableInput' type="text" value={ data['requestedBy'] } onChange={handleInformationChange('requestedBy')}/>
                 <h3 className="info">Solicitado por:</h3>
               </div>
 
@@ -581,9 +588,10 @@ export default function TransformationProposalInfo( props ) {
                 <h6 className="info">Rescue Transformação de veículos especiais Eireli</h6>
                 <h6 className="info">CNPJ: 33.972.355/0001-00 (Chave PIX)</h6>
 
+
                 <div className="osForm__titleWithDate--title">
                   <label className="form__input--labelInLine">Data Saída</label>
-                  <input className="osForm__input--date" type="date" value={ data.outputDate ? new Date( data.outputDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('outputDate')} required/>
+                  <input className="osForm__input--date" type="date" value={ data.outputDate ? new Date( data.outputDate ).toISOString().split("T")[0] : '' } onChange={handleInformationChange('outputDate')}/>
                 </div>
 
               </div>
@@ -591,8 +599,7 @@ export default function TransformationProposalInfo( props ) {
             </div>
 
           </div>
-
-          
+  
          
           <div className="footer__button--container">
             
@@ -602,14 +609,15 @@ export default function TransformationProposalInfo( props ) {
 
             <div className="footer__button--status">
               <label>STATUS</label>
-              { defineStatusFieldOptions( ) }
-            </div>    
+              { defineStatusFieldOptions( sessionName ) }
+            </div>
 
           </div>
 
         </form>
+
       </div>
 
     </main>
     )
-  }
+}
