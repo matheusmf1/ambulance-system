@@ -12,6 +12,7 @@ import { CurvedArrow } from './curvedArrow';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 // import { PaymentOutlined } from '@material-ui/icons';
 import { PaymentsOutlined } from '@mui/icons-material';
+import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 
 export default function Sidebar() {
 
@@ -321,6 +322,37 @@ toogleMenuBars.forEach( icon => {
 								</li> */}
 						
 							</ul>
+						</li>
+
+
+						{/* ALMOXARIFADO */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<WarehouseOutlinedIcon/>
+								<span className="sidebar__menu--title">Almoxarifado</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+		
+							<ul id="warehouse" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Almoxarifado</span>        
+								
+								<li>
+									<a href="/almoxarifado">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Estoque</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/almoxarifado/cadastro">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastro Material</span>
+									</a>
+								</li>
+						
+							</ul>
+
 						</li>
 
 					</ul>

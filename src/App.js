@@ -32,6 +32,9 @@ import QuoteSalesList from "./pages/getQuote/list_visualization/QuoteSalesList.j
 import TransformationProposalInfo from "./components/GetQuote_Sales/transformation_proposal/TransformationProposalInfo";
 import ServiceOrderInfo from "./components/GetQuote_Sales/service_order/ServiceOrderInfo.jsx";
 import ProductSaleInfo from "./components/GetQuote_Sales/products_sale/ProductSaleInfo.jsx";
+import MaterialAdd from "./pages/inventory/materialAdd/MaterialAdd";
+import InventoryList from "./pages/inventory/InventoryList";
+import MaterialInfo from "./pages/inventory/materialnfo/MaterialInfo";
 
 function App() {
   return (
@@ -159,6 +162,17 @@ function App() {
           <Route exact path="/financeiro/receber/cadastro">
             <NewBillToReceive/>
           </Route>
+
+          {/* FINANCEIRO */}
+          <Route exact path="/almoxarifado">
+            <InventoryList/>
+          </Route>
+
+          <Route exact path="/almoxarifado/cadastro">
+            <MaterialAdd/>
+          </Route>
+
+          <Route exact path="/almoxarifado/:id" component={MaterialInfo}/>
 
         </Switch>
 
