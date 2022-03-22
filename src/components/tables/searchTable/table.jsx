@@ -5,9 +5,9 @@ import "rc-pagination/assets/index.css";
 import './table.css';
 
 import { DeleteOutline } from "@material-ui/icons";
-import { Customer } from "../../../data/Customer1";
-import { Supplier } from "../../../data/Supplier1";
-import { Employee } from "../../../data/Employee1";
+import { Customer } from "../../../data/Customer";
+import { Supplier } from "../../../data/Supplier";
+import { Employee } from "../../../data/Employee";
 
 export const Table = ( props ) => {
 

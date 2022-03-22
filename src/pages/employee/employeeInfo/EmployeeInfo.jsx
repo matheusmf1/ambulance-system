@@ -12,7 +12,7 @@ import userImage from '../../../assets/images/user.png'
 import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
-import { Employee } from "../../../data/Employee1"
+import { Employee } from "../../../data/Employee"
 
 
 export default function EmployeeInfo( props ) {

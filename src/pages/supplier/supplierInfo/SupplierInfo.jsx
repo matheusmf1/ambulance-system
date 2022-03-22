@@ -14,7 +14,7 @@ import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
 
-import { Supplier } from "../../../data/Supplier1"
+import { Supplier } from "../../../data/Supplier"
 
 
 export default function SupplierInfo( props ) {
