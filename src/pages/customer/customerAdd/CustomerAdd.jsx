@@ -5,7 +5,7 @@ import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
 import { useHistory } from "react-router-dom"
 import './customerAdd.css';
-import { Customer } from '../../../data/Customer';
+import { Customer } from '../../../data/Customer1';
 
 export default function CustomerAdd() {
 

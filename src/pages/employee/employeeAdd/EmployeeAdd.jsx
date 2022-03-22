@@ -4,7 +4,7 @@ import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
 import { useHistory } from "react-router-dom"
-import { Employee } from '../../../data/Employee';
+import { Employee } from "../../../data/Employee1"
 
 export default function EmployeeAdd() {
 

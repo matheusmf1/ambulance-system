@@ -4,7 +4,7 @@ import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
 import { useHistory } from "react-router-dom"
-import { Supplier } from "../../../data/Supplier"
+import { Supplier } from "../../../data/Supplier1"
 
 
 export default function SupplierAdd() {
