@@ -58,25 +58,25 @@ export default function MaterialAdd() {
 
     console.log( materialData )
 
-    // if ( materialData['supplier_id'] === "choose" ) {
-    //   alert( "Selecione o fornecedor!" );
-    // }
-    // else {
+    if ( materialData['supplier_id'] === "choose" ) {
+      alert( "Selecione o fornecedor!" );
+    }
+    else {
 
-    //   materialData['id'] = `${materialData['supplier_id']}_${materialData['id']}` 
+      materialData['id'] = `${materialData['supplier_id']}_${materialData['id']}` 
 
-    //   const data = new Inventory( { data: materialData, id: materialData['id'] } );
+      const data = new Inventory( { data: materialData, id: materialData['id'] } );
   
-    //   const result = await data.addMaterialInventoryToFirebase();
+      const result = await data.addMaterialInventoryToFirebase();
   
-    //   if ( result ) {
-    //     alert( "Material cadastrado com sucesso" );
-    //     // history.push("/almoxarifado");
-    //   }
-    //   else {
-    //     alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
-    //   }
-    // }
+      if ( result ) {
+        alert( "Material cadastrado com sucesso" );
+        history.push("/almoxarifado");
+      }
+      else {
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      }
+    }
   
 
     
