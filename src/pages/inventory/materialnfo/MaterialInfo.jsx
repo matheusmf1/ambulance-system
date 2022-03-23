@@ -1,7 +1,5 @@
 import {React, useState, useEffect} from 'react';
 import { useHistory } from "react-router-dom";
-import { db } from '../../../firebase';
-import { collection, getDocs, query, orderBy, limit  } from 'firebase/firestore';
 import { Inventory } from "../../../data/Inventory";
 
 
@@ -108,7 +106,7 @@ export default function MaterialInfo( props ) {
     <main className="form__container">
 
       <div className="form__title">
-        <h4>Cadastrar Material</h4>
+        <h4>{ `Informações do material - ${codProduto}` }</h4>
       </div>
 
       <div className="form__content">

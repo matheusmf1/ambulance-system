@@ -35,6 +35,9 @@ import ProductSaleInfo from "./components/GetQuote_Sales/products_sale/ProductSa
 import MaterialAdd from "./pages/inventory/materialAdd/MaterialAdd";
 import InventoryList from "./pages/inventory/InventoryList";
 import MaterialInfo from "./pages/inventory/materialnfo/MaterialInfo";
+import ProductsList from "./pages/products/ProductsList";
+import ProductsAdd from "./pages/products/productsAdd/ProductsAdd";
+import ProductsInfo from "./pages/products/productslnfo/ProductsInfo";
 
 function App() {
   return (
@@ -163,7 +166,7 @@ function App() {
             <NewBillToReceive/>
           </Route>
 
-          {/* FINANCEIRO */}
+          {/* ALMOXARIFADO */}
           <Route exact path="/almoxarifado">
             <InventoryList/>
           </Route>
@@ -173,6 +176,18 @@ function App() {
           </Route>
 
           <Route exact path="/almoxarifado/:id" component={MaterialInfo}/>
+
+
+          {/* PRODUTOS */}
+          <Route exact path="/produtos">
+            <ProductsList/>
+          </Route>
+
+          <Route exact path="/produtos/cadastro">
+            <ProductsAdd/>
+          </Route>
+
+          <Route exact path="/produtos/:id" component={ProductsInfo}/>
 
         </Switch>
 
