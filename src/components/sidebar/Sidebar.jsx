@@ -12,6 +12,8 @@ import { CurvedArrow } from './curvedArrow';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 // import { PaymentOutlined } from '@material-ui/icons';
 import { PaymentsOutlined } from '@mui/icons-material';
+import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 
 export default function Sidebar() {
 
@@ -312,15 +314,70 @@ toogleMenuBars.forEach( icon => {
 										<span className="sidebar__submenu--title">Contas Recebidas</span>
 									</a>
 								</li>
-						
-								{/* <li className="">
-									<a href="">
+							</ul>
+						</li>
+
+
+						{/* ALMOXARIFADO */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<WarehouseOutlinedIcon/>
+								<span className="sidebar__menu--title">Almoxarifado</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+		
+							<ul id="warehouse" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Almoxarifado</span>        
+								
+								<li>
+									<a href="/almoxarifado">
 										<RemoveOutlinedIcon/>
-										<span className="sidebar__submenu--title">Lista de OS</span>
+										<span className="sidebar__submenu--title">Estoque</span>
 									</a>
-								</li> */}
+								</li>
+
+								<li>
+									<a href="/almoxarifado/cadastro">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastro Material</span>
+									</a>
+								</li>
 						
 							</ul>
+
+						</li>
+
+
+
+						{/* PRODUTOS */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<LocalOfferOutlinedIcon/>
+								<span className="sidebar__menu--title">Produtos</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+		
+							<ul id="warehouse" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Produtos</span>        
+								
+								<li>
+									<a href="/produtos">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/produtos/cadastro">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastro</span>
+									</a>
+								</li>
+						
+							</ul>
+
 						</li>
 
 					</ul>
