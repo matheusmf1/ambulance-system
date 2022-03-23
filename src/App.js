@@ -189,6 +189,28 @@ function App() {
 
           <Route exact path="/produtos/:id" component={ProductsInfo}/>
 
+          {/* NOTA FISCAL */}
+          <Route exact path="/nota-fiscal/entrada">
+            <ProductsList/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/entrada/cadastro">
+            <ProductsAdd/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/entrada/:id" component={ProductsInfo}/>
+         
+          <Route exact path="/nota-fiscal/saida">
+            <ProductsList/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/saida/cadastro">
+            <ProductsAdd/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/saida/:id" component={ProductsInfo}/>
+         
+
         </Switch>
 
       </Router>
