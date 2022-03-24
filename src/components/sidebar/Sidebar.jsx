@@ -14,6 +14,8 @@ import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import { PaymentsOutlined } from '@mui/icons-material';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 export default function Sidebar() {
 
@@ -375,6 +377,50 @@ toogleMenuBars.forEach( icon => {
 										<span className="sidebar__submenu--title">Cadastro</span>
 									</a>
 								</li>
+						
+							</ul>
+
+						</li>
+
+						{/* NOTA FISCAL */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<ReceiptLongOutlinedIcon/>
+								<span className="sidebar__menu--title">Nota Fiscal</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+		
+							<ul id="warehouse" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Nota Fiscal</span>
+
+								<li>
+									<a href="/nota-fiscal/entrada/cadastro">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastrar Entrada</span>
+									</a>
+								</li>
+								
+								<li>
+									<a href="/nota-fiscal/entrada">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar Entradas</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/nota-fiscal/saida/cadastro">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Cadastrar Saída</span>
+									</a>
+								</li>
+
+								<li>
+									<a href="/nota-fiscal/saida">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar Saídas</span>
+									</a>
+								</li>	
 						
 							</ul>
 

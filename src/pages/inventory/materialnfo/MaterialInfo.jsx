@@ -114,10 +114,10 @@ export default function MaterialInfo( props ) {
 
           <div className="form__content--inputs">
 
-          <div className="form__input--halfWidth">
-            <label className="form__input--label">Fornecedor*</label>
-            <input className="form__input" type="text" value={data['supplier_id']} placeholder="Fornecedor" disabled/>
-          </div>
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Fornecedor*</label>
+              <input className="form__input" type="text" value={data['supplier_id']} placeholder="Fornecedor" disabled/>
+            </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Código do Produto*</label>

@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import {React, useState, useEffect} from 'react'
 
 import './newServiceOrder.css'
 
@@ -9,13 +9,17 @@ import InputPhoneNumber from '../../../inputs/input--phoneNumber';
 import InputCep from '../../../inputs/input--cep';
 import { useHistory } from "react-router-dom";
 import { ServiceOrder } from "../../../../data/ServiceOrder";
-
+import { db } from '../../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewServiceOrder( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
   const [valorTotalServico, setValorTotalServico] = useState(0);
   const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ customerData, setCustomerData ] = useState( [] );
+  const { session } = props;
+  let history = useHistory();
 
   const [ installment, setInstallment ] = useState(
     {
@@ -35,7 +39,7 @@ export default function NewServiceOrder( props ) {
     mainService: "",
     id: "",
     entryDate: "",
-    clientNumber: "",
+    clientNumber: "choose",
     companyName: "",
     cpf: "",
   
@@ -237,8 +241,17 @@ export default function NewServiceOrder( props ) {
 
   });
 
-  const { session } = props
-  let history = useHistory();
+  useEffect( async () => {
+
+    const dataCollectionRef = collection( db, "customers" );
+    const queryResult = query( dataCollectionRef, orderBy("id") );
+    const docSnap = await getDocs( queryResult );
+
+    let test = docSnap.docs.map( doc => ( {...doc.data()} ) )
+    console.log( test )
+
+    setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }, []);
 
   const defineStatusFieldOptions = ( session ) => {
     
@@ -357,6 +370,25 @@ export default function NewServiceOrder( props ) {
       setServiceOrderData( { ...serviceOrderData, 'paymentInfo': paymentInfo } )
     }
 
+    else if ( id === 'clientNumber' ) {
+
+      let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0]
+      console.log( customerData2 )
+
+      setServiceOrderData( { ...serviceOrderData, 
+        "clientNumber": e.target.value,
+        "companyName": customerData2['fantasy_name'],
+        "email": customerData2['email'],
+        "cpf": customerData2['cnpj_cpf'],
+        "cep": customerData2['cep'],
+        "address": customerData2['address'],
+        "city": customerData2['city'],
+        "state": customerData2['state'],
+        "telephone": customerData2['telephone']
+      } );
+
+    }
+
     else {
       setServiceOrderData( { ...serviceOrderData, [id]: e.target.value } )
     }
@@ -447,16 +479,23 @@ export default function NewServiceOrder( props ) {
 
     const finalData = unifyData();
 
-    const serviceOrder = new ServiceOrder( { data: finalData } )
-    const result = await serviceOrder.addServiceOrderToFirebase();
-
-    if ( result ) {
-      alert( "Ordem de Serviço cadastrada com sucesso" )
-      history.push( `/${session}s` );
+    if ( serviceOrderData['clientNumber'] === "choose" ) {
+      alert( "Informe o código do cliente!" );
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      
+      const serviceOrder = new ServiceOrder( { data: finalData } )
+      const result = await serviceOrder.addServiceOrderToFirebase();
+
+      if ( result ) {
+        alert( "Ordem de Serviço cadastrada com sucesso" )
+        history.push( `/${session}s` );
+      }
+      else {
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      }
     }
+
   }
 
   return (
@@ -509,8 +548,6 @@ export default function NewServiceOrder( props ) {
               <div className="osForm__titleWithDate--container">
 
                 <div className="osForm__titleWithDate--title">
-                  {/* <label className="form__input--labelInLine" htmlFor="os-number">Ordem de Serviço Nº</label>
-                  <input className="osForm__input--OSnumber" id="os-number" type="number" required/> */}
                   <label className="form__input--labelInLine">Ordem de Serviço</label>
                 </div>
 
@@ -521,45 +558,48 @@ export default function NewServiceOrder( props ) {
 
               </div>
 
-
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
-              </div>
-
-              <div className="form__input--halfWidth">
-                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável"/>
+                <select name="estados-brasil" className="form__input" value={serviceOrderData['clientNumber']} onChange={handleInformationChange('clientNumber')} required>
+                  <option value="choose">Escolha o cliente</option>
+                    {
+                      customerData.map( (data, key) => {
+                        // console.log( data )
+                        return (<option value={data['id']} key={key}>{data['id']} - {data['responsable']}</option>);
+                    })
+                  }
+                </select>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={serviceOrderData['companyName']} onChange={handleInformationChange('companyName')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CPF/CNPJ*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')}/>
+                <InputCpfCnpj defaultValue={serviceOrderData['cpf']} onChange={handleInformationChange('cpf')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onChange={checkCep}/>
+                {/* <InputCep onChange={checkCep}/> */}
+                <InputCep defaultValue={serviceOrderData['cep']} onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={serviceOrderData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={serviceOrderData['address']} onChange={handleInformationChange('address')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={serviceOrderData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={serviceOrderData['city']} onChange={handleInformationChange('city')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" defaultValue={serviceOrderData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={serviceOrderData['state']} onChange={handleInformationChange('state')}>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -592,12 +632,12 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={serviceOrderData['email']} onChange={handleInformationChange('email')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={serviceOrderData['telephone']} onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 

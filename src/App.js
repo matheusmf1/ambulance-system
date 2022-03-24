@@ -38,6 +38,11 @@ import MaterialInfo from "./pages/inventory/materialnfo/MaterialInfo";
 import ProductsList from "./pages/products/ProductsList";
 import ProductsAdd from "./pages/products/productsAdd/ProductsAdd";
 import ProductsInfo from "./pages/products/productslnfo/ProductsInfo";
+import InvoiceInAdd from "./pages/invoice/invoice-in/InvoiceInAdd";
+import InvoiceOutAdd from "./pages/invoice/invoice-out/InvoiceOutAdd";
+import InvoiceList from "./pages/invoice/InvoiceList";
+import InvoiceInInfo from "./pages/invoice/invoice-in/InvoiceInInfo";
+import InvoiceOutInfo from "./pages/invoice/invoice-out/InvoiceOutInfo";
 
 function App() {
   return (
@@ -188,6 +193,27 @@ function App() {
           </Route>
 
           <Route exact path="/produtos/:id" component={ProductsInfo}/>
+
+          {/* NOTA FISCAL */}
+          <Route exact path="/nota-fiscal/entrada">
+            <InvoiceList/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/entrada/cadastro">
+            <InvoiceInAdd/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/entrada/:id" component={InvoiceInInfo}/>
+         
+          <Route exact path="/nota-fiscal/saida">
+            <InvoiceList/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/saida/cadastro">
+            <InvoiceOutAdd/>
+          </Route>
+
+          <Route exact path="/nota-fiscal/saida/:id" component={InvoiceOutInfo}/>
 
         </Switch>
 

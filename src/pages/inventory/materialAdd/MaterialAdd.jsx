@@ -1,5 +1,5 @@
-import {React, useState, useEffect} from 'react'
-import { useHistory } from "react-router-dom"
+import {React, useState, useEffect} from 'react';
+import { useHistory } from "react-router-dom";
 import { Inventory } from '../../../data/Inventory';
 import { db } from '../../../firebase';
 import { collection, getDocs, query, orderBy, limit  } from 'firebase/firestore';

@@ -343,9 +343,9 @@ export default function BillsReceiveInfo( props ) {
                 label="Serviço"
                 disabled
               >
-                <MenuItem value="proposta">Proposta</MenuItem>
-                <MenuItem value="ordemServico">Ordem de Serviço</MenuItem>
-                <MenuItem value="vendaProduto">Venda de Produto</MenuItem>
+                <MenuItem value="transformationProposal">Proposta</MenuItem>
+                <MenuItem value="serviceOrder">Ordem de Serviço</MenuItem>
+                <MenuItem value="productSale">Venda de Produto</MenuItem>
               </Select>
 
             </CustomFormControl>
