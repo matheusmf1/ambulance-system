@@ -36,9 +36,9 @@ export const TablePaidReceivedBill = ( props ) => {
       if ( keyD === "service" ) {
 
         let servicesNames = {
-          'proposta': "Proposta",
-          'ordemServico': "Ordem de Serviço",
-          'vendaProduto': "Venda de Produto",
+          'transformationProposal': "Proposta",
+          'serviceOrder': "Ordem de Serviço",
+          'productSale': "Venda de Produto",
         }
         return <td key={i}>{ servicesNames[ key[keyD] ]}</td>;
       }

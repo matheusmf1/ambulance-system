@@ -224,9 +224,9 @@ export default function NewBillToReceive() {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Serviço*</label>
               <select name="forma-pagamento" className="form__input" onChange={handleOnChangeInformation('service')}>
-                <option value="proposta">Proposta</option>
-                <option value="ordemServico">Ordem de Serviço</option>
-                <option value="vendaProduto">Venda de Produto</option>
+                <option value="transformationProposal">Proposta</option>
+                <option value="serviceOrder">Ordem de Serviço</option>
+                <option value="productSale">Venda de Produto</option>
               </select>  
             </div>
 
