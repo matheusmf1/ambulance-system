@@ -39,7 +39,6 @@ export default function TransformationProposalInfo( props ) {
 
     setIdRef( id )
     let serviceData = JSON.parse( localStorage.getItem( 'quoteSalesInfo' ) );
-    console.log( serviceData )
 
     if ( serviceData ) {
 

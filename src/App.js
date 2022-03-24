@@ -38,6 +38,11 @@ import MaterialInfo from "./pages/inventory/materialnfo/MaterialInfo";
 import ProductsList from "./pages/products/ProductsList";
 import ProductsAdd from "./pages/products/productsAdd/ProductsAdd";
 import ProductsInfo from "./pages/products/productslnfo/ProductsInfo";
+import InvoiceInAdd from "./pages/invoice/invoice-in/InvoiceInAdd";
+import InvoiceOutAdd from "./pages/invoice/invoice-out/InvoiceOutAdd";
+import InvoiceList from "./pages/invoice/InvoiceList";
+import InvoiceInInfo from "./pages/invoice/invoice-in/InvoiceInInfo";
+import InvoiceOutInfo from "./pages/invoice/invoice-out/InvoiceOutInfo";
 
 function App() {
   return (
@@ -191,25 +196,24 @@ function App() {
 
           {/* NOTA FISCAL */}
           <Route exact path="/nota-fiscal/entrada">
-            <ProductsList/>
+            <InvoiceList/>
           </Route>
 
           <Route exact path="/nota-fiscal/entrada/cadastro">
-            <ProductsAdd/>
+            <InvoiceInAdd/>
           </Route>
 
-          <Route exact path="/nota-fiscal/entrada/:id" component={ProductsInfo}/>
+          <Route exact path="/nota-fiscal/entrada/:id" component={InvoiceInInfo}/>
          
           <Route exact path="/nota-fiscal/saida">
-            <ProductsList/>
+            <InvoiceList/>
           </Route>
 
           <Route exact path="/nota-fiscal/saida/cadastro">
-            <ProductsAdd/>
+            <InvoiceOutAdd/>
           </Route>
 
-          <Route exact path="/nota-fiscal/saida/:id" component={ProductsInfo}/>
-         
+          <Route exact path="/nota-fiscal/saida/:id" component={InvoiceOutInfo}/>
 
         </Switch>
 
