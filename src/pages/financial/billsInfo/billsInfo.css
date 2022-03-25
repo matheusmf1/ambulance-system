@@ -1,16 +1,22 @@
 .renderInstallments__container {
   display: flex;
   width: -webkit-fill-available;
-  width: -moz-available;
   width: fill-available;
+}
+
+.renderInstallments__container {
+  width: -moz-available;
 }
 
 .bill_button--container {
   padding: 10px 10px;
   width: -webkit-fill-available;
-  width: -moz-available;
   text-align-last: end;
   text-align: end;
+}
+
+.bill_button--container {
+  width: -moz-available;
 }
 
 .renderInstallments__container--title {
