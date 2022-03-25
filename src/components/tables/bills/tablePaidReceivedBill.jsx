@@ -38,7 +38,7 @@ export const TablePaidReceivedBill = ( props ) => {
         let servicesNames = {
           'transformationProposal': "Proposta",
           'serviceOrder': "Ordem de Serviço",
-          'productSale': "Venda de Produto",
+          'productsSale': "Venda de Produto",
         }
         return <td key={i}>{ servicesNames[ key[keyD] ]}</td>;
       }

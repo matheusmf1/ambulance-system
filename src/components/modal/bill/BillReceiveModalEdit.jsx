@@ -233,7 +233,7 @@ export default function BillReceiveModalEdit( props ) {
 
                   <MenuItem value='transformationProposal'>Proposta</MenuItem>
                   <MenuItem value='serviceOrder'>Ordem de Serviço</MenuItem>
-                  <MenuItem value='productSale'>Venda de Produto</MenuItem>
+                  <MenuItem value='productsSale'>Venda de Produto</MenuItem>
                     
                 </Select>
               </CustomFormControl>

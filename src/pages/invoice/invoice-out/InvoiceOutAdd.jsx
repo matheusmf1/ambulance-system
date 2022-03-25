@@ -176,7 +176,7 @@ const InvoiceOutAdd = props => {
                 <option value="choose">Escolha um serviço</option>
                 <option value="transformationProposal">Proposta</option>
                 <option value="serviceOrder">Ordem de Serviço</option>
-                <option value="productSale">Venda de Produto</option>
+                <option value="productsSale">Venda de Produto</option>
               </select>
             </div>
 

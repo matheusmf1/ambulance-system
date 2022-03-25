@@ -166,7 +166,7 @@ const InvoiceOutInfo = props => {
               <select name="forma-pagamento" className="form__input" value={data['invoice_service']} disabled>
                 <option value="transformationProposal">Proposta</option>
                 <option value="serviceOrder">Ordem de Serviço</option>
-                <option value="productSale">Venda de Produto</option>
+                <option value="productsSale">Venda de Produto</option>
               </select>
             </div>
 

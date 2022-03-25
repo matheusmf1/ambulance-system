@@ -38,7 +38,7 @@ export const InvoiceTable = ( props ) => {
         let servicesNames = {
           'transformationProposal': "Proposta",
           'serviceOrder': "Ordem de Serviço",
-          'productSale': "Venda de Produto",
+          'productsSale': "Venda de Produto",
         }
         return <td key={i}>{ servicesNames[ key[keyD] ]}</td>;
       }
@@ -103,7 +103,7 @@ export const InvoiceTable = ( props ) => {
       let servicesNames = {
         'transformationProposal': "Proposta de Transformação",
         'serviceOrder': "Ordem de Serviço",
-        'productSale': "Venda de Produto",
+        'productsSale': "Venda de Produto",
       }
 
       return cloneDeep( data

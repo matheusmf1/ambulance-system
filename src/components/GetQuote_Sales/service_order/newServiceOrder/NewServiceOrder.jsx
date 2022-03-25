@@ -16,7 +16,7 @@ export default function NewServiceOrder( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
   const [valorTotalServico, setValorTotalServico] = useState(0);
-  const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ customerData, setCustomerData ] = useState( [] );
   const { session } = props;
   let history = useHistory();
@@ -247,8 +247,8 @@ export default function NewServiceOrder( props ) {
     const queryResult = query( dataCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 
-    let test = docSnap.docs.map( doc => ( {...doc.data()} ) )
-    console.log( test )
+    // let test = docSnap.docs.map( doc => ( {...doc.data()} ) )
+    // console.log( test )
 
     setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
   }, []);

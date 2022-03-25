@@ -31,7 +31,7 @@ export const TableQuoteSales = ( props ) => {
         let servicesNames = {
           'transformationProposal': "Proposta de Transformação",
           'serviceOrder': "Ordem de Serviço",
-          'productSale': "Venda de Produto",
+          'productsSale': "Venda de Produto",
         }
         return <td key={i}>{ servicesNames[ key[keyD] ]}</td>;
       }
@@ -97,7 +97,7 @@ export const TableQuoteSales = ( props ) => {
       else if ( serviceType === "serviceOrder" ) {
         serviceName = "os";
       }
-      else if ( serviceType === "productSale" ) {
+      else if ( serviceType === "productsSale" ) {
         serviceName = "venda_produto";
       }
 
@@ -121,7 +121,7 @@ export const TableQuoteSales = ( props ) => {
     let servicesNames = {
       'transformationProposal': "Proposta de Transformação",
       'serviceOrder': "Ordem de Serviço",
-      'productSale': "Venda de Produto",
+      'productsSale': "Venda de Produto",
     }
 
     let statusName = {
