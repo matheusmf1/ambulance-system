@@ -1,7 +1,5 @@
-import { React, useState } from 'react'
-
+import { React, useState, useEffect } from 'react';
 import '../../service_order/newServiceOrder/newServiceOrder.css';
-
 import logoRescue from '../../../../assets/images/logo-rescue.png';
 import { TableOS } from '../../../../components/tables/responsiveTable/table';
 
@@ -10,14 +8,19 @@ import InputPhoneNumber from '../../../inputs/input--phoneNumber'
 import InputCep from '../../../inputs/input--cep';
 import { useHistory } from "react-router-dom"
 import { ProductSale } from "../../../../data/ProductSale";
+import { db } from '../../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewProductsSale( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
-  const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+  const [ customerData, setCustomerData ] = useState( [] );
+  const { session } = props;
+  let history = useHistory();
   
   const [ productSaleData, setProductSaleData ] = useState({
-    serviceType: "productSale",
+    serviceType: "productsSale",
     mainService: "",
     entryDate: "",
     clientNumber: "",
@@ -59,7 +62,7 @@ export default function NewProductsSale( props ) {
     }
   )
 
-  const [tableDataProdutos, setTableDataProdutos] = useState( {
+  const [ tableDataProdutos, setTableDataProdutos ] = useState( {
 
     "columns" : [
 
@@ -150,9 +153,16 @@ export default function NewProductsSale( props ) {
     ]
 
   });
+
+  useEffect( async () => {
+
+    const dataCollectionRef = collection( db, "customers" );
+    const queryResult = query( dataCollectionRef, orderBy("id") );
+    const docSnap = await getDocs( queryResult );
+
+    setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }, []);
   
-  const { session } = props;
-  let history = useHistory();
 
   const checkCep = ( e ) => {
 
@@ -268,6 +278,23 @@ export default function NewProductsSale( props ) {
       setProductSaleData( { ...productSaleData, 'paymentInfo': paymentInfo } )
     }
 
+
+    else if ( id === 'clientNumber' ) {
+      let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0]
+    
+      setProductSaleData( { ...productSaleData, 
+        "clientNumber": e.target.value,
+        "companyName": customerData2['fantasy_name'],
+        "email": customerData2['email'],
+        "cpf": customerData2['cnpj_cpf'],
+        "cep": customerData2['cep'],
+        "address": customerData2['address'],
+        "city": customerData2['city'],
+        "state": customerData2['state'],
+        "telephone": customerData2['telephone']
+      } );
+
+    }
     else {
       setProductSaleData( {...productSaleData, [ id ]: e.target.value } )
     }
@@ -345,21 +372,27 @@ export default function NewProductsSale( props ) {
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const finalData = unifyData();
-    console.log( finalData )
+    console.log( productSaleData )
 
-    const productSale = new ProductSale( { data: finalData } )
-    const result = await productSale.addProductSaleToFirebase();
-
-    if ( result ) {
-      alert( "Venda de Produto cadastrada com sucesso" )
-      history.push( `/${session}s` );
+    if ( productSaleData['clientNumber'] === "choose" ) {
+      alert( "Informe o código do cliente!" );
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      const finalData = unifyData();
+      const productSale = new ProductSale( { data: finalData } )
+      const result = await productSale.addProductSaleToFirebase();
+
+      if ( result ) {
+        alert( "Venda de Produto cadastrada com sucesso" )
+        history.push( `/${session}s` );
+      }
+      else {
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      }  
     }
+    
   }
 
   return (
@@ -422,88 +455,88 @@ export default function NewProductsSale( props ) {
 
               </div>
 
-
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-               <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
-              </div>
-
-              <div className="form__input--halfWidth">
-                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável"/>
+                <select name="estados-brasil" className="form__input" value={productSaleData['clientNumber']} onChange={handleInformationChange('clientNumber')} required>
+                  <option value="choose">Escolha o cliente</option>
+                  {
+                    customerData.map( (data, key) => {
+                      return (<option value={data['id']} key={key}>{data['id']} - {data['responsable']}</option>);
+                    })
+                  }
+                </select>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={productSaleData['companyName']} onChange={handleInformationChange('companyName')} required/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')}/>
+                <label className="form__input--label">CPF/CNPJ*</label>
+                <InputCpfCnpj defaultValue={productSaleData['cpf']} onChange={handleInformationChange('cpf')}/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">CEP</label>
-                <InputCep onChange={checkCep}/>
+                <label className="form__input--label">CEP*</label>
+                {/* <InputCep onChange={checkCep}/> */}
+                <InputCep defaultValue={productSaleData['cep']} onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={productSaleData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={productSaleData['address']} onChange={handleInformationChange('address')} required/>
               </div>
-
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={productSaleData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={productSaleData['city']} onChange={handleInformationChange('city')} required/>
               </div>
-
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
                 <select name="estados-brasil" className="form__input" value={productSaleData['state']} onChange={handleInformationChange('state')}>
-                  <option value="AC">Acre</option>
-                  <option value="AL">Alagoas</option>
-                  <option value="AP">Amapá</option>
-                  <option value="AM">Amazonas</option>
-                  <option value="BA">Bahia</option>
-                  <option value="CE">Ceará</option>
-                  <option value="DF">Distrito Federal</option>
-                  <option value="ES">Espírito Santo</option>
-                  <option value="GO">Goiás</option>
-                  <option value="MA">Maranhão</option>
-                  <option value="MT">Mato Grosso</option>
-                  <option value="MS">Mato Grosso do Sul</option>
-                  <option value="MG">Minas Gerais</option>
-                  <option value="PA">Pará</option>
-                  <option value="PB">Paraíba</option>
-                  <option value="PR">Paraná</option>
-                  <option value="PE">Pernambuco</option>
-                  <option value="PI">Piauí</option>
-                  <option value="RJ">Rio de Janeiro</option>
-                  <option value="RN">Rio Grande do Norte</option>
-                  <option value="RS">Rio Grande do Sul</option>
-                  <option value="RO">Rondônia</option>
-                  <option value="RR">Roraima</option>
-                  <option value="SC">Santa Catarina</option>
-                  <option value="SP">São Paulo</option>
-                  <option value="SE">Sergipe</option>
-                  <option value="TO">Tocantins</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
                 </select>              
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={productSaleData['email']} onChange={handleInformationChange('email')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={productSaleData['telephone']} onChange={handleInformationChange('telephone')}/>
               </div>
+            
             </div>
-
 
             {/* PRODUTOS */}
             <div className="osForm__content--container">
