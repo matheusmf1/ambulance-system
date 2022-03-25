@@ -131,15 +131,17 @@ export const TableQuoteSales = ( props ) => {
       'aprovado': "Concluído",
     }
 
+    let newValue = value.toLowerCase();
 
     return cloneDeep( data
       .filter( item => 
-        item.id.toString().toLowerCase().indexOf( value ) > -1 ||
-        servicesNames[ item.serviceType ].toLowerCase().indexOf( value ) > -1 ||
-        item.companyName.toLowerCase().indexOf( value ) > -1 ||
-        item.cpf.toLowerCase().indexOf( value ) > -1 ||
-        item.email.toLowerCase().indexOf( value ) > -1 ||
-        statusName[ item.status ].toLowerCase().indexOf( value ) > -1 
+        item.id.toString().toLowerCase().indexOf( newValue ) > -1 ||
+        servicesNames[ item.serviceType ].toLowerCase().indexOf( newValue ) > -1 ||
+        item.clientNumber.toLowerCase().indexOf( newValue ) > -1 ||
+        item.companyName.toLowerCase().indexOf( newValue ) > -1 ||
+        item.cpf.toLowerCase().indexOf( newValue ) > -1 ||
+        item.email.toLowerCase().indexOf( newValue ) > -1 ||
+        statusName[ item.status ].toLowerCase().indexOf( newValue ) > -1 
       )
       .slice(0, countPerPage)
     );

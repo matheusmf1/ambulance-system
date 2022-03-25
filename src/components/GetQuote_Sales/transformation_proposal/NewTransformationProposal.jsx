@@ -1,23 +1,27 @@
-import { React, useState } from 'react'
-
+import { React, useState, useEffect } from 'react';
 import '../service_order/newServiceOrder/newServiceOrder.css';
-
 import logoRescue from '../../../assets/images/logo-rescue.png';
 import InputCpfCnpj from '../../inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
 import { TransformationProposal } from "../../../data/TransformationProposal";
 import { useHistory } from "react-router-dom";
+import { db } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewTransformationProposal( props ) {
 
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+  const [ billFileData, setBillFileData ] = useState( null );
+  const [ customerData, setCustomerData ] = useState( [] );
+  const { session } = props;
   let history = useHistory();
 
   const [ transformationProposalData, setTransformationProposalData ] = useState({
     serviceType: "transformationProposal",
     mainService: "",
     entryDate: "",
-    clientNumber: "",
+    clientNumber: "choose",
     companyName: "",
     cpf: "",
   
@@ -60,11 +64,13 @@ export default function NewTransformationProposal( props ) {
     }
   )
 
-  const [ hasInstallment, setHasInstallment ] = useState(false);
+  useEffect( async () => {
+    const dataCollectionRef = collection( db, "customers" );
+    const queryResult = query( dataCollectionRef, orderBy("id") );
+    const docSnap = await getDocs( queryResult );
 
-  const [ billFileData, setBillFileData ] = useState( null );
-
-  const { session } = props
+    setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }, []);
 
   const checkCep = ( e ) => {
 
@@ -198,6 +204,21 @@ export default function NewTransformationProposal( props ) {
       }
     }
 
+    else if ( id === 'clientNumber' ) {
+      let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0]
+    
+      setTransformationProposalData( { ...transformationProposalData, 
+        "clientNumber": e.target.value,
+        "companyName": customerData2['fantasy_name'],
+        "email": customerData2['email'],
+        "cpf": customerData2['cnpj_cpf'],
+        "cep": customerData2['cep'],
+        "address": customerData2['address'],
+        "city": customerData2['city'],
+        "state": customerData2['state'],
+        "telephone": customerData2['telephone']
+      } );
+    }
     else {
       setTransformationProposalData( {...transformationProposalData, [ id ]: e.target.value } )
     }
@@ -272,23 +293,26 @@ export default function NewTransformationProposal( props ) {
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const finalData = unifyData();
-
-    const transformationProposal = new TransformationProposal( { data: finalData, file: checkIfFileHasChanged() } );
-    const result = await transformationProposal.addTransformationProposalToFirebase();
-
-    if ( result ) {
-      alert( "Proposta de Transformação cadastrada com sucesso" )
-      history.push( `/${session}s` )
+    if ( transformationProposalData['clientNumber'] === "choose" ) {
+      alert( "Informe o código do cliente!" );
     }
+
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
-    }
-    
-  }
+      const finalData = unifyData();
+      const transformationProposal = new TransformationProposal( { data: finalData, file: checkIfFileHasChanged() } );
+      const result = await transformationProposal.addTransformationProposalToFirebase();
 
+      if ( result ) {
+        alert( "Proposta de Transformação cadastrada com sucesso" )
+        history.push( `/${session}s` )
+      }
+      else {
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      }
+    }
+  }
 
   return (
   
@@ -349,45 +373,47 @@ export default function NewTransformationProposal( props ) {
 
               </div>
 
-
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável" onChange={handleInformationChange('clientNumber')} required/>
+                <select name="estados-brasil" className="form__input" value={transformationProposalData['clientNumber']} onChange={handleInformationChange('clientNumber')} required>
+                  <option value="choose">Escolha o cliente</option>
+                    {
+                      customerData.map( (data, key) => {
+                        return (<option value={data['id']} key={key}>{data['id']} - {data['responsable']}</option>);
+                      })
+                    }
+                </select>
               </div>
 
-              <div className="form__input--halfWidth">
-                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável"/>
-              </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={transformationProposalData['companyName']} onChange={handleInformationChange('companyName')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')} required={true}/>
+                <InputCpfCnpj defaultValue={transformationProposalData['cpf']} onChange={handleInformationChange('cpf')} required={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep onChange={checkCep}/>
+                <InputCep defaultValue={transformationProposalData['cep']} onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" defaultValue={transformationProposalData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={transformationProposalData['address']} onChange={handleInformationChange('address')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" defaultValue={transformationProposalData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={transformationProposalData['city']} onChange={handleInformationChange('city')} required/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" defaultValue={transformationProposalData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={transformationProposalData['state']} onChange={handleInformationChange('state')}>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -420,12 +446,12 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={transformationProposalData['email']} onChange={handleInformationChange('email')}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={transformationProposalData['telephone']} onChange={handleInformationChange('telephone')}/>
               </div>
             </div>
 

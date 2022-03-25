@@ -13,7 +13,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewProductsSale( props ) {
 
-  const [valorTotalProduto, setValorTotalProduto] = useState(0);
+  const [ valorTotalProduto, setValorTotalProduto ] = useState(0);
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ customerData, setCustomerData ] = useState( [] );
   const { session } = props;
@@ -278,7 +278,6 @@ export default function NewProductsSale( props ) {
       setProductSaleData( { ...productSaleData, 'paymentInfo': paymentInfo } )
     }
 
-
     else if ( id === 'clientNumber' ) {
       let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0]
     
@@ -293,7 +292,6 @@ export default function NewProductsSale( props ) {
         "state": customerData2['state'],
         "telephone": customerData2['telephone']
       } );
-
     }
     else {
       setProductSaleData( {...productSaleData, [ id ]: e.target.value } )

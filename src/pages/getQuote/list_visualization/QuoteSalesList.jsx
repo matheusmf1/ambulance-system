@@ -27,6 +27,7 @@ export default class QuoteSalesList extends Component {
   tableColumns = {
     id: "Nº Serviço",
     serviceType: "Serviço",
+    clientNumber: "Cod. Cliente",
     companyName: "Empresa",
     cpf: "CPNJ/CPF",
     email: "Email",
@@ -90,7 +91,7 @@ export default class QuoteSalesList extends Component {
     return (
       <>
         <TableQuoteSales
-          tableName= { this.sessionName === "orcamentos" ? "Orçamentos" : "Vendas"  }
+          tableName= { this.sessionName === "orcamentos" ? "Serviços em Orçamentos" : "Serviços em Vendas"  }
           columns={ this.tableColumns }
           data={ this.state.customers }
           collection2={ this.state.collection }
