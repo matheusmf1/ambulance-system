@@ -6,6 +6,8 @@
   box-sizing: border-box;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
 :root {
   --main-radius: 5px;
   --main-padding: 5px;
