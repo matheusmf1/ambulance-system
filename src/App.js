@@ -215,6 +215,12 @@ function App() {
 
           <Route exact path="/nota-fiscal/saida/:id" component={InvoiceOutInfo}/>
 
+
+          {/* CALENDÁRIO */}
+          <Route exact path="/calendario">
+            <InvoiceList/>
+          </Route>
+
         </Switch>
 
       </Router>

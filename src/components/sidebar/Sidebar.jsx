@@ -15,7 +15,7 @@ import { PaymentsOutlined } from '@mui/icons-material';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 
 export default function Sidebar() {
 
@@ -421,6 +421,30 @@ toogleMenuBars.forEach( icon => {
 										<span className="sidebar__submenu--title">Visualizar Saídas</span>
 									</a>
 								</li>	
+						
+							</ul>
+
+						</li>
+
+
+						{/* NOTA FISCAL */}
+						<li className="sidebar__menu--listItens">
+							<a>
+								<CalendarMonthOutlinedIcon/>
+								<span className="sidebar__menu--title">Calendário</span>
+								<CurvedArrow id="menu-arrow" class_name={"sidebar__menu--arrow sidebar__menu--icons"}/>
+							</a>
+		
+							<ul id="warehouse" className="sidebar__submenu">  
+
+								<span className="sidebar__menu--closed-Title">Calendário</span>
+
+								<li>
+									<a href="/calendario">
+										<RemoveOutlinedIcon/>
+										<span className="sidebar__submenu--title">Visualizar</span>
+									</a>
+								</li>
 						
 							</ul>
 
