@@ -2,8 +2,9 @@
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4J5L0hx08BWtVJtXS5YU587usQLNjB6s",
@@ -15,9 +16,16 @@ const firebaseConfig = {
   measurementId: "G-F0M1LJCBDH"
 };
 
+
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-export const db = getFirestore();
+
+initializeFirestore(app, {
+  ignoreUndefinedProperties: true
+});
+
+// export const db = getFirestore();
+export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const bucketName = "silene-pro.appspot.com";

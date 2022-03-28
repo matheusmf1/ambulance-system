@@ -43,6 +43,7 @@ import InvoiceOutAdd from "./pages/invoice/invoice-out/InvoiceOutAdd";
 import InvoiceList from "./pages/invoice/InvoiceList";
 import InvoiceInInfo from "./pages/invoice/invoice-in/InvoiceInInfo";
 import InvoiceOutInfo from "./pages/invoice/invoice-out/InvoiceOutInfo";
+import Calendar from "./pages/calendar/Calendar";
 
 function App() {
   return (
@@ -214,6 +215,12 @@ function App() {
           </Route>
 
           <Route exact path="/nota-fiscal/saida/:id" component={InvoiceOutInfo}/>
+
+
+          {/* CALENDÁRIO */}
+          <Route exact path="/calendario">
+            <Calendar/>
+          </Route>
 
         </Switch>
 
