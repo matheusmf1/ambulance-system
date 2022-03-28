@@ -3,9 +3,10 @@ import { React, Component } from 'react'
 
 import { db } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { query, orderBy, limit } from "firebase/firestore";
+import { query, orderBy } from "firebase/firestore";
 import { InventoryTable } from '../../components/tables/inventory/InventoryTable';
 import { Inventory } from "../../data/Inventory";
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 
 export default class InventoryList extends Component {
@@ -15,7 +16,8 @@ export default class InventoryList extends Component {
 
     this.state = {
       inventory: [],
-      collection: []
+      collection: [],
+      loading: true
     }
   }
 
@@ -37,8 +39,10 @@ export default class InventoryList extends Component {
     const docSnap = await getDocs( queryResult );
     
     this.setState( { inventory: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
-      () => this.setState( { collection: this.state.inventory.slice( 0, 10 ) } ));
-
+      () => {
+        this.setState( { collection: this.state.inventory.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      });
   };
 
 
@@ -55,19 +59,22 @@ export default class InventoryList extends Component {
     
     return (
       <>
-        <InventoryTable
-          tableName="Estoque"
-          columns={ this.tableColumns }
-          data={ this.state.inventory }
-          link="almoxarifado"
-          linkCadastro="/almoxarifado/cadastro"
-          collection2={this.state.collection}
-          setCollection2={ setCollection }
-          handleDelete={ handleDelete }
-          searchPlaceholderName={ "Cod.Produto, Fornecedor, Nome..." }
-        />
+       { 
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <InventoryTable
+            tableName="Estoque"
+            columns={ this.tableColumns }
+            data={ this.state.inventory }
+            link="almoxarifado"
+            linkCadastro="/almoxarifado/cadastro"
+            collection2={this.state.collection}
+            setCollection2={ setCollection }
+            handleDelete={ handleDelete }
+            searchPlaceholderName={ "Cod.Produto, Fornecedor, Nome..." }
+          />
+          )
+        }
       </>
     )
   }
-
 }

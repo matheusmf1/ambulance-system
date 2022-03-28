@@ -1,10 +1,9 @@
 import { React, Component } from 'react';
-
-
 import { db } from '../../firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { Product } from '../../data/Product';
 import { ProductsTable } from '../../components/tables/products/ProductsTable';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 
 export default class ProductsList extends Component {
@@ -14,7 +13,8 @@ export default class ProductsList extends Component {
 
     this.state = {
       products: [],
-      collection: []
+      collection: [],
+      loading: true
     }
   }
 
@@ -31,8 +31,10 @@ export default class ProductsList extends Component {
     const docSnap = await getDocs( queryResult );
     
     this.setState( { products: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
-      () => this.setState( { collection: this.state.products.slice( 0, 10 ) } ));
-
+      () => {
+        this.setState( { collection: this.state.products.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      });
   };
 
 
@@ -49,19 +51,22 @@ export default class ProductsList extends Component {
     
     return (
       <>
-        <ProductsTable
-          tableName="Lista de Produtos"
-          columns={ this.tableColumns }
-          data={ this.state.products }
-          link="produtos"
-          linkCadastro="/produtos/cadastro"
-          collection2={ this.state.collection }
-          setCollection2={ setCollection }
-          handleDelete={ handleDelete }
-          searchPlaceholderName={ "Etiqueta, valor de venda" }
-        />
+      { 
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <ProductsTable
+            tableName="Lista de Produtos"
+            columns={ this.tableColumns }
+            data={ this.state.products }
+            link="produtos"
+            linkCadastro="/produtos/cadastro"
+            collection2={ this.state.collection }
+            setCollection2={ setCollection }
+            handleDelete={ handleDelete }
+            searchPlaceholderName={ "Etiqueta, valor de venda" }
+          />
+        )
+      }
       </>
     )
   }
-
 }

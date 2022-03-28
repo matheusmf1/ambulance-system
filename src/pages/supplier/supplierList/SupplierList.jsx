@@ -4,6 +4,7 @@ import { Table } from '../../../components/tables/searchTable/table';
 import { db } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { query, orderBy, limit } from "firebase/firestore";
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 
 export default class SupplierList extends Component {
@@ -13,7 +14,8 @@ export default class SupplierList extends Component {
 
     this.state = {
       suppliers: [],
-      collection: []
+      collection: [],
+      loading: true
     }
   }
 
@@ -36,7 +38,10 @@ export default class SupplierList extends Component {
     const docSnap = await getDocs( queryResult );
     
     this.setState( { suppliers: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
-      () => this.setState( { collection: this.state.suppliers.slice( 0, 10 ) } ));
+      () => {
+        this.setState( { collection: this.state.suppliers.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      });
 
   };
 
@@ -49,6 +54,8 @@ export default class SupplierList extends Component {
     
     return (
       <>
+      {
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
         <Table
           tableName="Lista de Fornecedores"
           columns={ this.tableColumns }
@@ -58,6 +65,8 @@ export default class SupplierList extends Component {
           collection2={this.state.collection}
           setCollection2={setCollection}
         />
+        )
+      }
       </>
     )
   }

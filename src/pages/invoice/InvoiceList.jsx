@@ -3,6 +3,7 @@ import { db } from '../../firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Invoice } from '../../data/Invoice';
 import { InvoiceTable } from '../../components/tables/invoice/InvoiceTable';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 
 export default class InvoiceList extends Component {
@@ -13,7 +14,8 @@ export default class InvoiceList extends Component {
 
     this.state = {
       invoice: [],
-      collection: []
+      collection: [],
+      loading: true
     }
   }
 
@@ -42,8 +44,10 @@ export default class InvoiceList extends Component {
     const docSnap = await getDocs( queryResult );
     
     this.setState( { invoice: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
-      () => this.setState( { collection: this.state.invoice.slice( 0, 10 ) } ));
-
+      () => {
+        this.setState( { collection: this.state.invoice.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      });
   };
 
 
@@ -60,17 +64,21 @@ export default class InvoiceList extends Component {
     
     return (
       <>
-        <InvoiceTable
-          tableName={ `Lista de Notas Fiscais ${this.sessionName === "entrada" ? "Entrada" : "Saída"}` }
-          columns={ this.sessionName === "entrada"? this.tableColumns_in : this.tableColumns_out }
-          data={ this.state.invoice }
-          link={ this.sessionName }
-          linkCadastro={`/nota-fiscal/${this.sessionName}/cadastro`}
-          collection2={ this.state.collection }
-          setCollection2={ setCollection }
-          handleDelete={ handleDelete }
-          searchPlaceholderName={ "Nº Nota, dia, valor..." }
-        />
+      { 
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <InvoiceTable
+            tableName={ `Lista de Notas Fiscais ${this.sessionName === "entrada" ? "Entrada" : "Saída"}` }
+            columns={ this.sessionName === "entrada"? this.tableColumns_in : this.tableColumns_out }
+            data={ this.state.invoice }
+            link={ this.sessionName }
+            linkCadastro={`/nota-fiscal/${this.sessionName}/cadastro`}
+            collection2={ this.state.collection }
+            setCollection2={ setCollection }
+            handleDelete={ handleDelete }
+            searchPlaceholderName={ "Nº Nota, dia, valor..." }
+          />
+          )
+        }
       </>
     )
   }

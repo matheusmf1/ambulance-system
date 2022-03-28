@@ -3,6 +3,7 @@ import { Table } from '../../../components/tables/searchTable/table';
 import { db } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { query, orderBy } from "firebase/firestore";
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default class EmployeeList extends Component {
 
@@ -11,7 +12,8 @@ export default class EmployeeList extends Component {
 
     this.state = {
       employees: [],
-      collection: []
+      collection: [],
+      loading: true
     }
   }
 
@@ -33,7 +35,10 @@ export default class EmployeeList extends Component {
     const docSnap = await getDocs( queryResult );
     
     this.setState( { employees: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
-      () => this.setState( { collection: this.state.employees.slice( 0, 10 ) } ));
+      () => {
+        this.setState( { collection: this.state.employees.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      });
 
   };
 
@@ -46,15 +51,19 @@ export default class EmployeeList extends Component {
     
     return (
       <>
-        <Table
-          tableName="Lista de Funcionários"
-          columns={ this.tableColumns }
-          data={ this.state.employees }
-          link="funcionario"
-          linkCadastro="/funcionarios/cadastro"
-          collection2={this.state.collection}
-          setCollection2={setCollection}
-        />
+      {
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <Table
+            tableName="Lista de Funcionários"
+            columns={ this.tableColumns }
+            data={ this.state.employees }
+            link="funcionario"
+            linkCadastro="/funcionarios/cadastro"
+            collection2={this.state.collection}
+            setCollection2={setCollection}
+          />
+        )
+      }
       </>
     )
   }

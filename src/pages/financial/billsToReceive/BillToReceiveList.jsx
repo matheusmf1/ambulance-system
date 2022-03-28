@@ -4,6 +4,7 @@ import { db } from "../../../firebase";
 import { collection, getDocs } from 'firebase/firestore';
 import { query, orderBy } from "firebase/firestore";
 import { Bill } from "../../../data/Bill";
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default class BillToReceiveList extends Component {
 
@@ -12,7 +13,8 @@ export default class BillToReceiveList extends Component {
 
     this.state = {
       tableData: [],
-      collection: []
+      collection: [],
+      loading: true
     }
 
     this.editarModal = "BillReceiveModalEdit"
@@ -38,7 +40,11 @@ export default class BillToReceiveList extends Component {
     const docSnap = await getDocs( queryResult );
     
     this.setState( { tableData: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
-      () => this.setState( { collection: this.state.tableData.slice( 0, 10 ) } ));
+      () => {
+        this.setState( { collection: this.state.tableData.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      }
+    );
 
   };
 
@@ -56,19 +62,23 @@ export default class BillToReceiveList extends Component {
     
     return (
       <>
-        <TableBill
-          tableName="Contas a Receber"
-          columns={ this.tableColumns }
-          data={ this.state.tableData }
-          billPaymentStatus="toReceive"
-          billModalEdit={ this.editarModal }
-          billModal={ this.darBaixaModal }
-          linkCadastro="/financeiro/receber/cadastro"
-          collection2={ this.state.collection }
-          setCollection2={ setCollection }
-          handleDelete={ handleDelete }
-          searchPlaceholderName={ "Procurar empresa ou valor total" }
+      {
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <TableBill
+            tableName="Contas a Receber"
+            columns={ this.tableColumns }
+            data={ this.state.tableData }
+            billPaymentStatus="toReceive"
+            billModalEdit={ this.editarModal }
+            billModal={ this.darBaixaModal }
+            linkCadastro="/financeiro/receber/cadastro"
+            collection2={ this.state.collection }
+            setCollection2={ setCollection }
+            handleDelete={ handleDelete }
+            searchPlaceholderName={ "Procurar empresa ou valor total" }
         />
+        )
+      }
       </>
     )
   }

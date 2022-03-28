@@ -3,6 +3,7 @@ import { TablePaidReceivedBill } from '../../../components/tables/bills/tablePai
 import { db } from "../../../firebase";
 import { collection, getDocs, query, orderBy  } from 'firebase/firestore';
 import { Bill } from "../../../data/Bill";
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default class BillReceivedList extends Component {
 
@@ -11,7 +12,8 @@ export default class BillReceivedList extends Component {
 
     this.state = {
       tableData: [],
-      collection: []
+      collection: [],
+      loading: true
     }
 
   }
@@ -41,8 +43,11 @@ export default class BillReceivedList extends Component {
     });
   
     this.setState( { tableData: billHasPaidInstallment.filter( data => data !== 0 ) },
-      () => this.setState( { collection: this.state.tableData.slice( 0, 10 ) } ) 
-    )
+      () => {
+        this.setState( { collection: this.state.tableData.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      } 
+    );
     
   };
 
@@ -59,17 +64,22 @@ export default class BillReceivedList extends Component {
     
     return (
       <>
-        <TablePaidReceivedBill
-          tableName="Contas Recebidas"
-          columns={ this.tableColumns }
-          data={ this.state.tableData }
-          billInfoLink="/financeiro/recebidos"
-          linkCadastro="/financeiro/receber/cadastro"
-          collection2={ this.state.collection }
-          setCollection2={ setCollection }
-          handleDelete={ handleDelete }
-          searchPlaceholderName={ "Procurar empresa ou valor total" }
-        />  
+      {
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <TablePaidReceivedBill
+            tableName="Contas Recebidas"
+            columns={ this.tableColumns }
+            data={ this.state.tableData }
+            billInfoLink="/financeiro/recebidos"
+            linkCadastro="/financeiro/receber/cadastro"
+            collection2={ this.state.collection }
+            setCollection2={ setCollection }
+            handleDelete={ handleDelete }
+            searchPlaceholderName={ "Procurar empresa ou valor total" }
+          />
+        )
+      }
+  
       </>
     )
   }

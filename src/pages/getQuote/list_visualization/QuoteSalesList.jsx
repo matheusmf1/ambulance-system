@@ -6,6 +6,7 @@ import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { TransformationProposal } from "../../../data/TransformationProposal";
 import { ServiceOrder } from "../../../data/ServiceOrder";
 import { ProductSale } from "../../../data/ProductSale";
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default class QuoteSalesList extends Component {
 
@@ -14,7 +15,8 @@ export default class QuoteSalesList extends Component {
 
     this.state = {
       customers: [],
-      collection: []
+      collection: [],
+      loading: true
     }
   }
 
@@ -60,7 +62,10 @@ export default class QuoteSalesList extends Component {
 
     this.docSnaps.forEach( docSnap => docSnap.docs.map( doc => {
       this.setState( { customers: [ ...this.state.customers, doc.data() ] },
-      () => this.setState( { collection: this.state.customers.slice( 0, 10 ) } ) );
+      () => {
+        this.setState( { collection: this.state.customers.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      });
     }))
 
   };
@@ -90,6 +95,8 @@ export default class QuoteSalesList extends Component {
     
     return (
       <>
+      {
+       this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
         <TableQuoteSales
           tableName= { this.sessionName === "orcamentos" ? "Serviços em Orçamentos" : "Serviços em Vendas"  }
           columns={ this.tableColumns }
@@ -100,6 +107,8 @@ export default class QuoteSalesList extends Component {
           searchPlaceholderName={ "Procurar serviço, empresa, status..." }
           session={ this.session }
         />
+       ) 
+      }
       </>
     )
   }

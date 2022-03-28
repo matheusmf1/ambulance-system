@@ -4,6 +4,7 @@ import { db } from "../../../firebase";
 import { collection, getDocs } from 'firebase/firestore';
 import { query, orderBy } from "firebase/firestore";
 import { Bill } from "../../../data/Bill";
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default class BillPaidList extends Component {
 
@@ -12,7 +13,8 @@ export default class BillPaidList extends Component {
 
     this.state = {
       tableData: [],
-      collection: []
+      collection: [],
+      loading: true
     }
 
   }
@@ -41,7 +43,10 @@ export default class BillPaidList extends Component {
     });
   
     this.setState( { tableData: billHasPaidInstallment.filter( data => data !== 0 ) },
-      () => this.setState( { collection: this.state.tableData.slice( 0, 10 ) } ) 
+      () => { 
+        this.setState( { collection: this.state.tableData.slice( 0, 10 ) } )
+        this.setState( { loading: false } )
+      } 
     )
     
   };
@@ -59,17 +64,21 @@ export default class BillPaidList extends Component {
     
     return (
       <>
-        <TablePaidReceivedBill
-          tableName="Contas Pagas"
-          columns={ this.tableColumns }
-          data={ this.state.tableData }
-          billInfoLink="/financeiro/pagas"
-          linkCadastro="/financeiro/pagar/cadastro"
-          collection2={ this.state.collection }
-          setCollection2={ setCollection }
-          handleDelete={ handleDelete }
-          searchPlaceholderName={ "Procurar empresa ou valor total" }
-        />  
+      {
+        this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
+          <TablePaidReceivedBill
+            tableName="Contas Pagas"
+            columns={ this.tableColumns }
+            data={ this.state.tableData }
+            billInfoLink="/financeiro/pagas"
+            linkCadastro="/financeiro/pagar/cadastro"
+            collection2={ this.state.collection }
+            setCollection2={ setCollection }
+            handleDelete={ handleDelete }
+            searchPlaceholderName={ "Procurar empresa ou valor total" }
+          />  
+        )
+      }
       </>
     )
   }
