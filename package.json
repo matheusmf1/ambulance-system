@@ -11,6 +11,7 @@
     "@mui/lab": "^5.0.0-alpha.74",
     "@mui/material": "^5.5.2",
     "@react-br-forms/cpf-cnpj-mask": "^1.0.6",
+    "@syncfusion/ej2-react-schedule": "^19.4.55",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",

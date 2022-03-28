@@ -43,6 +43,7 @@ import InvoiceOutAdd from "./pages/invoice/invoice-out/InvoiceOutAdd";
 import InvoiceList from "./pages/invoice/InvoiceList";
 import InvoiceInInfo from "./pages/invoice/invoice-in/InvoiceInInfo";
 import InvoiceOutInfo from "./pages/invoice/invoice-out/InvoiceOutInfo";
+import Calendar from "./pages/calendar/Calendar";
 
 function App() {
   return (
@@ -218,7 +219,7 @@ function App() {
 
           {/* CALENDÁRIO */}
           <Route exact path="/calendario">
-            <InvoiceList/>
+            <Calendar/>
           </Route>
 
         </Switch>
