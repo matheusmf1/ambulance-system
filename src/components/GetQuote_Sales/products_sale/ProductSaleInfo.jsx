@@ -370,44 +370,39 @@ export default function ProductSaleInfo( props ) {
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Código do Cliente*</label>
-                <input className="form__input" type="text" placeholder="Código do cliente" value={data.clientNumber} onChange={handleInformationChange('clientNumber')} required/>
+                <label className="form__input--label">Código do Cliente</label>
+                <input className="form__input" type="text" placeholder="Código do cliente" value={data.clientNumber} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">OPÇÃO DE BUSCAR CLIENTE</label>
-                <input className="form__input" type="text" placeholder="Nome do responsável"/>
+                <label className="form__input--label">Empresa</label>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={data.companyName} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" value={data.companyName} onChange={handleInformationChange('companyName')} required/>
-              </div>
-
-              <div className="form__input--halfWidth">
-                <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj onChange={handleInformationChange('cpf')} defaultValue={data.cpf} required={true}/>
+                <label className="form__input--label">CNPJ/CPF</label>
+                <InputCpfCnpj onChange={handleInformationChange('cpf')} defaultValue={data.cpf} required={true} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP</label>
-                <InputCep onChange={checkCep} defaultValue={data.cep}/>
+                <InputCep onChange={checkCep} defaultValue={data.cep} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" value={data['address']} onChange={handleInformationChange('address')} required/>
+                <label className="form__input--label">Endereço</label>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={data['address']} disabled/>
               </div>
 
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" value={data['city']} onChange={handleInformationChange('city')} required/>
+                <label className="form__input--label">Cidade</label>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={data['city']} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" value={data['state']} onChange={handleInformationChange('state')}>
+                <label className="form__input--label">Estado</label>
+                <select name="estados-brasil" className="form__input" value={data['state']} disabled>
                   <option value="AC">Acre</option>
                   <option value="AL">Alagoas</option>
                   <option value="AP">Amapá</option>
@@ -439,13 +434,13 @@ export default function ProductSaleInfo( props ) {
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" value={data['email']} onChange={handleInformationChange('email')}/>
+                <label className="form__input--label">Email</label>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={data['email']} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
-                <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={data['telephone']} onChange={handleInformationChange('telephone')}/>
+                <label className="form__input--label">Telefone</label>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={data['telephone']} disabled/>
               </div>
             </div>
 

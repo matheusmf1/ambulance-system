@@ -3,7 +3,7 @@ import InputMask from 'react-input-mask';
 
 export default function InputPhoneNumber( props ) {
 
-  const { onChange, placeholder, mask, className, defaultValue } = props;
+  const { onChange, placeholder, mask, className, defaultValue, disabled } = props;
 
   return(
     <InputMask
@@ -15,6 +15,8 @@ export default function InputPhoneNumber( props ) {
       onChange={ ( e ) => {
         onChange( e )
       }}
-      required/>
+      required
+      disabled={ disabled ? disabled : false }
+      />
   )
 }

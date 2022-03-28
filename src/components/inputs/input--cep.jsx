@@ -3,7 +3,7 @@ import InputMask from 'react-input-mask';
 
 export default function InputCep( props ) {
 
-  const { onChange, className, defaultValue } = props;
+  const { onChange, className, defaultValue, disabled } = props;
 
   return(
     <InputMask
@@ -13,6 +13,8 @@ export default function InputCep( props ) {
       type="text"
       placeholder="Informe o CEP"
       onChange={ ( e ) => { onChange( e ) } }
-      required/>
+      required
+      disabled={ disabled ? disabled : false }
+      />
   )
 }

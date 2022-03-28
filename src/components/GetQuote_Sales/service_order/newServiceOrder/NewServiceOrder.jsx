@@ -564,7 +564,6 @@ export default function NewServiceOrder( props ) {
                   <option value="choose">Escolha o cliente</option>
                     {
                       customerData.map( (data, key) => {
-                        // console.log( data )
                         return (<option value={data['id']} key={key}>{data['id']} - {data['responsable']}</option>);
                     })
                   }
