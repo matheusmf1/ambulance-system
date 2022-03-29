@@ -1,5 +1,5 @@
 import { React, Component } from 'react';
-import { TableHomeBill } from './tableHomeBill';
+import { TableHomeBill } from './TableHomeBill';
 import { db } from "../../../firebase";
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { Bill } from "../../../data/Bill";

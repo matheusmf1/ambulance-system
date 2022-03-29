@@ -1,13 +1,11 @@
 import { React, Component } from 'react';
-import { db } from '../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { query, orderBy } from "firebase/firestore";
-import { InventoryTable } from '../../components/tables/inventory/InventoryTable';
-import { Inventory } from "../../data/Inventory";
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { db } from '../../../firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import { TableAlertInventoryQuantity } from './TableAlertInventoryQuantity';
 
 
-export default class InventoryList extends Component {
+export default class AlertInventoryQuantity extends Component {
 
   constructor(props) {
     super(props);
@@ -24,8 +22,7 @@ export default class InventoryList extends Component {
     supplier_id: "Fornecedor",
     product_name: "Nome",
     product_quantity: "Quantidade",
-    product_value: "Valor Unitário",
-    product_entryDate: "Data de entrada",
+    product_quantityLimit: "Quantidade mínima",
     product_underQuantityLimit: "Status",
     action: "Opções"
   };
@@ -34,7 +31,7 @@ export default class InventoryList extends Component {
 
     const inventoryCollectionRef = collection( db, "inventory" )
 
-    const queryResult = query( inventoryCollectionRef, orderBy("id") );
+    const queryResult = query( inventoryCollectionRef, where( "product_underQuantityLimit", "==", true ) );
     const docSnap = await getDocs( queryResult );
     
     this.setState( { inventory: docSnap.docs.map( doc => ( {...doc.data()} ) ) },
@@ -50,26 +47,18 @@ export default class InventoryList extends Component {
     const setCollection = ( value ) => {
       this.setState( {"collection":  value } )
     }
-
-    const handleDelete = async ( id ) => {
-      const data = new Inventory( { id: id  } );
-      return await data.deleteMaterialInventoryFromFirebase();
-    }
     
     return (
       <>
        { 
         this.state.loading === true ? ( <main><LoadingSpinner/></main> ) : (
-          <InventoryTable
-            tableName="Estoque"
+          <TableAlertInventoryQuantity
+            tableName="Estoque - Materiais em falta"
             columns={ this.tableColumns }
             data={ this.state.inventory }
             link="almoxarifado"
-            linkCadastro="/almoxarifado/cadastro"
             collection2={this.state.collection}
             setCollection2={ setCollection }
-            handleDelete={ handleDelete }
-            searchPlaceholderName={ "Cod.Produto, Fornecedor, Nome..." }
           />
           )
         }

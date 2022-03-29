@@ -2,15 +2,13 @@ import { React, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
-import DeleteModal from "../../modal/deleteModal";
 
-export const InventoryTable = ( props ) => {
+export const TableAlertInventoryQuantity = ( props ) => {
 
-  const { tableName, columns, data, link, linkCadastro, collection2, setCollection2, handleDelete, searchPlaceholderName } = props;
+  const { tableName, columns, data, link, collection2, setCollection2 } = props;
 
-  const countPerPage = 10;
+  const countPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-
 
   const updatePage = p => {
     setCurrentPage(p);
@@ -78,52 +76,15 @@ export const InventoryTable = ( props ) => {
         </button>
       </a>
 
-      <DeleteModal id={ `${id}`} deleteFunction={handleDelete} collection={collection2} setCollection={setCollection2} />
-
     </td>;  
   }
 
-  const searchMethod = ( value ) => {
-
-    let newValue = value.toLowerCase();
-
-    return cloneDeep( data
-      .filter( item => 
-        item.id.toLowerCase().split( '_' )[1].indexOf( newValue ) > -1 ||
-        item.supplier_id.toLowerCase().indexOf( newValue ) > -1 ||
-        item.product_name.toLowerCase().indexOf( newValue ) > -1 ||
-        item.product_quantity.toLowerCase().indexOf( newValue ) > -1 ||
-        item.product_value.toLowerCase().indexOf( newValue ) > -1 ||
-        new Date( item.product_entryDate ).toLocaleDateString('pt-br').indexOf( newValue ) > -1
-      )
-      .slice(0, countPerPage)
-    );
-  }
-
   return (
-    <main className="table__container">
+    <section className="table__container">
       <div className="table__titleAndSearch--container">
 
         <h3 className="table__titleAndSearch--title">{ tableName }</h3>
-      
-        <div className="table__container--searchAndAdd">
-            
-            <input
-              className="table__titleAndSearch--search"
-              placeholder={ searchPlaceholderName }
-              onChange={ e => {
-
-                setCollection2( searchMethod( e.target.value ) );
-                
-              }}
-            />
-
-            <a href={linkCadastro} className="table__button--add">								  
-              <button className="form__button form__button--add table__button--add">Adicionar</button>
-            </a>
-
-        </div>
-
+   
       </div>
       
       <div className="table__container--area">   
@@ -146,7 +107,7 @@ export const InventoryTable = ( props ) => {
         className="table__pagination"
       />
 
-    </main>
+    </section>
       
   );
 };

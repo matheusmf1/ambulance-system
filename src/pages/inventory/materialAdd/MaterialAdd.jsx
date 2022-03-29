@@ -28,7 +28,9 @@ export default function MaterialAdd() {
       product_name: "",
       product_quantity: "",
       product_value: "",
-      product_entryDate: ""
+      product_entryDate: "",
+      product_quantityLimit: "",
+      product_underQuantityLimit: false,
     },
   );
 
@@ -63,7 +65,8 @@ export default function MaterialAdd() {
     }
     else {
 
-      materialData['id'] = `${materialData['supplier_id']}_${materialData['id']}` 
+      materialData['id'] = `${materialData['supplier_id']}_${materialData['id']}`;
+      materialData['product_underQuantityLimit'] = parseInt(materialData['product_quantity']) < parseInt(materialData['product_quantityLimit']) ? true: false;
 
       const data = new Inventory( { data: materialData, id: materialData['id'] } );
   
@@ -122,6 +125,11 @@ export default function MaterialAdd() {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Quantidade*</label>
               <input className="form__input" type="number" placeholder="Informe a quantidade" min={0} onChange={handleInformationChange('product_quantity')} required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Quantidade mínima desejada*</label>
+              <input className="form__input" type="number" placeholder="Informe a quantidade para alertar quando o estoque estiver baixo" min={0} onChange={handleInformationChange('product_quantityLimit')} required/>
             </div>
 
             <div className="form__input--halfWidth">

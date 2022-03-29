@@ -130,7 +130,8 @@ export const TableHomeBill = ( props ) => {
   }
 
   return (
-    <main className="table__container">
+    // <main className="table__container">
+    <section className="table__container">
       
       <div className="table__titleAndSearch--container">
         <h3 className="table__titleAndSearch--title">{ tableName }</h3>
@@ -155,7 +156,8 @@ export const TableHomeBill = ( props ) => {
         className="table__pagination"
       />
 
-    </main>
+    {/* </main> */}
+    </section>
       
   );
 };

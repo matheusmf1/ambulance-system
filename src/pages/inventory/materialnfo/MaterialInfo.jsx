@@ -84,6 +84,8 @@ export default function MaterialInfo( props ) {
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
+    
+    data['product_underQuantityLimit'] = parseInt(data['product_quantity']) < parseInt(data['product_quantityLimit']) ? true: false
 
     const updateData = new Inventory( { data: data, id: idRef } );
 
@@ -132,6 +134,11 @@ export default function MaterialInfo( props ) {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Quantidade*</label>
               <input className="form__input" type="number" placeholder="Informe a quantidade" min={0} value={ data['product_quantity'] } onChange={handleInformationChange('product_quantity')} required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Quantidade mínima desejada*</label>
+              <input className="form__input" type="number" placeholder="Informe a quantidade para alertar quando o estoque estiver baixo" min={0} value={ data['product_quantityLimit'] } onChange={handleInformationChange('product_quantityLimit')} required/>
             </div>
 
             <div className="form__input--halfWidth">
