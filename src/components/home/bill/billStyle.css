@@ -1,0 +1,16 @@
+.dueDate {
+  border: none;
+	font-size: 1rem;
+	padding: 7px 6px;
+	border-radius: 5px;
+}
+
+.dueDate.Due{
+	background-color: #e5faf2;
+	color: #337d61;
+}
+
+.dueDate.Overdue{
+	background-color: #fff0f1;
+	color: #ff0066;
+}

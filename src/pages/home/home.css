@@ -1,8 +1,13 @@
 .home{
-    flex: 4;
+	flex: 4;
 }
 
 .homeWidgets{
-    display: flex;
-    margin: 20px;
+	display: flex;
+	margin: 20px;
+}
+
+.homeBillInfo__container {
+	display: flex;
+	margin: 10px; 
 }

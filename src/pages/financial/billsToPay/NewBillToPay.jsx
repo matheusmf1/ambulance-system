@@ -33,6 +33,7 @@ export default function NewBillToPay() {
       additionalInformation: "",
       expenseType: "fixa",
       amountPay: "",
+      currentPaymentDate: "",
   
       paymentInfo: {
         installments: "1",
@@ -48,6 +49,7 @@ export default function NewBillToPay() {
     if ( id === 'dueDate' ) {
       let formatedDate = (e.target.value).toString().replaceAll( "-", "/" )
       setInstallment( { ...installment, [id]: `${new Date( formatedDate )}` } );
+      setData( { ...data, "currentPaymentDate": `${new Date( formatedDate )}` } );
     }
 
     else if ( id === 'amountPay' ) {

@@ -50,6 +50,7 @@ export default function BillReceiveModal( props ) {
     billFile: `${data.billFile}`,
     additionalInformation: `${data.additionalInformation}`,
     amountPay: `${data.amountPay}`,
+    currentPaymentDate: `${data.currentPaymentDate}`,
 
     service: `${data.service}`,
     serviceNumber: `${data.serviceNumber}`,
@@ -112,6 +113,13 @@ export default function BillReceiveModal( props ) {
 
     let finalInstallmentData = values['paymentInfo']['installmentsData'].map( data => data['installment'] === installment ? valuesInstallmentData : data )
     values['paymentInfo']['installmentsData'] = finalInstallmentData
+
+    let missingPayments = values['paymentInfo']['installmentsData'].filter( bill => bill.paymentStatus === "toReceive" )
+
+    if ( missingPayments.length > 0 ) {
+      let nextPayment = missingPayments[0];
+      values['currentPaymentDate'] = nextPayment['dueDate']
+    }
   
     const bill = new Bill( { data: values, id: values['id'], billType: "receive",  file: checkIfFileHasChanged() } )
     let result = await bill.updateBillOnFirebase();

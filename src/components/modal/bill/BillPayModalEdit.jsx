@@ -51,6 +51,7 @@ export default function BillPayModalEdit( props ) {
     additionalInformation: `${data.additionalInformation}`,
     expenseType: `${data.expenseType}`,
     amountPay: `${data.amountPay}`,
+    currentPaymentDate: `${data.currentPaymentDate}`,
 
     paymentInfo: {
       installments: `${data['paymentInfo'].installments}`,
@@ -189,6 +190,7 @@ export default function BillPayModalEdit( props ) {
                   inputFormat="dd/MM/yyyy"      
                   onChange={ (newValue) => {
                     setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
+                    setValues( { ...values, "currentPaymentDate": `${new Date( newValue )}` } );
                   }}
                   renderInput={(params) => <CustomTextField {...params}/>}
                 />

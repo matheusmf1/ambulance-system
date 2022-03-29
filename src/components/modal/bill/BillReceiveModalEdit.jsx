@@ -50,6 +50,7 @@ export default function BillReceiveModalEdit( props ) {
     billFile: `${data.billFile}`,
     additionalInformation: `${data.additionalInformation}`,
     amountPay: `${data.amountPay}`,
+    currentPaymentDate: `${data.currentPaymentDate}`,
 
     service: `${data.service}`,
     serviceNumber: `${data.serviceNumber}`,
@@ -190,6 +191,7 @@ export default function BillReceiveModalEdit( props ) {
                   inputFormat="dd/MM/yyyy"      
                   onChange={ (newValue) => {
                     setValuesInstallmentData( { ...valuesInstallmentData, dueDate: `${new Date( newValue )}` } );
+                    setValues( { ...values, "currentPaymentDate": `${new Date( newValue )}` } );
                   }}
                   renderInput={(params) => <CustomTextField {...params}/>}
                 />
