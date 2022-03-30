@@ -1,10 +1,29 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { Card, Button, Alert } from "react-bootstrap";
+import { useAuth } from "../../context/AuthProvider";
+import { Link, useHistory } from "react-router-dom";
 import "./topbar.css";
 
 import { NotificationsNone, Settings } from "@material-ui/icons";
 
 export default function Topbar() {
+
+  const [error, setError] = useState("");
+  const { currentUser, logout } = useAuth();
+  const history = useHistory();
+
+  async function handleLogout() {
+    setError("");
+
+    try {
+      await logout();
+      history.push("/login");
+    } catch {
+      setError("Erro ao fazer logout")
+    }
+  }
+
   return (
     <div className="topbar">
       
@@ -22,13 +41,15 @@ export default function Topbar() {
         </div>
 
         <div className="topRight">
+          {error && <Alert variant="danger">{error}</Alert>}
+          <strong>Email:</strong> {currentUser.email}
 
           <div className="topbarIconContainer">
             <NotificationsNone />
             <span className="topIconBadge">2</span>
           </div>
 
-          <div className="topbarIconContainer">
+          <div className="topbarIconContainer" onClick={handleLogout}>
             <Settings />
           </div>
 

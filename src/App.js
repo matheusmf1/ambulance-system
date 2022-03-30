@@ -1,10 +1,7 @@
-import Topbar from "./components/topbar/Topbar";
-import Sidebar from "./components/sidebar/Sidebar";
-import './app.css';
 import React from "react";
+import './app.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
-import Home from "./pages/home/Home"
+import Home from "./pages/home/Home";
 import CustomerAdd from "./pages/customer/customerAdd/CustomerAdd"
 import CustomerInfo from "./pages/customer/customerInfo/CustomerInfo";
 import CustomerList from "./pages/customer/customerList/CustomerList";
@@ -44,185 +41,142 @@ import InvoiceList from "./pages/invoice/InvoiceList";
 import InvoiceInInfo from "./pages/invoice/invoice-in/InvoiceInInfo";
 import InvoiceOutInfo from "./pages/invoice/invoice-out/InvoiceOutInfo";
 import Calendar from "./pages/calendar/Calendar";
+import Signup from "./pages/login/Signup";
+import Login from "./pages/login/Login";
+import { AuthProvider } from "./context/AuthProvider";
+import PrivateRoute from "./components/login/PrivateRoute";
+import ForgotPassword from "./pages/login/ForgotPassword";
+import UpdateProfile from "./pages/login/UpdateProfile";
 
 function App() {
+
   return (
-    <div className="container">
+    <div className="container1">
 
       <Router>
-
-        <Topbar/> 
+        <AuthProvider>
         
-        <Sidebar/>
+          <Switch>
 
-        <Switch>
+            {/* LOGIN */}
+            <Route path="/signup" component={Signup}/>
 
-        {/* HOME */}
-          <Route exact path="/">
-            <Home/>
-          </Route>
+            <Route path="/login" component={Login}/>
 
-          {/* CLIENTES */}
-          <Route exact path="/clientes">
-            <CustomerList/>
-          </Route>
+            <Route path="/forgot-password" component={ForgotPassword} />
 
-          <Route exact path="/clientes/cadastro">
-            <CustomerAdd/>
-          </Route>
+            <PrivateRoute path="/update-profile" component={UpdateProfile} />
+            
 
-          <Route exact path="/cliente/:id" component={CustomerInfo}/>
+            {/* HOME */}
+            <PrivateRoute exact path="/" component={Home}/>
 
-          {/* VENDA */}
-          <Route path="/venda/nova-os">
-            <SalesServiceOrder/>
-          </Route>
+            {/* CLIENTES */}
+            <PrivateRoute exact path="/clientes" component={CustomerList}/>
 
-          <Route exact path="/venda/os/:id" component={ServiceOrderInfo}/>
+            <PrivateRoute exact path="/clientes/cadastro" component={CustomerAdd}/>
 
-          <Route path="/venda/nova-venda">
-            <ProductSale/>
-          </Route>
+            <PrivateRoute exact path="/cliente/:id" component={CustomerInfo}/>
 
-          <Route exact path="/venda/venda_produto/:id" component={ProductSaleInfo}/>
+            {/* VENDA */}
+            <PrivateRoute path="/venda/nova-os" component={SalesServiceOrder}/>
 
-          <Route path="/venda/nova-transformacao">
-            <SalesTransformationProposal/>
-          </Route>
+            <PrivateRoute exact path="/venda/os/:id" component={ServiceOrderInfo}/>
 
-          <Route exact path="/venda/transformacao/:id" component={TransformationProposalInfo}/>
+            <PrivateRoute path="/venda/nova-venda" component={ProductSale}/>
+              
+            <PrivateRoute exact path="/venda/venda_produto/:id" component={ProductSaleInfo}/>
 
-          <Route exact path="/vendas">
-            <QuoteSalesList/>
-          </Route>
+            <PrivateRoute path="/venda/nova-transformacao" component={SalesTransformationProposal}/>
+             
+            <PrivateRoute exact path="/venda/transformacao/:id" component={TransformationProposalInfo}/>
+
+            <PrivateRoute exact path="/vendas" component={QuoteSalesList}/>
 
 
-          {/* FORNECEDOR */}
-          <Route exact path="/fornecedores">
-            <SupplierList/>
-          </Route>
+            {/* FORNECEDOR */}
+            <PrivateRoute exact path="/fornecedores" component={SupplierList}/>
 
-          <Route path="/fornecedores/cadastro">
-            <SupplierAdd/>
-          </Route>
+            <PrivateRoute path="/fornecedores/cadastro" component={SupplierAdd}/>
 
-          <Route path="/fornecedor/:id" component={SupplierInfo}/>
+            <PrivateRoute path="/fornecedor/:id" component={SupplierInfo}/>
 
-          {/* FUNCIONARIO */}
-          <Route exact path="/funcionarios">
-            <EmployeeList/>
-          </Route>
+            {/* FUNCIONARIO */}
+            <PrivateRoute exact path="/funcionarios" component={EmployeeList}/>
 
-          <Route path="/funcionarios/cadastro">
-            <EmployeeAdd/>
-          </Route>
-
-          <Route path="/funcionario/:id" component={EmployeeInfo}/>
+            <PrivateRoute path="/funcionarios/cadastro" component={EmployeeAdd}/>
+            
+            <PrivateRoute path="/funcionario/:id" component={EmployeeInfo}/>
 
 
-          {/* ORCAMENTO */}
-          <Route exact path="/orcamento/nova-os">
-            <GetQuoteServiceOrder/>
-          </Route>
+            {/* ORCAMENTO */}
+            <PrivateRoute exact path="/orcamento/nova-os" component={GetQuoteServiceOrder}/>
 
-          <Route exact path="/orcamento/os/:id" component={ServiceOrderInfo}/>
+            <PrivateRoute exact path="/orcamento/os/:id" component={ServiceOrderInfo}/>
 
-          <Route exact path="/orcamento/nova-venda">
-            <GetQuoteProductSale/>
-          </Route>
+            <PrivateRoute exact path="/orcamento/nova-venda" component={GetQuoteProductSale}/>
 
-          <Route exact path="/orcamento/venda_produto/:id" component={ProductSaleInfo}/>
+            <PrivateRoute exact path="/orcamento/venda_produto/:id" component={ProductSaleInfo}/>
 
-          <Route exact path="/orcamento/nova-transformacao">
-            <GetQuoteTransformationProposal/>
-          </Route>
+            <PrivateRoute exact path="/orcamento/nova-transformacao" component={GetQuoteTransformationProposal}/>
 
-          <Route exact path="/orcamento/transformacao/:id" component={TransformationProposalInfo}/>
+            <PrivateRoute exact path="/orcamento/transformacao/:id" component={TransformationProposalInfo}/>
 
-          <Route exact path="/orcamentos">
-            <QuoteSalesList/>
-          </Route>
-
-          {/* FINANCEIRO */}
-          <Route exact path="/financeiro/pagas/:id" component={BillsPayInfo}/>
-
-          <Route exact path="/financeiro/pagas">
-            <BillPaidList/>
-          </Route>
-          
-          <Route exact path="/financeiro/pagar">
-            <BillToPayList/>
-          </Route>
-
-          <Route exact path="/financeiro/pagar/cadastro">
-            <NewBillToPay/>
-          </Route>
-
-          <Route exact path="/financeiro/recebidos/:id" component={BillsReceiveInfo}/>
-
-          <Route exact path="/financeiro/recebidos">
-            <BillReceivedList/>
-          </Route>
-
-          <Route exact path="/financeiro/receber">
-            <BillToReceiveList/>
-          </Route>
-
-          <Route exact path="/financeiro/receber/cadastro">
-            <NewBillToReceive/>
-          </Route>
-
-          {/* ALMOXARIFADO */}
-          <Route exact path="/almoxarifado">
-            <InventoryList/>
-          </Route>
-
-          <Route exact path="/almoxarifado/cadastro">
-            <MaterialAdd/>
-          </Route>
-
-          <Route exact path="/almoxarifado/:id" component={MaterialInfo}/>
+            <PrivateRoute exact path="/orcamentos" component={QuoteSalesList}/>
 
 
-          {/* PRODUTOS */}
-          <Route exact path="/produtos">
-            <ProductsList/>
-          </Route>
+            {/* FINANCEIRO */}
+            <PrivateRoute exact path="/financeiro/pagas/:id" component={BillsPayInfo}/>
 
-          <Route exact path="/produtos/cadastro">
-            <ProductsAdd/>
-          </Route>
+            <PrivateRoute exact path="/financeiro/pagas" component={BillPaidList}/>
+            
+            <PrivateRoute exact path="/financeiro/pagar" component={BillToPayList}/>
 
-          <Route exact path="/produtos/:id" component={ProductsInfo}/>
+            <PrivateRoute exact path="/financeiro/pagar/cadastro" component={NewBillToPay}/>
 
-          {/* NOTA FISCAL */}
-          <Route exact path="/nota-fiscal/entrada">
-            <InvoiceList/>
-          </Route>
+            <PrivateRoute exact path="/financeiro/recebidos/:id" component={BillsReceiveInfo}/>
 
-          <Route exact path="/nota-fiscal/entrada/cadastro">
-            <InvoiceInAdd/>
-          </Route>
+            <PrivateRoute exact path="/financeiro/recebidos" component={BillReceivedList}/>
 
-          <Route exact path="/nota-fiscal/entrada/:id" component={InvoiceInInfo}/>
-         
-          <Route exact path="/nota-fiscal/saida">
-            <InvoiceList/>
-          </Route>
+            <PrivateRoute exact path="/financeiro/receber" component={BillToReceiveList}/>
 
-          <Route exact path="/nota-fiscal/saida/cadastro">
-            <InvoiceOutAdd/>
-          </Route>
-
-          <Route exact path="/nota-fiscal/saida/:id" component={InvoiceOutInfo}/>
+            <PrivateRoute exact path="/financeiro/receber/cadastro" component={NewBillToReceive}/>
 
 
-          {/* CALENDÁRIO */}
-          <Route exact path="/calendario">
-            <Calendar/>
-          </Route>
+            {/* ALMOXARIFADO */}
+            <PrivateRoute exact path="/almoxarifado" component={InventoryList}/>
 
-        </Switch>
+            <PrivateRoute exact path="/almoxarifado/cadastro" component={MaterialAdd}/>
+
+            <PrivateRoute exact path="/almoxarifado/:id" component={MaterialInfo}/>
+
+
+            {/* PRODUTOS */}
+            <PrivateRoute exact path="/produtos" component={ProductsList}/>
+
+            <PrivateRoute exact path="/produtos/cadastro" component={ProductsAdd}/>
+
+            <PrivateRoute exact path="/produtos/:id" component={ProductsInfo}/>
+
+            {/* NOTA FISCAL */}
+            <PrivateRoute exact path="/nota-fiscal/entrada" component={InvoiceList}/>
+
+            <PrivateRoute exact path="/nota-fiscal/entrada/cadastro" component={InvoiceInAdd}/>
+
+            <PrivateRoute exact path="/nota-fiscal/entrada/:id" component={InvoiceInInfo}/>
+
+            <PrivateRoute exact path="/nota-fiscal/saida" component={InvoiceList}/>
+
+            <PrivateRoute exact path="/nota-fiscal/saida/cadastro" component={InvoiceOutAdd}/>
+
+            <PrivateRoute exact path="/nota-fiscal/saida/:id" component={InvoiceOutInfo}/>
+
+            {/* CALENDÁRIO */}
+            <PrivateRoute exact path="/calendario" component={Calendar}/>
+
+          </Switch>
+
+        </AuthProvider>
 
       </Router>
 

@@ -4,21 +4,23 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC4J5L0hx08BWtVJtXS5YU587usQLNjB6s",
-  authDomain: "silene-pro.firebaseapp.com",
-  projectId: "silene-pro",
-  storageBucket: "silene-pro.appspot.com",
-  messagingSenderId: "884025593979",
-  appId: "1:884025593979:web:d1c620ba8b2555407152de",
-  measurementId: "G-F0M1LJCBDH"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+export const auth = getAuth( app );
 export const analytics = getAnalytics(app);
 
 initializeFirestore(app, {
