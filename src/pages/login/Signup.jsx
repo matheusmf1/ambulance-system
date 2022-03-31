@@ -1,29 +1,45 @@
-import { React, useRef, useState } from "react";
-import { Container,Form, Button, Card, Alert } from "react-bootstrap";
-import { useAuth } from "../../context/AuthProvider";
+import React, { useState } from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import CopyRight from '../../components/CopyRight';
 import { Link, useHistory } from "react-router-dom";
+import { useAuth } from "../../context/AuthProvider";
 
-export default function Signup() {
-  const emailRef = useRef()
-  const passwordRef = useRef()
-  const passwordConfirmRef = useRef()
+
+export default function SignUp() {
   const { signup } = useAuth();
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const history = useHistory()
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState( false );
+  const history = useHistory();
 
-  async function handleSubmit(e) {
-    e.preventDefault()
 
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setError("Senhas não conferem")
+  const handleSubmit = async (event) => {
+    
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    const nome = data.get('name')
+    const email = data.get('email')
+    const password = data.get('password')
+    const passwordConfirm = data.get('passwordConfirm')
+
+    if ( password !== passwordConfirm ) {
+      return setError("Senhas não conferem");
     }
 
     try {
-      setError("")
-      setLoading(true)
-      await signup(emailRef.current.value, passwordRef.current.value)
-      history.push("/")
+      setError("");
+      setLoading(true);
+      await signup( email, password );
+      history.push("/");
     } catch( error ) {
       console.error( error )
       setError("Erro ao criar o usuário, por favor tente novamente");
@@ -32,45 +48,102 @@ export default function Signup() {
     setLoading(false);
   }
 
+
   return (
-    <>
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh", width: "100vw" }}>
-      <div className="w-100" style={{ maxWidth: "400px" }}>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
       
-        <Card>
-          <Card.Body>
-            <h2 className="text-center mb-4">Cadastre-se</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-            <Form onSubmit={handleSubmit}>
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
 
-              <Form.Group id="email" className="mt-2">
-                <Form.Label className="mb-0">Email</Form.Label>
-                <Form.Control type="email" ref={emailRef} required />
-              </Form.Group>
+        <Typography component="h1" variant="h5">
+          Cadastre-se
+        </Typography>
 
-              <Form.Group id="password" className="mt-2">
-                <Form.Label className="mb-0">Senha</Form.Label>
-                <Form.Control type="password" ref={passwordRef} required />
-              </Form.Group>
+        {error && <Alert severity="error">{error}</Alert>}
+        
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          
+          <Grid container spacing={2}>
 
-              <Form.Group id="password-confirm" className="mt-2">
-                <Form.Label className="mb-0">Confirmação da Senha</Form.Label>
-                <Form.Control type="password" ref={passwordConfirmRef} required />
-              </Form.Group>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="given-name"
+                label="Nome"
+                name="name"
+                required
+                fullWidth
+                id="name"
+                autoFocus
+              />
+            </Grid>
 
-              <Button disabled={loading} className="w-100 mt-3" type="submit">
-                Cadastre-se
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Endereço de Email"
+                name="email"
+                autoComplete="email"
+              />
+            </Grid>
 
-        <div className="w-100 text-center mt-2">
-          Já possui uma conta?<Link to="/login">Log In</Link>
-        </div>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                label="Senha"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+              />
+            </Grid>
 
-      </div>
-    </Container>
-    </>
-  )
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="passwordConfirm"
+                label="Confirme sua senha"
+                type="password"
+                id="passwordConfirm"
+              />
+            </Grid>
+
+          </Grid>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            Cadastre-se
+          </Button>
+
+          <Grid item>
+            <Link to="/login" className="form__text--link">
+              Já possui uma conta? Faça o Login
+            </Link>
+          </Grid>
+
+        </Box>
+      </Box>
+        
+      <CopyRight sx={{ mt: 4 }}/>
+
+    </Container>   
+  );
 }

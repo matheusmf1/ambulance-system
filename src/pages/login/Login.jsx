@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import './login.css';
+import CopyRight from '../../components/CopyRight';
 
 
 export default function Login() {
@@ -20,18 +21,6 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState( false );
   const history = useHistory();
-
-  const Copyright = (props) => {
-    return (
-      <Typography className="form__text--link" color="text.secondary" align="center" {...props}>
-        {'Copyright © '}<Link className='form__text--link' to="https://matheusmf.com/" target="_blank" rel="noreferrer">
-          Matheus Mandotti
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-      </Typography>
-    );
-  }
   
   
   const handleSubmit = async (event) => {
@@ -145,7 +134,7 @@ export default function Login() {
 
               </Grid>
 
-              <Copyright sx={{ mt: 5 }} />
+              <CopyRight sx={{ mt: 4 }}/>
               
             </Box>
           </Box>
