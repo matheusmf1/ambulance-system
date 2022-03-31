@@ -1,61 +1,112 @@
-import React, { useRef, useState } from "react";
-import { Container, Form, Button, Card, Alert } from "react-bootstrap";
-import { useAuth } from "../../context/AuthProvider";
+import React, { useState } from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import CopyRight from '../../components/CopyRight';
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthProvider";
+
 
 export default function ForgotPassword() {
-  const emailRef = useRef()
-  const { resetPassword } = useAuth()
-  const [error, setError] = useState("")
-  const [message, setMessage] = useState("")
-  const [loading, setLoading] = useState(false)
+  const { resetPassword } = useAuth();
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState( false );
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
+    const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+  
     try {
-      setMessage("")
-      setError("")
-      setLoading(true)
-      await resetPassword(emailRef.current.value)
-      setMessage("Verifique seu email para mais instruções")
-    } catch {
-      setError("Erro ao redefinir a senha")
+      setMessage("");
+      setError("");
+      setLoading(true);
+      await resetPassword( email );
+      setMessage("Verifique seu email para mais instruções");
+
+    } catch( error ) {
+      console.error( error )
+      setError("Erro ao redefinir a senha");
     }
 
-    setLoading(false)
+    setLoading(false);
   }
 
+
   return (
-    <>
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh",  width: "100vw" }}>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
 
-     <div className="w-100" style={{ maxWidth: "400px" }}>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Redefinir Senha</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          {message && <Alert variant="success">{message}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" ref={emailRef} required />
-            </Form.Group>
-            <Button disabled={loading} className="w-100" type="submit">
-              Redefinir senha
-            </Button>
-          </Form>
-          <div className="w-100 text-center mt-3">
-            <Link to="/login">Login</Link>
-          </div>
-        </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
-        Ainda não tem conta?<Link to="/signup">Cadastre-se</Link>
-      </div>
-     </div>
+        <Typography component="h1" variant="h5">
+          Redefinir Senha
+        </Typography>
 
-    </Container>
-    </>
-  )
+        {error && <Alert severity="error">{error}</Alert>}
+        {message && <Alert severity="success">{message}</Alert>}
+        
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          
+          <Grid container spacing={2}>
+
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Endereço de Email"
+                name="email"
+                autoComplete="email"
+              />
+            </Grid>
+
+          </Grid>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            Redefinir senha
+          </Button>
+
+          <Grid item>
+            <Link to="/login" className="form__text--link">
+              Login
+            </Link>
+
+            <Link to="/signup" className="form__text--link">
+              Ainda não tem conta? Cadastre-se
+            </Link>
+          </Grid>
+
+        </Box>
+      </Box>
+        
+      <CopyRight sx={{ mt: 4 }}/>
+
+    </Container>   
+  );
 }
