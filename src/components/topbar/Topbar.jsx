@@ -1,10 +1,29 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { useAuth } from "../../context/AuthProvider";
+import { useHistory } from "react-router-dom";
+import Alert from '@mui/material/Alert';
 import "./topbar.css";
 
 import { NotificationsNone, Settings } from "@material-ui/icons";
 
 export default function Topbar() {
+
+  const [error, setError] = useState("");
+  const { currentUser, logout } = useAuth();
+  const history = useHistory();
+
+  async function handleLogout() {
+    setError("");
+
+    try {
+      await logout();
+      history.push("/login");
+    } catch {
+      setError("Erro ao fazer logout")
+    }
+  }
+
   return (
     <div className="topbar">
       
@@ -22,17 +41,23 @@ export default function Topbar() {
         </div>
 
         <div className="topRight">
+          {error && <Alert severity="error">{error}</Alert>}
+          <strong>Email:</strong> {currentUser.email}
 
           <div className="topbarIconContainer">
             <NotificationsNone />
             <span className="topIconBadge">2</span>
           </div>
 
-          <div className="topbarIconContainer">
+          <div className="topbarIconContainer" onClick={handleLogout}>
             <Settings />
           </div>
 
-          <img src="https://images.pexels.com/photos/1526814/pexels-photo-1526814.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="" className="topAvatar" />
+          <img 
+            src="https://images.pexels.com/photos/1526814/pexels-photo-1526814.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+            className="topAvatar"
+            alt=""
+            onClick={ () => history.push("/update-profile")} />
         
         </div>
 

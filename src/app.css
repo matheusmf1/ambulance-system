@@ -42,7 +42,7 @@ a {
 }
 
 
-.container {
+.container1 {
   display: grid;
   height: 100vh;
   width: 100vw;
@@ -70,7 +70,7 @@ footer {
 
 
 @media (max-width: 479.98px) {
-  .container {
+  .container1 {
     grid-template-columns: 1fr;
     grid-template-rows: 0.2fr 3fr;
     /* grid-template-rows: 0.2fr auto; */
