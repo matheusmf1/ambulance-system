@@ -1,32 +1,49 @@
-import React, { useRef, useState } from "react";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import React, { useState } from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { useHistory } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
-import { Link, useHistory } from "react-router-dom";
+
 
 export default function UpdateProfile() {
-  const emailRef = useRef()
-  const passwordRef = useRef()
-  const passwordConfirmRef = useRef()
-  const { currentUser, updatePassword, updateEmail } = useAuth()
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const history = useHistory()
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setError("Senhas não equivalentes")
+  const { currentUser, updatePassword, updateEmail } = useAuth();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState( false );
+  const history = useHistory();
+
+
+  const handleSubmit = async (event) => {
+    
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    const nome = data.get('name')
+    const email = data.get('email')
+    const password = data.get('password')
+    const passwordConfirm = data.get('passwordConfirm')
+
+    if ( password !== passwordConfirm ) {
+      return setError("Senhas não conferem");
     }
 
-    const promises = []
-    setLoading(true)
-    setError("")
+    const promises = [];
+    setLoading( true );
+    setError("");
 
-    if (emailRef.current.value !== currentUser.email) {
-      promises.push(updateEmail(emailRef.current.value))
+    if ( email !== currentUser.email ) {
+      promises.push( updateEmail( email ) )
     }
-    if (passwordRef.current.value) {
-      promises.push(updatePassword(passwordRef.current.value))
+    if ( password ) {
+      promises.push( updatePassword( password ) )
     }
 
     Promise.all(promises)
@@ -41,51 +58,95 @@ export default function UpdateProfile() {
       })
   }
 
+
   return (
-    <>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Atualizar Perfil</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit}>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
 
-            <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                ref={emailRef}
+      { console.log( currentUser ) }
+      
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+
+        <Typography component="h1" variant="h5">
+          Atualizar Perfil
+        </Typography>
+
+        {error && <Alert severity="error">{error}</Alert>}
+        
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          
+          <Grid container spacing={2}>
+
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="given-name"
+                label="Nome"
+                name="name"
                 required
-                defaultValue={currentUser.email}
+                fullWidth
+                id="name"
+                autoFocus
               />
-            </Form.Group>
+            </Grid>
 
-            <Form.Group id="password">
-              <Form.Label>Senha</Form.Label>
-              <Form.Control
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Endereço de Email"
+                name="email"
+                autoComplete="email"
+                defaultValue={ currentUser.email }
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                name="password"
+                label="Senha"
                 type="password"
-                ref={passwordRef}
-                placeholder="Leave blank to keep the same"
+                id="password"
+                autoComplete="new-password"
               />
-            </Form.Group>
+            </Grid>
 
-            <Form.Group id="password-confirm">
-              <Form.Label>Password Confirmation</Form.Label>
-              <Form.Control
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                name="passwordConfirm"
+                label="Confirme sua senha"
                 type="password"
-                ref={passwordConfirmRef}
-                placeholder="Leave blank to keep the same"
+                id="passwordConfirm"
               />
-            </Form.Group>
+            </Grid>
 
-            <Button disabled={loading} className="w-100" type="submit">
-              Atualizar
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
-        <Link to="/">Cancelar</Link>
-      </div>
-    </>
-  )
+          </Grid>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            Atualizar
+          </Button>
+
+        </Box>
+      </Box>
+    
+    </Container>   
+  );
 }

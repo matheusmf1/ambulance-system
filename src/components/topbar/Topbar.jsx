@@ -1,8 +1,8 @@
 
 import React, { useState } from "react";
-import { Card, Button, Alert } from "react-bootstrap";
 import { useAuth } from "../../context/AuthProvider";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import Alert from '@mui/material/Alert';
 import "./topbar.css";
 
 import { NotificationsNone, Settings } from "@material-ui/icons";
@@ -41,7 +41,7 @@ export default function Topbar() {
         </div>
 
         <div className="topRight">
-          {error && <Alert variant="danger">{error}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
           <strong>Email:</strong> {currentUser.email}
 
           <div className="topbarIconContainer">
@@ -53,7 +53,11 @@ export default function Topbar() {
             <Settings />
           </div>
 
-          <img src="https://images.pexels.com/photos/1526814/pexels-photo-1526814.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="" className="topAvatar" />
+          <img 
+            src="https://images.pexels.com/photos/1526814/pexels-photo-1526814.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+            className="topAvatar"
+            alt=""
+            onClick={ () => history.push("/update-profile")} />
         
         </div>
 
