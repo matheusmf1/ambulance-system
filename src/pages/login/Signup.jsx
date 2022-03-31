@@ -12,10 +12,11 @@ import Container from '@mui/material/Container';
 import CopyRight from '../../components/CopyRight';
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
+import { auth } from "../../firebase";
 
 
 export default function SignUp() {
-  const { signup } = useAuth();
+  const { signup, sendEmailVerificationProvider, updateProfileProvider } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState( false );
   const history = useHistory();
@@ -26,7 +27,7 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const nome = data.get('name')
+    const name = data.get('name')
     const email = data.get('email')
     const password = data.get('password')
     const passwordConfirm = data.get('passwordConfirm')
@@ -38,7 +39,14 @@ export default function SignUp() {
     try {
       setError("");
       setLoading(true);
+
       await signup( email, password );
+
+      if( auth.currentUser !== null ) {
+        await sendEmailVerificationProvider();
+        await updateProfileProvider( name );
+      }
+
       history.push("/");
     } catch( error ) {
       console.error( error )

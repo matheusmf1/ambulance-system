@@ -15,7 +15,7 @@ import { useAuth } from "../../context/AuthProvider";
 
 export default function UpdateProfile() {
 
-  const { currentUser, updatePassword, updateEmail } = useAuth();
+  const { currentUser, updatePasswordProvider, updateEmailProvider } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState( false );
   const history = useHistory();
@@ -40,10 +40,10 @@ export default function UpdateProfile() {
     setError("");
 
     if ( email !== currentUser.email ) {
-      promises.push( updateEmail( email ) )
+      promises.push( updateEmailProvider( email ) )
     }
     if ( password ) {
-      promises.push( updatePassword( password ) )
+      promises.push( updatePasswordProvider( password ) )
     }
 
     Promise.all(promises)
@@ -62,8 +62,6 @@ export default function UpdateProfile() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-
-      { console.log( currentUser ) }
       
       <Box
         sx={{
@@ -96,6 +94,7 @@ export default function UpdateProfile() {
                 fullWidth
                 id="name"
                 autoFocus
+                defaultValue={ currentUser.displayName }
               />
             </Grid>
 

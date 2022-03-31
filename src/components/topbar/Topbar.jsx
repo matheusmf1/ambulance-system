@@ -4,8 +4,7 @@ import { useAuth } from "../../context/AuthProvider";
 import { useHistory } from "react-router-dom";
 import Alert from '@mui/material/Alert';
 import "./topbar.css";
-
-import { NotificationsNone, Settings } from "@material-ui/icons";
+import Profile from "./tabs/profile";
 
 export default function Topbar() {
 
@@ -38,26 +37,15 @@ export default function Topbar() {
           </div>
 
           <span className="logo"></span>
+
+          <h4 className="topbar__userName">Bem vindo(a), {currentUser.displayName}</h4>
         </div>
 
+        {error && <Alert severity="error">{error}</Alert>}
+
         <div className="topRight">
-          {error && <Alert severity="error">{error}</Alert>}
-          <strong>Email:</strong> {currentUser.email}
 
-          <div className="topbarIconContainer">
-            <NotificationsNone />
-            <span className="topIconBadge">2</span>
-          </div>
-
-          <div className="topbarIconContainer" onClick={handleLogout}>
-            <Settings />
-          </div>
-
-          <img 
-            src="https://images.pexels.com/photos/1526814/pexels-photo-1526814.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-            className="topAvatar"
-            alt=""
-            onClick={ () => history.push("/update-profile")} />
+          <Profile logout={handleLogout}/>
         
         </div>
 
