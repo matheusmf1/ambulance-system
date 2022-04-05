@@ -13,7 +13,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import './billsInfo.css';
 import { Bill } from "../../../data/Bill";
-import { storage, bucketName } from "../../../firebase";
+import { storage, bucketName, auth } from "../../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillsPayInfo( props ) {
@@ -202,7 +202,7 @@ export default function BillsPayInfo( props ) {
                     onClick={ () => {
 
                       if( installmentInfo.receiptFile !== '' ) {
-                        let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_pay/${idRef}/receiptFile/${installmentInfo.installment}/${installmentInfo.receiptFile}`) )
+                        let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/${auth.currentUser.uid}/bills_pay/${idRef}/receiptFile/${installmentInfo.installment}/${installmentInfo.receiptFile}`) )
                           .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
                       }
 
@@ -274,10 +274,10 @@ export default function BillsPayInfo( props ) {
           <div className="form__input--halfWidth">
             <CustomTextField
               id="name"
-              label="Empresa"
+              label="Fornecedor/Empresa"
               disabled
-              variant="outlined" 
-              value={ data === '' ? '' : data.name }
+              variant="outlined"
+              value={ data.supplierNumber !== '' ? `${data.supplierNumber} - ${data.name}` : `${data.name}` }
             />
           </div>
 
@@ -375,7 +375,7 @@ export default function BillsPayInfo( props ) {
               value={ data.billFile === '' ? "Não disponivel" : data.billFile }
               onClick={ () => {
                 if( data.billFile !== '' ) {
-                  let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_pay/${idRef}/billFile/${data.billFile}`) )
+                  let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/${auth.currentUser.uid}/bills_pay/${idRef}/billFile/${data.billFile}`) )
                     .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
                   }
               }}

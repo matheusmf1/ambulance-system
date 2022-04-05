@@ -1,14 +1,17 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 import '../../customer/customerAdd/customerAdd.css';
 import { Bill } from "../../../data/Bill";
 import { useHistory } from "react-router-dom";
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewBillToPay() {
 
   const history = useHistory();
 
-  const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+  const [ supplierData, setSupplierData ] = useState( [] );
 
   const [ installment, setInstallment ] = useState(
     {
@@ -27,6 +30,7 @@ export default function NewBillToPay() {
     {
       id: "",
       name: "",
+      supplierNumber: "",
       billType: "pay",
       documentNumber: "",
       billFile: "",
@@ -43,6 +47,15 @@ export default function NewBillToPay() {
   )
 
   const [ billFileData, setBillFileData ] = useState( null );
+
+  useEffect( async () => {
+
+    const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/suppliers` );
+    const queryResult = query( dataCollectionRef, orderBy("id") );
+    const docSnap = await getDocs( queryResult );
+
+    setSupplierData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }, []);
 
   const handleOnChangeInformation = (id) => (e) => {
     
@@ -85,6 +98,26 @@ export default function NewBillToPay() {
         setData( { ...data, [id]: '' } );
         setBillFileData( null );
       }
+    }
+
+    else if ( id === "supplierNumber" ) {
+
+      if ( e.target.value !== "choose" ) {
+        let supplierData2 = supplierData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0];
+  
+        setData({ ...data, 
+          "supplierNumber": e.target.value,
+          "name": supplierData2['responsable'],
+         })
+      }
+      else {
+        setData( {...data, 
+          "supplierNumber" : e.target.value,
+          "name": "",
+         });
+
+      }
+
     }
 
     else{
@@ -223,14 +256,22 @@ export default function NewBillToPay() {
           <div className="form__content--inputs">
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Nome da Empresa*</label>
-              <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleOnChangeInformation('name')} required/>
+              <label className="form__input--label">Código do Fornecedor</label>
+              <select name="forcedorID" className="form__input" value={data['supplierNumber']} onChange={handleOnChangeInformation('supplierNumber')} required>
+              <option value="choose">Escolha o fornecedor, se houver</option>
+              {
+                supplierData.map( (data2, key) => {
+                  return (<option value={data2['id']} key={key}>{data2['id']} - {data2['responsable']}</option>);
+                })
+              }
+              </select>
             </div>
 
             <div className="form__input--halfWidth">
-              <label className="form__input--label">Código do Fornecedor</label>
-              <input className="form__input" type="text" placeholder="CAMPO PARA BUSCAR O FORNECEDOR"/>
+              <label className="form__input--label">Nome da Empresa*</label>
+              <input className="form__input" type="text" placeholder="Nome da empresa" value={data['name']} onChange={handleOnChangeInformation('name')} required/>
             </div>
+
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Data de Vencimento*</label>
@@ -240,7 +281,6 @@ export default function NewBillToPay() {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Valor da Conta*</label>
               <input className="form__input" type="number" min="1" step=".01" placeholder="Informe o valor da conta" required onChange={handleOnChangeInformation('amountPay')}/>
-              {/* <input className="form__input" type="number" min="1" placeholder="Informe o valor da conta" required onChange={handleOnChangeInformation('amountPay')}/> */}
             </div>
 
             <div className="form__input--halfWidth">

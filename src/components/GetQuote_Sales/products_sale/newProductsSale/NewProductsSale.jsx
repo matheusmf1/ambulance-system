@@ -8,7 +8,7 @@ import InputPhoneNumber from '../../../inputs/input--phoneNumber'
 import InputCep from '../../../inputs/input--cep';
 import { useHistory } from "react-router-dom"
 import { ProductSale } from "../../../../data/ProductSale";
-import { db } from '../../../../firebase';
+import { db, auth } from '../../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewProductsSale( props ) {
@@ -156,7 +156,7 @@ export default function NewProductsSale( props ) {
 
   useEffect( async () => {
 
-    const dataCollectionRef = collection( db, "customers" );
+    const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
     const queryResult = query( dataCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 
@@ -371,8 +371,6 @@ export default function NewProductsSale( props ) {
 
   const handleSubmit = async ( e ) => {
     e.preventDefault();
-
-    console.log( productSaleData )
 
     if ( productSaleData['clientNumber'] === "choose" ) {
       alert( "Informe o código do cliente!" );

@@ -9,7 +9,7 @@ import InputPhoneNumber from '../../../inputs/input--phoneNumber';
 import InputCep from '../../../inputs/input--cep';
 import { useHistory } from "react-router-dom";
 import { ServiceOrder } from "../../../../data/ServiceOrder";
-import { db } from '../../../../firebase';
+import { db, auth } from '../../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewServiceOrder( props ) {
@@ -243,12 +243,9 @@ export default function NewServiceOrder( props ) {
 
   useEffect( async () => {
 
-    const dataCollectionRef = collection( db, "customers" );
+    const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
     const queryResult = query( dataCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
-
-    // let test = docSnap.docs.map( doc => ( {...doc.data()} ) )
-    // console.log( test )
 
     setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
   }, []);

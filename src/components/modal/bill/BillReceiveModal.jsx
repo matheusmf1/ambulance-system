@@ -45,6 +45,7 @@ export default function BillReceiveModal( props ) {
   const [values, setValues] = useState({
     id: data.id,
     name: `${data.name}`,
+    customerNumber: `${data.customerNumber}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
@@ -162,9 +163,9 @@ export default function BillReceiveModal( props ) {
               <CustomTextField
                 disabled
                 id="name-disabled"
-                label="Empresa/Cliente"
+                label="Cliente/Empresa"
                 variant="outlined" 
-                defaultValue={values.name}
+                defaultValue={ values.customerNumber !== '' ? `${values.customerNumber} - ${values.name}` : `${values.name}` }
               />
             </div>
 

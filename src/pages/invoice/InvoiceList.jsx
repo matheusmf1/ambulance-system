@@ -1,5 +1,5 @@
 import { React, Component } from 'react';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Invoice } from '../../data/Invoice';
 import { InvoiceTable } from '../../components/tables/invoice/InvoiceTable';
@@ -38,7 +38,7 @@ export default class InvoiceList extends Component {
 
   componentDidMount = async () => {
 
-    const invoiceCollectionRef = collection( db, "invoices" );
+    const invoiceCollectionRef = collection( db, `users/${auth.currentUser.uid}/invoices` );
 
     const queryResult = query( invoiceCollectionRef, where( "invoice_type", "==", `${ this.sessionName === "entrada" ? "invoice_in" : "invoice_out" }` ) );
     const docSnap = await getDocs( queryResult );

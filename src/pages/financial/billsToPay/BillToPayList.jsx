@@ -1,7 +1,6 @@
 import { React, Component } from 'react'
 import { TableBill } from '../../../components/tables/bills/tableBill';
-
-import { db } from "../../../firebase";
+import { db, auth } from "../../../firebase";
 import { collection, getDocs } from 'firebase/firestore';
 import { query, orderBy } from "firebase/firestore";
 import { Bill } from "../../../data/Bill";
@@ -36,7 +35,7 @@ export default class BillToPayList extends Component {
 
   componentDidMount = async () => {
 
-    const billCollectionRef = collection( db, "bills_pay" )
+    const billCollectionRef = collection( db, `users/${auth.currentUser.uid}/bills_pay` )
     const queryResult = query( billCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
     

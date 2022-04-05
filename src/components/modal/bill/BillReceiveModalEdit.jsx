@@ -21,7 +21,7 @@ import CustomFormControl from '../../CustomFormControl'
 import ptBrLocate from "date-fns/locale/pt-BR"
 
 import { Bill } from "../../../data/Bill";
-import { storage, bucketName } from "../../../firebase";
+import { storage, bucketName, auth } from "../../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillReceiveModalEdit( props ) {
@@ -45,6 +45,7 @@ export default function BillReceiveModalEdit( props ) {
   const [values, setValues] = useState({
     id: data.id,
     name: `${data.name}`,
+    customerNumber: `${data.customerNumber}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
@@ -151,10 +152,11 @@ export default function BillReceiveModalEdit( props ) {
             <div className="form__input--halfWidth">            
               <CustomTextField
                 id="name"
-                label="Empresa"
+                label="Cliente/Empresa"
                 required
                 variant="outlined" 
-                defaultValue={values.name}
+                disabled
+                defaultValue={ values.customerNumber !== '' ? `${values.customerNumber} - ${values.name}` : `${values.name}` }
                 onChange={handleOnChangeInformation('name')}
               />
             </div>
@@ -162,7 +164,6 @@ export default function BillReceiveModalEdit( props ) {
             <div className="form__input--halfWidth">            
               <CustomTextField
                 id="serviceNumber"
-                disabled
                 label="Nº Serviço"
                 variant="outlined" 
                 value={values.serviceNumber}
@@ -251,7 +252,7 @@ export default function BillReceiveModalEdit( props ) {
                 onClick={ () => {
 
                   if ( values.billFile !== '' ) {
-                    let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_receive/${values.id}/billFile/${values.billFile}`) )
+                    let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/${auth.currentUser.uid}/bills_receive/${values.id}/billFile/${values.billFile}`) )
                     .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
                     
                   }

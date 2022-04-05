@@ -16,7 +16,7 @@ import { auth } from "../../firebase";
 
 
 export default function SignUp() {
-  const { signup, sendEmailVerificationProvider, updateProfileProvider } = useAuth();
+  const { signup, sendEmailVerificationProvider, updateProfileProvider, addUserToFirestore } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState( false );
   const history = useHistory();
@@ -45,6 +45,7 @@ export default function SignUp() {
       if( auth.currentUser !== null ) {
         await sendEmailVerificationProvider();
         await updateProfileProvider( name );
+        await addUserToFirestore();
       }
 
       history.push("/");

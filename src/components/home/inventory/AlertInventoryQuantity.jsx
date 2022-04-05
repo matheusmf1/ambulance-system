@@ -1,5 +1,5 @@
 import { React, Component } from 'react';
-import { db } from '../../../firebase';
+import { db, auth } from '../../../firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { TableAlertInventoryQuantity } from './TableAlertInventoryQuantity';
@@ -29,7 +29,7 @@ export default class AlertInventoryQuantity extends Component {
 
   componentDidMount = async () => {
 
-    const inventoryCollectionRef = collection( db, "inventory" )
+    const inventoryCollectionRef = collection( db, `users/${auth.currentUser.uid}/inventory` )
 
     const queryResult = query( inventoryCollectionRef, where( "product_underQuantityLimit", "==", true ) );
     const docSnap = await getDocs( queryResult );

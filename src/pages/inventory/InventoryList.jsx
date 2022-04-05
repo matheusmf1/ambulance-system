@@ -1,7 +1,6 @@
 import { React, Component } from 'react';
-import { db } from '../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { query, orderBy } from "firebase/firestore";
+import { db, auth } from '../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { InventoryTable } from '../../components/tables/inventory/InventoryTable';
 import { Inventory } from "../../data/Inventory";
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -25,6 +24,7 @@ export default class InventoryList extends Component {
     product_name: "Nome",
     product_quantity: "Quantidade",
     product_value: "Valor Unitário",
+    product_totalValue: "Valor total no estoque",
     product_entryDate: "Data de entrada",
     product_underQuantityLimit: "Status",
     action: "Opções"
@@ -32,7 +32,7 @@ export default class InventoryList extends Component {
 
   componentDidMount = async () => {
 
-    const inventoryCollectionRef = collection( db, "inventory" )
+    const inventoryCollectionRef = collection( db, `users/${auth.currentUser.uid}/inventory` )
 
     const queryResult = query( inventoryCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );

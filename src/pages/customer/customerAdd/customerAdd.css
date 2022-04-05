@@ -186,43 +186,20 @@ select {
   background-color: #f3127c;
 }
 
-
-/* 
-.btn-primary {
+.form__button--add:disabled {
   color: #fff;
   background-color: #32bdea;
   border-color: #32bdea;
-  box-shadow: unset;
-}
-
-.btn-primary:active{
-  background-color: #1c9cc5;
-}
-
-.btn-danger:active{
-  background-color: #e0619d;
-}
-
-.btn-primary.disabled, .btn-primary:disabled {
-  color: #fff;
-  background-color: #32bdea;
-  border-color: #32bdea;
-}
-
-.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+  opacity: 0.65;
   cursor: not-allowed;
   pointer-events: none;
   box-shadow: none;
 }
 
-.btn.disabled, .btn:disabled {
-  opacity: .65;
+.form__button--calcel:disabled {
+  background-color: #f3127c;
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
   box-shadow: none;
 }
-
-.btn-danger {
-  color: #fff;
-  background-color: #E08DB4;
-  border-color: #E08DB4;
-  box-shadow: unset;
-} */

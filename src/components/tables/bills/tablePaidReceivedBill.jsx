@@ -108,7 +108,7 @@ export const TablePaidReceivedBill = ( props ) => {
     }
     return <td key={i}>
 
-      <a href={`${billInfoLink}/${id}`} target="_blank" rel="noreferrer">
+      <a href={`${billInfoLink}/${id}`} target="_blank" rel="noreferrer" className="link">
         <button className="userListEdit modal__button" variant="outlined" onClick={ () => { localStorage.setItem( localStorageName(), JSON.stringify(rowData)) }}>
           Visualizar
         </button>

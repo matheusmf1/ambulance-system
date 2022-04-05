@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
-import { db } from '../../../firebase';
+import { db, auth } from '../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { Invoice } from '../../../data/Invoice';
 
@@ -24,7 +24,7 @@ const InvoiceInAdd = props => {
 
   useEffect( async () => {
 
-    const supplierCollectionRef = collection( db, "suppliers" );
+    const supplierCollectionRef = collection( db, `users/${auth.currentUser.uid}/suppliers` );
     const queryResult = query( supplierCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 

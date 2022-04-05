@@ -1,5 +1,5 @@
 import { React, Component } from 'react';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { Product } from '../../data/Product';
 import { ProductsTable } from '../../components/tables/products/ProductsTable';
@@ -26,7 +26,7 @@ export default class ProductsList extends Component {
 
   componentDidMount = async () => {
 
-    const dataCollectionRef = collection( db, "products" )
+    const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/products` )
     const queryResult = query( dataCollectionRef );
     const docSnap = await getDocs( queryResult );
     

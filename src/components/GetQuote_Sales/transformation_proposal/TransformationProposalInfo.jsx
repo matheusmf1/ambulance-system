@@ -5,7 +5,7 @@ import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
 import { TransformationProposal } from "../../../data/TransformationProposal";
 import { useHistory } from "react-router-dom";
-import { storage, bucketName } from "../../../firebase";
+import { storage, bucketName, auth } from "../../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 import { Fab } from "@material-ui/core";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -315,7 +315,7 @@ export default function TransformationProposalInfo( props ) {
       return (
         <>
           <div className="osForm__input" onClick={ () => {
-            let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/orcamento_venda_transformationProposal/${idRef}/information_file/${data['information_file']}`) )
+            let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/${auth.currentUser.uid}/orcamento_venda_transformationProposal/${idRef}/information_file/${data['information_file']}`) )
             .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
           }}>
             <label className="form__input--label">Arquivo</label>

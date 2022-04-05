@@ -1,8 +1,7 @@
 import { React, Component } from 'react'
 import { Table } from '../../../components/tables/searchTable/table';
-import { db } from '../../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { query, orderBy } from "firebase/firestore";
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default class EmployeeList extends Component {
@@ -30,7 +29,7 @@ export default class EmployeeList extends Component {
 
   componentDidMount = async () => {
 
-    const employeeCollectionRef = collection( db, "employees" )
+    const employeeCollectionRef = collection( db, `users/${auth.currentUser.uid}/employees` )
     const queryResult = query( employeeCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
     

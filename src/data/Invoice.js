@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { db, storage } from "../firebase";
+import { db, storage, auth } from "../firebase";
 import { ref, uploadBytes, deleteObject, listAll } from "firebase/storage";
 
 export class Invoice {
@@ -14,7 +14,7 @@ export class Invoice {
   addInvoiceToFirebase = async () => {
     try {
 
-      const refDoc = doc(db, "invoices", `${this.id}` )
+      const refDoc = doc(db, `users/${auth.currentUser.uid}/invoices`, `${this.id}` )
       const docSnap = await getDoc( refDoc );
   
       if ( !docSnap.exists() ) {
@@ -24,7 +24,7 @@ export class Invoice {
           await this.uploadFile( fileData );
         }
 
-        await setDoc( doc( db, "invoices", `${this.id}` ), this.data );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/invoices`, `${this.id}` ), this.data );
         return true;
 
       }
@@ -42,7 +42,7 @@ export class Invoice {
   getInvoiceFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, "invoices", `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/invoices`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -55,7 +55,7 @@ export class Invoice {
 
   updateInvoiceOnFirebase = async () => {
     try {
-      const docRef = doc( db, "invoices", `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/invoices`, `${this.id}` );
       
       if ( this.file ) {
         const fileData = this.file['file'];
@@ -74,7 +74,7 @@ export class Invoice {
   deleteInvoiceFromFirebase = async () => {
     try {
       
-      const deleteRef = ref(storage, `invoices/${this.invoiceType}/${this.id}` );      
+      const deleteRef = ref(storage, `${auth.currentUser.uid}/invoices/${this.invoiceType}/${this.id}` );      
 
       const delete2 = async ( path ) => {
 
@@ -97,7 +97,7 @@ export class Invoice {
 
       await delete2( deleteRef )
 
-      await deleteDoc( doc( db, "invoices", `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/invoices`, `/${this.id}` ) );
       
       return true
 
@@ -108,9 +108,9 @@ export class Invoice {
   }
 
   uploadFile = async ( file ) => {
-    const storageRef = ref( storage, `invoices/${this.data['invoice_type']}/${this.data['id']}/${file['name']}` );
+    const storageRef = ref( storage, `${auth.currentUser.uid}/invoices/${this.data['invoice_type']}/${this.data['id']}/${file['name']}` );
 
-    const deleteRef = ref(storage, `invoices/${this.data['invoice_type']}/${this.data['id']}/` );
+    const deleteRef = ref(storage, `${auth.currentUser.uid}/invoices/${this.data['invoice_type']}/${this.data['id']}/` );
   
     await listAll( deleteRef ).then( ( listResult ) => {
 

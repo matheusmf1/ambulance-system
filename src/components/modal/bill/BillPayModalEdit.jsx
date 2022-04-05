@@ -21,7 +21,7 @@ import CustomFormControl from '../../CustomFormControl';
 import ptBrLocate from "date-fns/locale/pt-BR";
 
 import { Bill } from "../../../data/Bill";
-import { storage, bucketName } from "../../../firebase";
+import { storage, bucketName, auth } from "../../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 
 export default function BillPayModalEdit( props ) {
@@ -45,6 +45,7 @@ export default function BillPayModalEdit( props ) {
   const [values, setValues] = useState({
     id: data.id,
     name: `${data.name}`,
+    supplierNumber: `${data.supplierNumber}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
@@ -149,10 +150,11 @@ export default function BillPayModalEdit( props ) {
             <div className="form__input--halfWidth">            
               <CustomTextField
                 id="name"
-                label="Empresa"
+                label="Fornecedor/Empresa"
                 required
                 variant="outlined" 
-                defaultValue={values.name}
+                defaultValue={ values.supplierNumber !== '' ? `${values.supplierNumber} - ${values.name}` : `${values.name}` }
+                disabled
                 onChange={handleOnChangeInformation('name')}
               />
             </div>
@@ -258,7 +260,7 @@ export default function BillPayModalEdit( props ) {
                 onClick={ () => {
 
                   if ( values.billFile !== '' ) {
-                    let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/bills_pay/${values.id}/billFile/${values.billFile}`) )
+                    let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/${auth.currentUser.uid}/bills_pay/${values.id}/billFile/${values.billFile}`) )
                     .then( data => window.open( data, '_blank', 'noopener,noreferrer') );
                     
                   }

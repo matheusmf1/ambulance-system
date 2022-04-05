@@ -44,6 +44,7 @@ export default function BillPayModal( props ) {
   const [values, setValues] = useState({
     id: data.id,
     name: `${data.name}`,
+    supplierNumber: `${data.supplierNumber}`,
     billType: `${data.billType}`,
     documentNumber: `${data.documentNumber}`,
     billFile: `${data.billFile}`,
@@ -158,9 +159,9 @@ export default function BillPayModal( props ) {
               <CustomTextField
                 disabled
                 id="name-disabled"
-                label="Empresa"
+                label="Fornecedor/Empresa"
                 variant="outlined" 
-                defaultValue={values.name}
+                defaultValue={ values.supplierNumber !== '' ? `${values.supplierNumber} - ${values.name}` : `${values.name}` }
               />
             </div>
 

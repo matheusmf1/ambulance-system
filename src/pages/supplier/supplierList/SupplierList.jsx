@@ -1,9 +1,7 @@
 import { React, Component } from 'react'
 import { Table } from '../../../components/tables/searchTable/table';
-
-import { db } from '../../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { query, orderBy, limit } from "firebase/firestore";
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 
@@ -32,7 +30,7 @@ export default class SupplierList extends Component {
 
   componentDidMount = async () => {
 
-    const supplierCollectionRef = collection( db, "suppliers" )
+    const supplierCollectionRef = collection( db, `users/${auth.currentUser.uid}/suppliers` );
 
     const queryResult = query( supplierCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );

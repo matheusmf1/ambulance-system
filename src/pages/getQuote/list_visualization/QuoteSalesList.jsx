@@ -1,7 +1,6 @@
 import {React, Component} from 'react'
 import { TableQuoteSales } from "../../../components/GetQuote_Sales/TableQuoteSales";
-
-import { db } from '../../../firebase';
+import { db, auth } from '../../../firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { TransformationProposal } from "../../../data/TransformationProposal";
 import { ServiceOrder } from "../../../data/ServiceOrder";
@@ -46,15 +45,15 @@ export default class QuoteSalesList extends Component {
       this.session = "venda";
     }
 
-    const productsSale = collection( db, `orcamento_venda_productsSale` )
+    const productsSale = collection( db, `users/${auth.currentUser.uid}/orcamento_venda_productsSale` )
     const queryResult1 = query( productsSale, where("mainService", "==", `${this.session}`) );
     const docSnap1 = await getDocs( queryResult1 );
 
-    const serviceOrder = collection( db, `orcamento_venda_serviceOrder` )
+    const serviceOrder = collection( db, `users/${auth.currentUser.uid}/orcamento_venda_serviceOrder` )
     const queryResult2 = query( serviceOrder, where("mainService", "==", `${this.session}`) );
     const docSnap2 = await getDocs( queryResult2 );
     
-    const transformationProposal = collection( db, `orcamento_venda_transformationProposal` )
+    const transformationProposal = collection( db, `users/${auth.currentUser.uid}/orcamento_venda_transformationProposal` )
     const queryResult3 = query( transformationProposal, where("mainService", "==", `${this.session}`), orderBy("id") );
     const docSnap3 = await getDocs( queryResult3 );
     
@@ -64,9 +63,10 @@ export default class QuoteSalesList extends Component {
       this.setState( { customers: [ ...this.state.customers, doc.data() ] },
       () => {
         this.setState( { collection: this.state.customers.slice( 0, 10 ) } )
-        this.setState( { loading: false } )
       });
     }))
+
+    this.setState( { loading: false } );
 
   };
 
@@ -112,5 +112,4 @@ export default class QuoteSalesList extends Component {
       </>
     )
   }
-
 }

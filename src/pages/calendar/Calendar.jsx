@@ -8,7 +8,7 @@ import * as gregorian from "./culture-files/ca-gregorian.json";
 import * as numbers from "./culture-files/numbers.json";
 import * as timeZoneNames from "./culture-files/timeZoneNames.json";
 
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 import './culture-files/calendar.css';
 
@@ -154,7 +154,7 @@ class Calendar extends Component {
 
   componentDidMount = async () => {
 
-    const customerCollectionRef = collection( db, "calendar" )
+    const customerCollectionRef = collection( db, `users/${auth.currentUser.uid}/calendar` )
     const queryResult = query( customerCollectionRef );
     const docSnap = await getDocs( queryResult );
 

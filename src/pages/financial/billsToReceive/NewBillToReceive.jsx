@@ -1,14 +1,17 @@
-import React, {useState} from "react";
-
+import React, {useState, useEffect} from "react";
 import '../../customer/customerAdd/customerAdd.css';
 import { Bill } from "../../../data/Bill";
 import { useHistory } from "react-router-dom";
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+
 
 export default function NewBillToReceive() {
 
   const history = useHistory();
 
-  const [ hasInstallment, setHasInstallment ] = useState(false)
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+  const [ customerData, setCustomerData ] = useState( [] );
 
   const [ installment, setInstallment ] = useState(
     {
@@ -26,6 +29,7 @@ export default function NewBillToReceive() {
   const [ data, setData ] = useState( {
     id: "",
     name: "",
+    customerNumber: "",
     billType: "receive",
     documentNumber: "",
     billFile: "",
@@ -40,7 +44,16 @@ export default function NewBillToReceive() {
     
     service: "",
     serviceNumber: ""
-  } )
+  } );
+
+  useEffect( async () => {
+
+    const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
+    const queryResult = query( dataCollectionRef, orderBy("id") );
+    const docSnap = await getDocs( queryResult );
+
+    setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }, []);
 
   const handleOnChangeInformation = (id) => (e) => {
     
@@ -66,6 +79,25 @@ export default function NewBillToReceive() {
       }
 
       setData( { ...data, 'paymentInfo': paymentInfo } )
+    }
+    
+    else if ( id === "customerNumber" ) {
+
+      if ( e.target.value !== "choose" ) {
+        let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0];
+  
+        setData({ ...data, 
+          "customerNumber": e.target.value,
+          "name": customerData2['fantasy_name'],
+         })
+      }
+      else {
+        setData( {...data, 
+          "customerNumber" : e.target.value,
+          "name": "",
+         });
+      }
+
     }
 
     else{
@@ -147,7 +179,6 @@ export default function NewBillToReceive() {
     }
   }
 
-
   const installmentElements = () => setHasInstallment( !hasInstallment )
 
   const renderInstallment = () => {
@@ -192,12 +223,19 @@ export default function NewBillToReceive() {
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Nome da Empresa*</label>
-              <input className="form__input" type="text" placeholder="Nome da empresa" onChange={handleOnChangeInformation('name')} required/>
+              <input className="form__input" type="text" placeholder="Nome da empresa" value={data['name']} onChange={handleOnChangeInformation('name')} required/>
             </div>
 
             <div className="form__input--halfWidth">
               <label className="form__input--label">Código do Cliente</label>
-              <input className="form__input" type="text" placeholder="CAMPO PARA BUSCAR O CLIENTE"/>
+              <select name="forcedorID" className="form__input" value={data['customerNumber']} onChange={handleOnChangeInformation('customerNumber')} required>
+              <option value="choose">Escolha o cliente, se houver</option>
+              {
+                customerData.map( (data2, key) => {
+                  return (<option value={data2['id']} key={key}>{data2['id']} - {data2['responsable']}</option>);
+                })
+              }
+              </select>
             </div>
 
             <div className="form__input--halfWidth">

@@ -1,8 +1,8 @@
-import {React, useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { Inventory } from '../../../data/Inventory';
-import { db } from '../../../firebase';
-import { collection, getDocs, query, orderBy, limit  } from 'firebase/firestore';
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 
 export default function MaterialAdd() {
@@ -11,7 +11,7 @@ export default function MaterialAdd() {
 
   useEffect( async () => {
 
-    const supplierCollectionRef = collection( db, "suppliers" );
+    const supplierCollectionRef = collection( db, `users/${auth.currentUser.uid}/suppliers` );
     const queryResult = query( supplierCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 
@@ -28,6 +28,7 @@ export default function MaterialAdd() {
       product_name: "",
       product_quantity: "",
       product_value: "",
+      product_totalValue: "",
       product_entryDate: "",
       product_quantityLimit: "",
       product_underQuantityLimit: false,
@@ -44,8 +45,27 @@ export default function MaterialAdd() {
     }
 
     else if ( id === 'product_value' ) {
-      let amount = parseFloat( e.target.value.toString() ).toFixed(2)
-      setMaterialData( { ...materialData, [id]: amount } )
+      let amount = parseFloat( e.target.value.toString() ).toFixed(2);
+
+      if ( materialData['product_quantity'] !== "" && isNaN(amount) !== true ) {
+        let totalValue = parseFloat( materialData['product_quantity'] * parseFloat(amount) ).toFixed(2);
+        setMaterialData( { ...materialData, "product_totalValue": totalValue, "product_value": amount } )
+      }
+      else {
+        setMaterialData( { ...materialData, [id]: amount, "product_totalValue": "" } )
+      }
+    }
+
+    else if ( id === 'product_quantity' ) {
+      let amount = parseInt( e.target.value.toString() );
+
+      if ( materialData['product_value'] !== "" && isNaN(amount) !== true ) {
+        let totalValue = parseFloat( materialData['product_value'] * parseInt(amount) ).toFixed(2);
+        setMaterialData( { ...materialData, "product_totalValue": totalValue, "product_quantity": amount.toString() } )
+      }
+      else {
+        setMaterialData( { ...materialData, [id]: amount.toString(), "product_totalValue": "" } )
+      }
     }
     
     else {
@@ -53,12 +73,9 @@ export default function MaterialAdd() {
     }
   }
 
-
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
-
-    console.log( materialData )
 
     if ( materialData['supplier_id'] === "choose" ) {
       alert( "Selecione o fornecedor!" );
@@ -135,6 +152,11 @@ export default function MaterialAdd() {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Valor unitário - (R$)*</label>
               <input className="form__input" type="number" step=".01" placeholder="Informe o valor" min={0} onChange={handleInformationChange('product_value')} required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Valor Total no Estoque - (R$)*</label>
+              <input className="form__input" type="number" step=".01" placeholder="Informe o valor" min={0} value={materialData['product_totalValue']} disabled/>
             </div>
 
             <div className="form__input--halfWidth">

@@ -40,7 +40,6 @@ export default function CustomerAdd() {
   const checkCep = ( e ) => {
 
     let cep = e.target.value.replace( /\D/g, '' );
-    console.log( cep )
     
     setCustomerData( { ...customerData, "cep": cep } );
 
@@ -55,7 +54,6 @@ export default function CustomerAdd() {
           throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
         }
         else {
-          console.log( data )
           setCustomerData( { ...customerData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
         }
       })

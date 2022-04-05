@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 
 export class Product {
 
@@ -11,11 +11,11 @@ export class Product {
   addProductToFirebase = async () => {
     try {
 
-      const refDoc = doc(db, "products", `${this.id}` )
+      const refDoc = doc(db, `users/${auth.currentUser.uid}/products`, `${this.id}` )
       const docSnap = await getDoc( refDoc );
   
       if ( !docSnap.exists() ) {
-        await setDoc( doc( db, "products", `${this.id}` ), this.data );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/products`, `${this.id}` ), this.data );
         return true;
       }
 
@@ -34,7 +34,7 @@ export class Product {
   getProductFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, "products", `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/products`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -47,7 +47,7 @@ export class Product {
 
   updateProductOnFirebase = async () => {
     try {
-      const docRef = doc( db, "products", `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/products`, `${this.id}` );
       await updateDoc( docRef, this.data );
       return true
       
@@ -59,7 +59,7 @@ export class Product {
 
   deleteProductFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, "products", `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/products`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {
@@ -67,5 +67,4 @@ export class Product {
       return false
     }
   }
-
 }

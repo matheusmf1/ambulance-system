@@ -75,6 +75,30 @@ export default function MaterialInfo( props ) {
       setData( { ...data, [id]: `${new Date( formatedDate )}` } );
     }
     
+    else if ( id === 'product_value' ) {
+      let amount = parseFloat( e.target.value.toString() ).toFixed(2);
+
+      if ( data['product_quantity'] !== "" && isNaN(amount) !== true ) {
+        let totalValue = parseFloat( data['product_quantity'] * parseFloat(amount) ).toFixed(2);
+        setData( { ...data, "product_totalValue": totalValue, "product_value": amount } )
+      }
+      else {
+        setData( { ...data, [id]: amount, "product_totalValue": "" } )
+      }
+    }
+
+    else if ( id === 'product_quantity' ) {
+      let amount = parseInt( e.target.value.toString() );
+
+      if ( data['product_value'] !== "" && isNaN(amount) !== true ) {
+        let totalValue = parseFloat( data['product_value'] * parseFloat(amount) ).toFixed(2);
+        setData( { ...data, "product_totalValue": totalValue, "product_quantity": amount } )
+      }
+      else {
+        setData( { ...data, [id]: amount, "product_totalValue": "" } )
+      }
+    }
+    
     else {
       setData( { ...data, [id]: e.target.value } )
     }
@@ -144,6 +168,11 @@ export default function MaterialInfo( props ) {
             <div className="form__input--halfWidth">
               <label className="form__input--label">Valor unitário - (R$)*</label>
               <input className="form__input" type="number" step=".01" placeholder="Informe o valor" min={0} value={data['product_value']} onChange={handleInformationChange('product_value')} required/>
+            </div>
+
+            <div className="form__input--halfWidth">
+              <label className="form__input--label">Valor Total no Estoque - (R$)*</label>
+              <input className="form__input" type="number" step=".01" placeholder="Informe o valor" min={0} value={data['product_totalValue']} disabled/>
             </div>
 
             <div className="form__input--halfWidth">

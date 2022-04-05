@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 
 export class Employee {
 
@@ -11,22 +11,22 @@ export class Employee {
   addEmployeeToFirebase = async () => {
     try {
 
-      const refID = doc(db, "ids", "employees")
+      const refID = doc(db, `users/${auth.currentUser.uid}/ids`, "employees")
       const docSnap = await getDoc( refID );
   
       if ( !docSnap.exists() ) {
-        await setDoc( doc( db, "ids", "employees" ), { id: 0 } );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "employees" ), { id: 0 } );
       }
       
       //Update id counter
-      await updateDoc( doc( db, "ids", "employees"), { id: increment( 1 ) } );
+      await updateDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "employees"), { id: increment( 1 ) } );
 
-      const idSnap = await getDoc( doc( db, "ids", "employees" ) );
+      const idSnap = await getDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "employees" ) );
       const idData = idSnap.data();
 
       //Set new document id
       this.data['id'] = idData['id']
-      await setDoc( doc( db, "employees", `${this.data['id']}` ), this.data );
+      await setDoc( doc( db, `users/${auth.currentUser.uid}/employees`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -39,7 +39,7 @@ export class Employee {
   getEmployeeFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, "employees", this.id );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/employees`, this.id );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -52,7 +52,7 @@ export class Employee {
 
   updateEmployeeOnFirebase = async () => {
     try {
-      const docRef = doc( db, "employees", this.id );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/employees`, this.id );
       await updateDoc( docRef, this.data );
       return true
       
@@ -64,7 +64,7 @@ export class Employee {
 
   deleteEmployeeFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, "employees", `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/employees`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {

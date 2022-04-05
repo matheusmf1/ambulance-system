@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { Invoice } from '../../../data/Invoice';
-import { storage, bucketName } from "../../../firebase";
+import { storage, bucketName, auth } from "../../../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { Fab } from "@material-ui/core";
@@ -31,9 +31,7 @@ const InvoiceInInfo = props => {
 
     if ( fetchData ) {
 
-      if ( fetchData['id'].toString() === id.toString() ) {
-
-        console.log( "Feching data from firebase" )
+      if ( fetchData['id'].toString() !== id.toString() ) {
 
         const invoice = new Invoice( { id: id } )
         const invoiceData = await invoice.getInvoiceFromFirebase();
@@ -159,7 +157,7 @@ const InvoiceInInfo = props => {
 
             <div className="form__input--halfWidth" onClick={ () => {
               if ( data['invoice_file'] !== '' ) {
-                let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/invoices/${data['invoice_type']}/${data['id']}/${data['invoice_file']}`) )
+                let gsReference = getDownloadURL( ref( storage, `gs://${bucketName}/${auth.currentUser.uid}/invoices/${data['invoice_type']}/${data['id']}/${data['invoice_file']}`) )
                   .then( data => window.open( data, '_blank', 'noopener,noreferrer') );        
               }
               }}>

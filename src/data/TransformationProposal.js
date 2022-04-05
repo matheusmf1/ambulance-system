@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
-import { db, storage } from "../firebase";
+import { db, storage, auth } from "../firebase";
 import { ref, uploadBytes, deleteObject, listAll } from "firebase/storage";
 
 export class TransformationProposal {
@@ -13,17 +13,17 @@ export class TransformationProposal {
   addTransformationProposalToFirebase = async () => {
     try {
 
-      const refID = doc(db, "ids", "transformationProposal")
+      const refID = doc(db, `users/${auth.currentUser.uid}/ids`, "services")
       const docSnap = await getDoc( refID );
   
       if ( !docSnap.exists() ) {
-        await setDoc( doc( db, "ids", "transformationProposal" ), { id: 0 } );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "services" ), { id: 0 } );
       }
       
       //Update id counter
-      await updateDoc( doc( db, "ids", "transformationProposal" ), { id: increment( 1 ) } );
+      await updateDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "services" ), { id: increment( 1 ) } );
 
-      const idSnap = await getDoc( doc( db, "ids", "transformationProposal" ) );
+      const idSnap = await getDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "services" ) );
       const idData = idSnap.data();
 
       //Set new document id
@@ -41,7 +41,7 @@ export class TransformationProposal {
         this.data['mainService'] = "venda";
       }
 
-      await setDoc( doc( db, `orcamento_venda_transformationProposal`, `${this.data['id']}` ), this.data );
+      await setDoc( doc( db, `users/${auth.currentUser.uid}/orcamento_venda_transformationProposal`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -54,7 +54,7 @@ export class TransformationProposal {
   getTransformationProposalFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `orcamento_venda_transformationProposal`, `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/orcamento_venda_transformationProposal`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -67,7 +67,7 @@ export class TransformationProposal {
 
   updateTransformationProposalOnFirebase = async () => {
     try {
-      const docRef = doc( db, `orcamento_venda_transformationProposal`, `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/orcamento_venda_transformationProposal`, `${this.id}` );
       
       if ( this.file ) {
         const fileData = this.file['file'];
@@ -92,7 +92,7 @@ export class TransformationProposal {
   deleteTransformationProposalFromFirebase = async () => {
     try {
       
-      const deleteRef = ref(storage, `orcamento_venda_transformationProposal/${this.id}` );      
+      const deleteRef = ref(storage, `${auth.currentUser.uid}/orcamento_venda_transformationProposal/${this.id}` );      
 
       const delete2 = async ( path ) => {
 
@@ -115,7 +115,7 @@ export class TransformationProposal {
 
       await delete2( deleteRef )
 
-      await deleteDoc( doc( db, `orcamento_venda_transformationProposal`, `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/orcamento_venda_transformationProposal`, `/${this.id}` ) );
       
       return true
 
@@ -126,9 +126,9 @@ export class TransformationProposal {
   }
 
   uploadFile = async ( file, fileID ) => {
-    const storageRef = ref( storage, `orcamento_venda_transformationProposal/${this.data['id']}/${fileID}/${file['name']}` );
+    const storageRef = ref( storage, `${auth.currentUser.uid}/orcamento_venda_transformationProposal/${this.data['id']}/${fileID}/${file['name']}` );
 
-    const deleteRef = ref(storage, `orcamento_venda_transformationProposal/${this.data['id']}/${fileID}/` );
+    const deleteRef = ref(storage, `${auth.currentUser.uid}/orcamento_venda_transformationProposal/${this.data['id']}/${fileID}/` );
   
     await listAll( deleteRef ).then( ( listResult ) => {
 
@@ -140,7 +140,7 @@ export class TransformationProposal {
       })
 
     }).catch( ( error ) => {
-      console.log('Erro ao listar os objetos')
+      console.log('Erro ao listar os objetos');
       console.error( error )
     })
 

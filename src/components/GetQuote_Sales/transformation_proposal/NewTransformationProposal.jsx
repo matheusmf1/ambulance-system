@@ -6,7 +6,7 @@ import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
 import { TransformationProposal } from "../../../data/TransformationProposal";
 import { useHistory } from "react-router-dom";
-import { db } from '../../../firebase';
+import { db, auth } from '../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewTransformationProposal( props ) {
@@ -65,7 +65,7 @@ export default function NewTransformationProposal( props ) {
   )
 
   useEffect( async () => {
-    const dataCollectionRef = collection( db, "customers" );
+    const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
     const queryResult = query( dataCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 

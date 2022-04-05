@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
-import { db } from '../../../firebase';
+import { db, auth } from '../../../firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { Invoice } from '../../../data/Invoice';
 
@@ -12,6 +12,7 @@ const InvoiceOutAdd = props => {
   const [ loadingServiceData, setLoadingServiceData ] = useState( false );
   
   const [ invoiceFileData, setInvoiceFileData ] = useState( null );
+  const [ isLoading, setIsLoading ] = useState( false );
 
   const [ invoiceData, setInvoiceData ] = useState(
     {
@@ -33,7 +34,7 @@ const InvoiceOutAdd = props => {
 
   useEffect( async () => {
 
-    const customersCollectionRef = collection( db, "customers" );
+    const customersCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
     const queryResult = query( customersCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 
@@ -44,7 +45,7 @@ const InvoiceOutAdd = props => {
   const fetchServiceData = async () => {
 
     if ( loadingServiceData ) {
-      const customersCollectionRef = collection( db, `orcamento_venda_${ invoiceData['invoice_service'] }` );
+      const customersCollectionRef = collection( db,  `users/${auth.currentUser.uid}/orcamento_venda_${ invoiceData['invoice_service'] }` );
       const queryResult = query( customersCollectionRef, where( "clientNumber", "==", `${invoiceData['customer_id']}` ) );
       const docSnap = await getDocs( queryResult );
 
@@ -106,7 +107,8 @@ const InvoiceOutAdd = props => {
 
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsLoading( true );
 
     if ( invoiceData['customer_id'] === "choose" || invoiceData['invoice_service'] === "choose" || invoiceData['invoice_serviceID'] === "choose" ) {
       alert( "Informe todas as informações necessárias!" );
@@ -121,7 +123,8 @@ const InvoiceOutAdd = props => {
         history.push( "/nota-fiscal/saida" );
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }
     }
     
@@ -145,7 +148,6 @@ const InvoiceOutAdd = props => {
             <label className="form__input--label">Cliente*</label>
             <select className="form__input" value={invoiceData['customer_id']} onChange={handleInformationChange('customer_id')} required>
               <option value="choose">Escolha o cliente</option>
-
                 {
                   customersData.map( (data, key) => {
                     return (<option value={data['id']} key={key}>{data['id']} - {data['fantasy_name']}</option>);
@@ -205,8 +207,8 @@ const InvoiceOutAdd = props => {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--calcel">Corrigir</button>
           </div>
 
         </form>

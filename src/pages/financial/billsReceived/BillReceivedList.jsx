@@ -1,6 +1,6 @@
-import { React, Component, useState } from 'react';
+import { React, Component } from 'react';
 import { TablePaidReceivedBill } from '../../../components/tables/bills/tablePaidReceivedBill';
-import { db } from "../../../firebase";
+import { db, auth } from "../../../firebase";
 import { collection, getDocs, query, orderBy  } from 'firebase/firestore';
 import { Bill } from "../../../data/Bill";
 import LoadingSpinner from '../../../components/LoadingSpinner';
@@ -31,7 +31,7 @@ export default class BillReceivedList extends Component {
 
   componentDidMount = async () => {
 
-    const billCollectionRef = collection( db, "bills_receive" )
+    const billCollectionRef = collection( db, `users/${auth.currentUser.uid}/bills_receive` )
     const queryResult = query( billCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 

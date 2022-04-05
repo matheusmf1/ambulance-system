@@ -1,5 +1,5 @@
-import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { doc, getDoc, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db, auth } from "../firebase";
 
 export class Inventory {
 
@@ -11,11 +11,11 @@ export class Inventory {
   addMaterialInventoryToFirebase = async () => {
     try {
 
-      const refDoc = doc(db, "inventory", `${this.id}` )
+      const refDoc = doc(db, `users/${auth.currentUser.uid}/inventory`, `${this.id}` )
       const docSnap = await getDoc( refDoc );
   
       if ( !docSnap.exists() ) {
-        await setDoc( doc( db, "inventory", `${this.id}` ), this.data );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/inventory`, `${this.id}` ), this.data );
         return true;
       }
 
@@ -34,7 +34,7 @@ export class Inventory {
   getMaterialInventoryFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, "inventory", `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/inventory`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -47,7 +47,7 @@ export class Inventory {
 
   updateMaterialInventoryOnFirebase = async () => {
     try {
-      const docRef = doc( db, "inventory", `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/inventory`, `${this.id}` );
       await updateDoc( docRef, this.data );
       return true
       
@@ -59,7 +59,7 @@ export class Inventory {
 
   deleteMaterialInventoryFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, "inventory", `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/inventory`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {

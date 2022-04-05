@@ -1,5 +1,5 @@
-import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc, collection, query, getDocs, addDoc } from "firebase/firestore";
-import { db, storage } from "../firebase";
+import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
+import { db, storage, auth } from "../firebase";
 import { ref, uploadBytes, deleteObject, listAll } from "firebase/storage";
 
 export class Bill {
@@ -14,17 +14,17 @@ export class Bill {
   addBillToFirebase = async () => {
     try {
 
-      const refID = doc(db, "ids", `bills_${this.billType}` )
+      const refID = doc(db, `users/${auth.currentUser.uid}/ids`, `bills_${this.billType}` )
       const docSnap = await getDoc( refID );
   
       if ( !docSnap.exists() ) {
-        await setDoc( doc( db, "ids", `bills_${this.billType}` ), { id: 0 } );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/ids`, `bills_${this.billType}` ), { id: 0 } );
       }
       
       //Update id counter
-      await updateDoc( doc( db, "ids", `bills_${this.billType}` ), { id: increment( 1 ) } );
+      await updateDoc( doc( db, `users/${auth.currentUser.uid}/ids`, `bills_${this.billType}` ), { id: increment( 1 ) } );
 
-      const idSnap = await getDoc( doc( db, "ids", `bills_${this.billType}` ) );
+      const idSnap = await getDoc( doc( db, `users/${auth.currentUser.uid}/ids`, `bills_${this.billType}` ) );
       const idData = idSnap.data();
 
       //Set new document id
@@ -38,7 +38,7 @@ export class Bill {
         await this.uploadFile( fileData, fileID );
       }
       
-      await setDoc( doc( db, `bills_${this.billType}`, `${this.data['id']}` ), this.data );
+      await setDoc( doc( db, `users/${auth.currentUser.uid}/bills_${this.billType}`, `${this.data['id']}` ), this.data );
 
       return true
       
@@ -51,7 +51,7 @@ export class Bill {
   getBillFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `bills_${this.billType}`, `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/bills_${this.billType}`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -64,7 +64,7 @@ export class Bill {
 
   updateBillOnFirebase = async () => {
     try {
-      const docRef = doc( db, `bills_${this.billType}`, `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/bills_${this.billType}`, `${this.id}` );
 
       if ( this.file ) {
 
@@ -87,7 +87,7 @@ export class Bill {
   deleteBillFromFirebase = async () => {
     try {
 
-      const deleteRef = ref(storage, `bills_${this.billType}/${this.id}` );
+      const deleteRef = ref(storage, `${auth.currentUser.uid}/bills_${this.billType}/${this.id}` );
 
       const delete2 = async ( path ) => {
 
@@ -110,7 +110,7 @@ export class Bill {
 
       await delete2( deleteRef )
 
-      await deleteDoc( doc( db, `bills_${this.billType}`, `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/bills_${this.billType}`, `/${this.id}` ) );
 
       return true
 
@@ -121,9 +121,9 @@ export class Bill {
   }
 
   uploadFile = async ( file, fileID ) => {
-    const storageRef = ref( storage, `bills_${this.billType}/${this.data['id']}/${fileID}/${file['name']}` );
+    const storageRef = ref( storage, `${auth.currentUser.uid}/bills_${this.billType}/${this.data['id']}/${fileID}/${file['name']}` );
 
-    const deleteRef = ref(storage, `bills_${this.billType}/${this.data['id']}/${fileID}/` );
+    const deleteRef = ref(storage, `${auth.currentUser.uid}/bills_${this.billType}/${this.data['id']}/${fileID}/` );
   
     await listAll( deleteRef ).then( ( listResult ) => {
 

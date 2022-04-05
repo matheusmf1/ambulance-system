@@ -25,8 +25,12 @@ export const ProductsTable = ( props ) => {
     const tableCell = Object.keys( columns );
 
     const columnData = tableCell.map((keyD, i) => {
+
+      if ( keyD === 'product_sale_value' ) {
+        return <td key={i}>R$ {key[keyD]}</td>;
+      }
       
-      if ( keyD === 'action' ) {
+      else if ( keyD === 'action' ) {
         return createActionButtons( i, key );
       }
 

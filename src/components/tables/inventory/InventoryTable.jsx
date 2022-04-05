@@ -44,6 +44,10 @@ export const InventoryTable = ( props ) => {
         }
       }
 
+      else if ( keyD === "product_value" || keyD === "product_totalValue" ) {
+        return <td key={i}>R$ {key[keyD]}</td>;
+      }
+
       else if ( keyD === 'action' ) {
         return createActionButtons( i, key );
       }

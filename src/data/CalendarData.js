@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 
 export class CalendarData {
 
@@ -10,15 +10,13 @@ export class CalendarData {
   addCalendarToFirebase = async () => {
     try {
 
-      const docRef = doc(db, "calendar", "data" );
+      const docRef = doc(db, `users/${auth.currentUser.uid}/calendar`, "data" );
       const docSnap = await getDoc( docRef );
   
       if ( !docSnap.exists() ) {
-        // console.log( 'Nao existe, criando calendar no firebase' )
         await setDoc( docRef, this.data );
       }
       else {
-        // console.log( 'Atualizando calendar no firebase' );
         await updateDoc( docRef, this.data );
       }   
       

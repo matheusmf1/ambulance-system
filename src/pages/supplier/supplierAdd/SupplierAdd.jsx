@@ -42,7 +42,6 @@ export default function SupplierAdd() {
   const checkCep = ( e ) => {
 
     let cep = e.target.value.replace( /\D/g, '' );
-    console.log( cep )
     
     setSupplierData( { ...supplierData, "cep": cep } );
 
@@ -57,7 +56,6 @@ export default function SupplierAdd() {
           throw new Error( "Não foi possível encontrar o CEP informado, por favor tente novamente" )
         }
         else {
-          console.log( data )
           setSupplierData( { ...supplierData, "cep": cep, "address": data['logradouro'], "neighborhood": data['bairro'], "city": data['localidade'], "state": data['uf'] } );
         }
       })
@@ -72,8 +70,6 @@ export default function SupplierAdd() {
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
-
-    console.log( supplierData )
 
     const supplier = new Supplier( { data: supplierData } )
     const result = await supplier.addSupplierToFirebase();

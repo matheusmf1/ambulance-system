@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc, increment, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 
 export class ProductSale {
 
@@ -11,17 +11,17 @@ export class ProductSale {
   addProductSaleToFirebase = async () => {
     try {
 
-      const refID = doc(db, "ids", "productsSale")
+      const refID = doc(db, `users/${auth.currentUser.uid}/ids`, "services")
       const docSnap = await getDoc( refID );
   
       if ( !docSnap.exists() ) {
-        await setDoc( doc( db, "ids", "productsSale" ), { id: 0 } );
+        await setDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "services" ), { id: 0 } );
       }
       
       //Update id counter
-      await updateDoc( doc( db, "ids", "productsSale" ), { id: increment( 1 ) } );
+      await updateDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "services" ), { id: increment( 1 ) } );
 
-      const idSnap = await getDoc( doc( db, "ids", "productsSale" ) );
+      const idSnap = await getDoc( doc( db, `users/${auth.currentUser.uid}/ids`, "services" ) );
       const idData = idSnap.data();
 
       //Set new document id
@@ -31,7 +31,7 @@ export class ProductSale {
         this.data['mainService'] = "venda";
       }
 
-      await setDoc( doc( db, `orcamento_venda_productsSale`, `${this.data['id']}` ), this.data );
+      await setDoc( doc( db, `users/${auth.currentUser.uid}/orcamento_venda_productsSale`, `${this.data['id']}` ), this.data );
       
       return true
       
@@ -44,7 +44,7 @@ export class ProductSale {
   getProductSaleFromFirebase = async () => {
 
     try {
-      const docRef = doc( db, `orcamento_venda_productsSale`, `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/orcamento_venda_productsSale`, `${this.id}` );
       const docSnap = await getDoc( docRef );
       return docSnap.data()
 
@@ -57,7 +57,7 @@ export class ProductSale {
 
   updateProductSaleOnFirebase = async () => {
     try {
-      const docRef = doc( db, `orcamento_venda_productsSale`, `${this.id}` );
+      const docRef = doc( db, `users/${auth.currentUser.uid}/orcamento_venda_productsSale`, `${this.id}` );
 
       if ( this.data['mainService'] === "orcamento" && this.data['status'] === "aprovado" ) {
         this.data['mainService'] = "venda";
@@ -74,7 +74,7 @@ export class ProductSale {
 
   deleteProductSaleFromFirebase = async () => {
     try {
-      await deleteDoc( doc( db, `orcamento_venda_productsSale`, `/${this.id}` ) );
+      await deleteDoc( doc( db, `users/${auth.currentUser.uid}/orcamento_venda_productsSale`, `/${this.id}` ) );
       return true
 
     } catch ( error ) {
@@ -82,6 +82,4 @@ export class ProductSale {
       return false
     }
   }
-
-
 }
