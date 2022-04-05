@@ -12,6 +12,7 @@ export default function NewBillToPay() {
 
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ supplierData, setSupplierData ] = useState( [] );
+  const [ isLoading, setIsLoading ] = useState( false );
 
   const [ installment, setInstallment ] = useState(
     {
@@ -194,7 +195,8 @@ export default function NewBillToPay() {
 
 
   const handleAddInformation = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsLoading( true );
 
     const finalData = unifyData()
     const bill = new Bill( { data: finalData, billType: finalData['billType'], file: checkIfFileHasChanged() } );
@@ -206,7 +208,8 @@ export default function NewBillToPay() {
       history.push("/financeiro/pagar")
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
     
   }
@@ -337,9 +340,8 @@ export default function NewBillToPay() {
           </div>
 
           <div className="form__container--buttons">
-            {/* <button className="form__button form__button--add" onClick={handleAddInformation}>Adicionar</button> */}
-            <button className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>

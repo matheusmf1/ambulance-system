@@ -18,8 +18,9 @@ export default function NewServiceOrder( props ) {
   const [valorTotalServico, setValorTotalServico] = useState(0);
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ customerData, setCustomerData ] = useState( [] );
+  const [ isLoading, setIsLoading ] = useState( false );
   const { session } = props;
-  let history = useHistory();
+  const history = useHistory();
 
   const [ installment, setInstallment ] = useState(
     {
@@ -472,7 +473,7 @@ export default function NewServiceOrder( props ) {
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const finalData = unifyData();
 
@@ -480,7 +481,7 @@ export default function NewServiceOrder( props ) {
       alert( "Informe o código do cliente!" );
     }
     else {
-      
+      setIsLoading( true );
       const serviceOrder = new ServiceOrder( { data: finalData } )
       const result = await serviceOrder.addServiceOrderToFirebase();
 
@@ -489,7 +490,8 @@ export default function NewServiceOrder( props ) {
         history.push( `/${session}s` );
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }
     }
 
@@ -755,8 +757,8 @@ export default function NewServiceOrder( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Adicionar</button>
-              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+              <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
             </div>
 
             <div className="footer__button--status">

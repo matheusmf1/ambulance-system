@@ -18,6 +18,7 @@ export default function ProductSaleInfo( props ) {
   const [ tableDataProdutos, setTableDataProdutos ] = useState( null );
   const [ hasTableData, setHasTableData ] = useState( false );
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
+  const [ isLoading, setIsLoading ] = useState( false );
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -294,10 +295,10 @@ export default function ProductSaleInfo( props ) {
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsLoading( true );
 
     const finalData = unifyData();
-
     const productSale = new ProductSale( { data: finalData, id: idRef } )
     const result = await productSale.updateProductSaleOnFirebase();
 
@@ -306,7 +307,8 @@ export default function ProductSaleInfo( props ) {
       history.push( `/${sessionName}s` );
     }
     else {
-      alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
   }
 
@@ -523,7 +525,7 @@ export default function ProductSaleInfo( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Atualizar</button>
+              <button type="submit" disabled={isLoading} className="form__button form__button--add">Atualizar</button>
             </div>
 
             <div className="footer__button--status">

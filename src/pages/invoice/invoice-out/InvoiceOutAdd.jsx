@@ -208,7 +208,7 @@ const InvoiceOutAdd = props => {
           
           <div className="form__container--buttons">
             <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
-            <button type="reset" disabled={isLoading} className="form__button form__button--calcel">Corrigir</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>

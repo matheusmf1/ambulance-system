@@ -23,6 +23,7 @@ export default function BillsReceiveInfo( props ) {
   const [ hasInstallment, setHasInstallment ] = useState( false );
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
   const [ updateButton, setUpdateButton ] = useState( false );
+  const [ isLoading, setIsLoading ] = useState( false );
 
 
   useEffect( () => {
@@ -236,15 +237,15 @@ export default function BillsReceiveInfo( props ) {
     if ( updateButton ) {
       return(      
         <div className='bill_button--container'>
-          <button onClick={handleSubmit} className="userUpdateButton">Atualizar</button>
+          <button onClick={handleSubmit} disabled={isLoading} className="userUpdateButton">Atualizar</button>
         </div>
       );
     } else return <></>
   }
 
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
 
     const bill = new Bill( { data: data, id: idRef, billType: "receive" } )
     const result = await bill.updateBillOnFirebase();
@@ -256,7 +257,8 @@ export default function BillsReceiveInfo( props ) {
     }
 
     else {
-      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." );
+      setIsLoading( false );
     }
   }
 

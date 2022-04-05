@@ -9,6 +9,9 @@ import { Supplier } from "../../../data/Supplier"
 
 export default function SupplierAdd() {
 
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
+
   const [ supplierData, setSupplierData ] = useState(
     {
       id: "",
@@ -31,9 +34,8 @@ export default function SupplierAdd() {
   
       moreInfo: ""
     }
-  )
+  );
 
-  let history = useHistory();
 
   const handleInformationChange = ( id ) => ( e ) => {
     setSupplierData( { ...supplierData, [id]: e.target.value } )
@@ -68,18 +70,19 @@ export default function SupplierAdd() {
   }
 
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
 
     const supplier = new Supplier( { data: supplierData } )
     const result = await supplier.addSupplierToFirebase();
 
     if ( result ) {
-      alert( "Fornecedor cadastrado com sucesso" )
-      history.push("/fornecedores")
+      alert( "Fornecedor cadastrado com sucesso" );
+      history.push("/fornecedores");
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
   }
 
@@ -202,8 +205,8 @@ export default function SupplierAdd() {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>

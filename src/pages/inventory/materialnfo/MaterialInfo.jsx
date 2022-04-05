@@ -8,6 +8,8 @@ export default function MaterialInfo( props ) {
   const [ data, setData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
   const [ codProduto, setCodProduto ] = useState( '' );
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
 
   useEffect( () => {
 
@@ -66,7 +68,7 @@ export default function MaterialInfo( props ) {
 
   }
 
-  let history = useHistory();
+  
 
   const handleInformationChange = ( id ) => ( e ) => {
 
@@ -106,8 +108,8 @@ export default function MaterialInfo( props ) {
 
 
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
     
     data['product_underQuantityLimit'] = parseInt(data['product_quantity']) < parseInt(data['product_quantityLimit']) ? true: false
 
@@ -121,7 +123,8 @@ export default function MaterialInfo( props ) {
       history.push("/almoxarifado");
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
 
     
@@ -183,7 +186,7 @@ export default function MaterialInfo( props ) {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Atualizar</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Atualizar</button>
           </div>
 
         </form>

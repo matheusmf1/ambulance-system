@@ -23,6 +23,7 @@ export default function CustomerInfo( props ) {
   const [ data, setData ] = useState( '' );
   const [ customerData, setCustomerData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
+  const [ isLoading, setIsLoading ] = useState( false );
 
   useEffect( () => {
 
@@ -120,20 +121,20 @@ export default function CustomerInfo( props ) {
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
-
-    console.log( customerData )
+    setIsLoading( true );
 
     const customer = new Customer( { data: customerData, id: idRef } )
     const result = await customer.updateCustomerOnFirebase();
 
     if ( result ) {
-      alert( "Cliente atualizado com sucesso" )
-      localStorage.removeItem( 'customerInfo' )
-      window.location.reload()
+      alert( "Cliente atualizado com sucesso" );
+      localStorage.removeItem( 'customerInfo' );
+      window.location.reload();
     }
 
     else {
-      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." );
+      setIsLoading( false );
     }
   }
 
@@ -142,7 +143,7 @@ export default function CustomerInfo( props ) {
 
       <div className="userTitleContainer">
         <h1 className="userTitle">Editar Cliente</h1>
-        <button onClick={handleSubmit} className="userUpdateButton">Atualizar</button>
+        <button onClick={handleSubmit} disabled={isLoading} className="userUpdateButton">Atualizar</button>
       </div>
 
       <div className="userContainer">

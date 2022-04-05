@@ -19,6 +19,7 @@ export default function TransformationProposalInfo( props ) {
   const [ hasInstallment, setHasInstallment ] = useState( false );
   const [ valuesInstallmentData, setValuesInstallmentData ] = useState( '' );
   const [ serviceFileData, setServiceFileData ] = useState( null );
+  const [ isLoading, setIsLoading ] = useState( false );
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -289,7 +290,8 @@ export default function TransformationProposalInfo( props ) {
   }
 
   const handleSubmit = async ( e ) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsLoading( true );
 
     const finalData = unifyData();
     console.log( finalData )
@@ -304,6 +306,7 @@ export default function TransformationProposalInfo( props ) {
     }
     else {
       alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      setIsLoading( false );
     }
     
   }
@@ -592,7 +595,7 @@ export default function TransformationProposalInfo( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Atualizar</button>
+              <button type="submit" disabled={isLoading} className="form__button form__button--add">Atualizar</button>
             </div>
 
             <div className="footer__button--status">

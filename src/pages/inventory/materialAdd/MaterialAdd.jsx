@@ -8,6 +8,8 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 export default function MaterialAdd() {
 
   const [ suppliersData, setSuppliersData ] = useState( [] );
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
 
   useEffect( async () => {
 
@@ -35,7 +37,7 @@ export default function MaterialAdd() {
     },
   );
 
-  let history = useHistory();
+  
 
   const handleInformationChange = ( id ) => ( e ) => {
 
@@ -81,7 +83,7 @@ export default function MaterialAdd() {
       alert( "Selecione o fornecedor!" );
     }
     else {
-
+      setIsLoading( true );
       materialData['id'] = `${materialData['supplier_id']}_${materialData['id']}`;
       materialData['product_underQuantityLimit'] = parseInt(materialData['product_quantity']) < parseInt(materialData['product_quantityLimit']) ? true: false;
 
@@ -94,7 +96,8 @@ export default function MaterialAdd() {
         history.push("/almoxarifado");
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }
     }
   
@@ -167,8 +170,8 @@ export default function MaterialAdd() {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>

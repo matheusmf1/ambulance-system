@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   MailOutline,
   LocalPhone,
@@ -14,7 +14,7 @@ import InputCpfCnpj from '../../../components/inputs/input--cpfCnpj';
 import InputPhoneNumber from '../../../components/inputs/input--phoneNumber'
 import InputCep from '../../../components/inputs/input--cep';
 
-import { Supplier } from "../../../data/Supplier"
+import { Supplier } from "../../../data/Supplier";
 
 
 export default function SupplierInfo( props ) {
@@ -22,6 +22,7 @@ export default function SupplierInfo( props ) {
   const [ data, setData ] = useState( '' );
   const [ supplierData, setSupplierData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
+  const [ isLoading, setIsLoading ] = useState( false );
 
   useEffect( () => {
 
@@ -114,20 +115,21 @@ export default function SupplierInfo( props ) {
   }
   
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
 
     const supplier = new Supplier( { data: supplierData, id: idRef } )
     const result = await supplier.updateSupplierOnFirebase();
 
     if ( result ) {
-      alert( "Fornecedor atualizado com sucesso" )
-      localStorage.removeItem( 'supplierInfo' )
-      window.location.reload()
+      alert( "Fornecedor atualizado com sucesso" );
+      localStorage.removeItem( 'supplierInfo' );
+      window.location.reload();
     }
 
     else {
-      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+      alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." );
+      setIsLoading( false );
     }
   }
 
@@ -137,7 +139,7 @@ export default function SupplierInfo( props ) {
 
       <div className="userTitleContainer">
         <h1 className="userTitle">Editar Fornecedor</h1>
-        <button onClick={handleSubmit} className="userUpdateButton">Atualizar</button>
+        <button onClick={handleSubmit} disabled={isLoading} className="userUpdateButton">Atualizar</button>
       </div>
 
       <div className="userContainer">

@@ -8,7 +8,9 @@ import { Employee } from "../../../data/Employee"
 
 export default function EmployeeAdd() {
 
-  const [bankData, setBankData] = useState([])
+  const [bankData, setBankData] = useState([]);
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
 
   useEffect( () => {
     fetch('https://brasilapi.com.br/api/banks/v1')
@@ -56,8 +58,7 @@ export default function EmployeeAdd() {
     } 
   )
 
-  let history = useHistory();
-
+  
   const handleInformationChange = ( id ) => ( e ) => {
 
     if ( id === 'birthday' ){
@@ -99,11 +100,10 @@ export default function EmployeeAdd() {
   }
 
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
     
     const employee = new Employee( { data: employeeData } );
-
     const result = await employee.addEmployeeToFirebase();
 
     if ( result ) {
@@ -111,7 +111,8 @@ export default function EmployeeAdd() {
       history.push("/funcionarios")
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
 
   }
@@ -310,11 +311,10 @@ export default function EmployeeAdd() {
           </div>
 
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
-
-
+          
         </form>
 
       </div>

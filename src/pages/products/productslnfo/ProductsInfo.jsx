@@ -7,6 +7,8 @@ export default function ProductsInfo( props ) {
 
   const [ data, setData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
 
   useEffect( () => {
 
@@ -22,8 +24,6 @@ export default function ProductsInfo( props ) {
 
     setIdRef( id )
     let fetchData = JSON.parse( localStorage.getItem( 'productsInfo' ) );
-
-    console.log( fetchData )
 
     if ( fetchData ) {
 
@@ -64,16 +64,14 @@ export default function ProductsInfo( props ) {
 
   }
 
-  let history = useHistory();
-
   const handleInformationChange = ( id ) => ( e ) => {
     setData( { ...data, [id]: e.target.value } );
   }
 
 
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
 
     data['product_sale_value'] = parseFloat( data['product_sale_value'] ).toFixed(2);
     
@@ -87,7 +85,8 @@ export default function ProductsInfo( props ) {
       history.push("/produtos");
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
 
     
@@ -119,7 +118,7 @@ export default function ProductsInfo( props ) {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Atualizar</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Atualizar</button>
           </div>
 
         </form>

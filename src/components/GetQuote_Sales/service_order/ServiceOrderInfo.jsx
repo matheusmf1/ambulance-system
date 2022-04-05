@@ -20,7 +20,7 @@ export default function ServiceOrderInfo( props ) {
 
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
   const [valorTotalServico, setValorTotalServico] = useState(0);
-  
+  const [ isLoading, setIsLoading ] = useState( false );
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -324,6 +324,7 @@ export default function ServiceOrderInfo( props ) {
 
   const handleSubmit = async ( e ) => {
     e.preventDefault();
+    setIsLoading( true );
 
     const finalData = unifyData();
 
@@ -336,7 +337,8 @@ export default function ServiceOrderInfo( props ) {
       history.push( `/${sessionName}s` );
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
   }
 
@@ -591,7 +593,7 @@ export default function ServiceOrderInfo( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Atualizar</button>
+              <button type="submit" disabled={isLoading} className="form__button form__button--add">Atualizar</button>
             </div>
 
             <div className="footer__button--status">

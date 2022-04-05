@@ -20,7 +20,8 @@ export default function EmployeeInfo( props ) {
   const [ data, setData ] = useState( '' );
   const [ employeeData, setEmployeeData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
-  const [ bankData, setBankData ] = useState([])
+  const [ bankData, setBankData ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState( false );
 
   useEffect( () => {
 
@@ -128,8 +129,9 @@ export default function EmployeeInfo( props ) {
   }
 
   const handleSubmit = async ( e ) => {
-    
     e.preventDefault();
+    setIsLoading( true );
+
     const employee = new Employee( { data: employeeData, id: idRef } )
     const result = await employee.updateEmployeeOnFirebase();
 
@@ -141,6 +143,7 @@ export default function EmployeeInfo( props ) {
 
     else {
       alert( "Algo deu errado ao atualizar as informações. Por favor verifique todas as informações e tente novamente." )
+      setIsLoading( false );
     }
   }
 
@@ -178,7 +181,7 @@ export default function EmployeeInfo( props ) {
 
         <h1 className="userTitle">Editar Funcionário</h1>
         
-        <button onClick={handleSubmit} className="userUpdateButton">Atualizar</button>
+        <button onClick={handleSubmit} disabled={isLoading} className="userUpdateButton">Atualizar</button>
 
       </div>
 

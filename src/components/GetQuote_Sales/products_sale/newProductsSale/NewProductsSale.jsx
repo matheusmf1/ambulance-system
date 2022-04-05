@@ -13,11 +13,13 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default function NewProductsSale( props ) {
 
+  const { session } = props;
   const [ valorTotalProduto, setValorTotalProduto ] = useState(0);
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ customerData, setCustomerData ] = useState( [] );
-  const { session } = props;
-  let history = useHistory();
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
+  
   
   const [ productSaleData, setProductSaleData ] = useState({
     serviceType: "productsSale",
@@ -376,16 +378,18 @@ export default function NewProductsSale( props ) {
       alert( "Informe o código do cliente!" );
     }
     else {
+      setIsLoading( true );
       const finalData = unifyData();
       const productSale = new ProductSale( { data: finalData } )
       const result = await productSale.addProductSaleToFirebase();
 
       if ( result ) {
-        alert( "Venda de Produto cadastrada com sucesso" )
+        alert( "Venda de Produto cadastrada com sucesso" );
         history.push( `/${session}s` );
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }  
     }
     
@@ -613,8 +617,8 @@ export default function NewProductsSale( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Adicionar</button>
-              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+              <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
             </div>
 
             <div className="footer__button--status">

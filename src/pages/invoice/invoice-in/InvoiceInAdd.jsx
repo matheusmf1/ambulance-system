@@ -19,6 +19,7 @@ const InvoiceInAdd = props => {
       invoice_moreInfo: "",
     }
   );
+  const [ isLoading, setIsLoading ] = useState( false );
 
   const history = useHistory();
 
@@ -83,7 +84,7 @@ const InvoiceInAdd = props => {
       alert( "Informe todas as informações necessárias!" );
     }
     else {
-      
+      setIsLoading( true );
       const invoice = new Invoice( { data: invoiceData, id: invoiceData['id'], file: checkIfFileHasChanged() } );
       const result = await invoice.addInvoiceToFirebase();
 
@@ -92,7 +93,8 @@ const InvoiceInAdd = props => {
         history.push( "/nota-fiscal/entrada" );
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }
     }
     
@@ -154,8 +156,8 @@ const InvoiceInAdd = props => {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>

@@ -31,7 +31,8 @@ export default function CustomerAdd() {
     },
   );
 
-  let history = useHistory();
+  const history = useHistory();
+  const [ isLoading, setIsLoading ] = useState( false );
 
   const handleInformationChange = ( id ) => ( e ) => {
     setCustomerData( { ...customerData, [id]: e.target.value } )
@@ -68,17 +69,18 @@ export default function CustomerAdd() {
   const handleSubmit = async ( e ) => {
 
     e.preventDefault();
+    setIsLoading( true );
   
     const customer = new Customer( { data: customerData } );
-
     const result = await customer.addCustomerToFirebase();
 
     if ( result ) {
-      alert( "Cliente cadastrado com sucesso" )
-      history.push("/clientes")
+      alert( "Cliente cadastrado com sucesso" );
+      history.push("/clientes");
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
 
     
@@ -209,8 +211,8 @@ export default function CustomerAdd() {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>

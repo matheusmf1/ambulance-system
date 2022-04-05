@@ -11,6 +11,7 @@ const InvoiceOutInfo = props => {
   const [ data, setData ] = useState( '' );
   const [ idRef, setIdRef ] = useState( '' );
   const [ invoiceFileData, setInvoiceFileData ] = useState( null );
+  const [ isLoading, setIsLoading ] = useState( false );
   
   const history = useHistory();
 
@@ -28,8 +29,6 @@ const InvoiceOutInfo = props => {
 
     setIdRef( id )
     let fetchData = JSON.parse( localStorage.getItem( 'invoiceInfo' ) );
-
-    console.log( fetchData )
 
     if ( fetchData ) {
 
@@ -106,14 +105,12 @@ const InvoiceOutInfo = props => {
   const handleSubmit = async ( e ) => {
     e.preventDefault();
 
-    console.log( data )
-
     if ( data['invoice_file'] === "" ) {
       alert( "Por favor selecione um arquivo para a nota fiscal" );
     }
 
     else {       
-      
+      setIsLoading( true );
       const invoice = new Invoice( { data: data, id: idRef, file: checkIfFileHasChanged() } );
       const result = await invoice.updateInvoiceOnFirebase();
 
@@ -123,7 +120,8 @@ const InvoiceOutInfo = props => {
         history.push( "/nota-fiscal/entrada" );
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }
     }    
   }
@@ -221,7 +219,7 @@ const InvoiceOutInfo = props => {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Atualizar</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Atualizar</button>
           </div>
 
         </form>

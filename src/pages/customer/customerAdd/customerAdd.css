@@ -170,20 +170,11 @@ select {
   box-shadow: unset;
 }
 
-.form__button--calcel {
+.form__button--cancel {
   color: #fff;
   background-color: #f53d93;
   border-color: #f53d93;
   box-shadow: unset;
-}
-
-
-.form__button--add:active {
-  background-color: #1c9cc5;
-}
-
-.form__button--calcel:active {
-  background-color: #f3127c;
 }
 
 .form__button--add:disabled {
@@ -196,7 +187,7 @@ select {
   box-shadow: none;
 }
 
-.form__button--calcel:disabled {
+.form__button--cancel:disabled {
   background-color: #f3127c;
   opacity: 0.65;
   cursor: not-allowed;

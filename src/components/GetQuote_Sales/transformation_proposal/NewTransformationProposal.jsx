@@ -14,6 +14,7 @@ export default function NewTransformationProposal( props ) {
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ billFileData, setBillFileData ] = useState( null );
   const [ customerData, setCustomerData ] = useState( [] );
+  const [ isLoading, setIsLoading ] = useState( false );
   const { session } = props;
   let history = useHistory();
 
@@ -300,6 +301,7 @@ export default function NewTransformationProposal( props ) {
     }
 
     else {
+      setIsLoading( true );
       const finalData = unifyData();
       const transformationProposal = new TransformationProposal( { data: finalData, file: checkIfFileHasChanged() } );
       const result = await transformationProposal.addTransformationProposalToFirebase();
@@ -309,7 +311,8 @@ export default function NewTransformationProposal( props ) {
         history.push( `/${session}s` )
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
       }
     }
   }
@@ -561,8 +564,8 @@ export default function NewTransformationProposal( props ) {
           <div className="footer__button--container">
             
             <div className="footer__button--buttons">
-              <button type="submit" className="form__button form__button--add">Adicionar</button>
-              <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+              <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+              <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
             </div>
 
             <div className="footer__button--status">

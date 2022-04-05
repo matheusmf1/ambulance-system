@@ -5,6 +5,9 @@ import { Product } from '../../../data/Product';
 
 export default function ProductsAdd() {
 
+  const [ isLoading, setIsLoading ] = useState( false );
+  const history = useHistory();
+
   const [productsData, setProductsData] = useState(
     {
       product_sale_value: "",
@@ -12,7 +15,6 @@ export default function ProductsAdd() {
     },
   );
 
-  let history = useHistory();
 
   const handleInformationChange = ( id ) => ( e ) => {
 
@@ -27,8 +29,8 @@ export default function ProductsAdd() {
   }
 
   const handleSubmit = async ( e ) => {
-
     e.preventDefault();
+    setIsLoading( true );
     
     const data = new Product( { data: productsData, id: productsData['id'] } );
     const result = await data.addProductToFirebase();
@@ -38,7 +40,8 @@ export default function ProductsAdd() {
       history.push("/produtos");
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." )
+      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      setIsLoading( false );
     }
     
   }
@@ -68,8 +71,8 @@ export default function ProductsAdd() {
           </div>
           
           <div className="form__container--buttons">
-            <button type="submit" className="form__button form__button--add">Adicionar</button>
-            <button type="reset" className="form__button form__button--calcel">Corrigir</button>
+            <button type="submit" disabled={isLoading} className="form__button form__button--add">Adicionar</button>
+            <button type="reset" disabled={isLoading} className="form__button form__button--cancel">Corrigir</button>
           </div>
 
         </form>
