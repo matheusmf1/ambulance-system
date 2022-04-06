@@ -61,9 +61,11 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
+          
             backgroundImage: "url('../../assets/images/logo-rescue.png')",
             backgroundRepeat: 'no-repeat',
-            backgroundSize: '75% auto',
+            // backgroundSize: '75% auto',
+            backgroundSize: 'contain',
             backgroundPosition: 'center',
           }}
         />
