@@ -15,7 +15,7 @@ import { useAuth } from "../../context/AuthProvider";
 
 export default function UpdateProfile() {
 
-  const { currentUser, updatePasswordProvider, updateEmailProvider } = useAuth();
+  const { currentUser, updatePasswordProvider, updateEmailProvider, updateProfileProvider } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState( false );
   const history = useHistory();
@@ -26,7 +26,7 @@ export default function UpdateProfile() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const nome = data.get('name')
+    const name = data.get('name')
     const email = data.get('email')
     const password = data.get('password')
     const passwordConfirm = data.get('passwordConfirm')
@@ -39,19 +39,30 @@ export default function UpdateProfile() {
     setLoading( true );
     setError("");
 
-    if ( email !== currentUser.email ) {
-      promises.push( updateEmailProvider( email ) )
+    if ( name !== currentUser.displayName ) {
+      promises.push( updateProfileProvider( name ) );
     }
+
+    if ( email !== currentUser.email ) {
+      promises.push( updateEmailProvider( email ) );
+    }
+
     if ( password ) {
-      promises.push( updatePasswordProvider( password ) )
+      console.log( 'update password' );
+      promises.push( updatePasswordProvider( password ) );
     }
 
     Promise.all(promises)
       .then(() => {
-        history.push("/")
+        history.push("/");
       })
-      .catch(() => {
-        setError("Erro ao atualizar a conta")
+      .catch(( error ) => {
+        if ( error.code === "auth/requires-recent-login") {
+          setError("Erro. Para atualizar email/senha, faça login novamente.")
+        }
+        else {
+          setError("Erro ao atualizar a conta");
+        }
       })
       .finally(() => {
         setLoading(false)
@@ -114,7 +125,7 @@ export default function UpdateProfile() {
               <TextField
                 fullWidth
                 name="password"
-                label="Senha"
+                label="Senha, deixe em branco para manter a mesma"
                 type="password"
                 id="password"
                 autoComplete="new-password"
@@ -125,9 +136,10 @@ export default function UpdateProfile() {
               <TextField
                 fullWidth
                 name="passwordConfirm"
-                label="Confirme sua senha"
+                label="Confirme sua senha, deixe em branco para manter a mesma"
                 type="password"
                 id="passwordConfirm"
+                autoComplete="new-password"
               />
             </Grid>
 

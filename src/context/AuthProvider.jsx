@@ -41,7 +41,7 @@ export function AuthProvider( { children } ) {
   }
 
   const updateEmailProvider = (newEmail) => {
-    return updateEmail( currentUser, newEmail );
+    return updateEmail( auth.currentUser, newEmail );
   }
 
   const updatePasswordProvider = ( newPassword ) => {
@@ -53,7 +53,7 @@ export function AuthProvider( { children } ) {
   }
 
   const updateProfileProvider = ( name ) => {
-    return updateProfile( auth.currentUser, { displayName: name })
+    return updateProfile( auth.currentUser, { displayName: name });
   }
 
   const addUserToFirestore = () => {

@@ -13,11 +13,12 @@ import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import './login.css';
 import CopyRight from '../../components/CopyRight';
+import { auth } from "../../firebase.js";
 
 
 export default function Login() {
 
-  const { login } = useAuth();
+  const { login, sendEmailVerificationProvider } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState( false );
   const history = useHistory();
@@ -34,7 +35,12 @@ export default function Login() {
       setError("");
       setLoading( true );
       await login( email, password );
-      history.push("/"); 
+
+      if ( !auth.currentUser.emailVerified ) {
+        await sendEmailVerificationProvider();
+      }
+      
+      history.push("/");
     } catch {
       setError("Erro ao fazer login, email ou senha incorretos")
     }
