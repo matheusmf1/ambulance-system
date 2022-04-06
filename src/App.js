@@ -51,7 +51,7 @@ import UpdateProfile from "./pages/login/UpdateProfile";
 function App() {
 
   return (
-    <div className="container1">
+    <div className="container">
 
       <Router>
         <AuthProvider>

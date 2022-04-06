@@ -51,7 +51,7 @@ li {
   position: relative;
   transition: all 0.6s ease-in-out;
 
-  transform: translateX( -170px );
+  transform: translateX( -165px );
 }
 
 .container__sidebar.active .sidebar__logo {

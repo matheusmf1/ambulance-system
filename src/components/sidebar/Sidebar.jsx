@@ -1,5 +1,4 @@
-import {React, useEffect } from 'react'
-import './sidebar.css'
+import React, { useState } from 'react';
 import logoRescue from '../../assets/images/logo-rescue.png';
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
@@ -10,69 +9,113 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import { CurvedArrow } from './curvedArrow';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
-// import { PaymentOutlined } from '@material-ui/icons';
 import { PaymentsOutlined } from '@mui/icons-material';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import './sidebar.css';
 
 export default function Sidebar() {
 
-	const menuListItemClick = (e) => {
+	const [ hasOpenTab, setHasOpenTab ] = useState( false );
+	const [ openTabElement, setOpenTabElement ] = useState( false );
 
-		const toggleSidebarMultiItem = document.querySelectorAll( ".sidebar__menu--listItens" )
+	const openTabMenuItem = ( e ) => {
+		let mainTarget = e.target;
 
-		toggleSidebarMultiItem.forEach( li => {
+		const getTargetLi = () => {
+			while ( !mainTarget.classList.contains( "sidebar__menu--listItens" ) ) {
+	
+				let parentTarget = mainTarget.parentElement;
 
-  	li.addEventListener( "click", ( e ) => {
+				if ( parentTarget.classList.contains( "sidebar__menu--listItens" ) ) {
+					return parentTarget
+				}
+				else {
+					mainTarget = parentTarget;
+				}
+			}
+		}
 
-    let currentActive = document.querySelector( ".sidebar__menu--listItens.active" )
+		const targetLi = getTargetLi()
 
-    if ( currentActive && currentActive !== li ) 
-      currentActive.classList.toggle( "active" )
-    
-    li.classList.toggle( "active" )
-  
-    let toggleSidebarArrow = li.querySelector( "#menu-arrow" )
-  
-    if (toggleSidebarArrow)
-      toggleSidebarArrow.classList.toggle( "active" )
-  } )
-})
+		if ( targetLi === openTabElement ) {
 
+			// fechar o que ja esta aberto
+			let arrow = targetLi.querySelector( "#menu-arrow" );
 
-const toogleMenuBars = document.querySelectorAll( ".sidebar__menu--barIcon" )
-const navbarMenuIcon = document.querySelector( ".nav .sidebar__menu--barIcon" )
+			if ( arrow ) {
+				targetLi.classList.toggle( "active" );
+				arrow.classList.toggle( "active" );
+			}
 
-toogleMenuBars.forEach( icon => {
+			setHasOpenTab( false );
+			setOpenTabElement( null );	
+		}
 
-  icon.addEventListener( "click", ( e ) => {
-    
-    let containerSidebar = document.querySelector( ".container__sidebar" )
+		else {
 
-    let initialWidth = document.body.clientWidth
+			if ( hasOpenTab ) {
 
-    if ( initialWidth <= 480 && containerSidebar.classList.contains( "active" ) ) {
-      containerSidebar.classList.toggle( "collapse" )  
-    }
+				let arrow = openTabElement.querySelector( "#menu-arrow" );
+	
+				if ( arrow ) {
+					openTabElement.classList.toggle( "active" );
+					arrow.classList.toggle( "active" );
+				}
+			}
 
-    else if ( initialWidth <= 480 && !containerSidebar.classList.contains( "active" )  ) {
-      containerSidebar.classList.toggle( "active" )
-      containerSidebar.classList.toggle( "collapse" )
-    }
-    else {
-      containerSidebar.classList.toggle( "active" )  
-    }
+			let arrow = targetLi.querySelector( "#menu-arrow" );
 
-  })
-})
+			if ( arrow ) {
+				targetLi.classList.toggle( "active" );
+				arrow.classList.toggle( "active" );
+			}
+
+			setHasOpenTab( true );
+			setOpenTabElement( targetLi );	
+		}
 	}
 
-	useEffect( () => menuListItemClick() )
+	const toogleMenuBars = ( e ) => {
+
+		let mainTarget = e.target;
+		
+		const getTargetAside = () => {
+			while ( !mainTarget.classList.contains( "container__sidebar" ) ) {
+	
+				let parentTarget = mainTarget.parentElement;
+
+				if ( parentTarget.classList.contains( "container__sidebar" ) ) {
+					return parentTarget
+				}
+				else {
+					mainTarget = parentTarget;
+				}
+			}
+		}
+
+		const targetAside = getTargetAside();
+
+		let initialWidth = document.body.clientWidth;
+		
+		if ( initialWidth <= 480 && targetAside.classList.contains( "active" ) ) {
+			targetAside.classList.toggle( "collapse" )  
+		}
+
+		else if ( initialWidth <= 480 && !targetAside.classList.contains( "active" )  ) {
+			targetAside.classList.toggle( "active" )
+			targetAside.classList.toggle( "collapse" )
+		}
+		else {
+			targetAside.classList.toggle( "active" )  
+		}
+
+	}
 	
   return (
-		<aside className="container__sidebar active">
+		<aside className="container__sidebar active" id='sideMenu'>
 			
 			<div className="sidebar__logo">
 				<a href="/" className="sidebar__logo--anchor">
@@ -84,7 +127,7 @@ toogleMenuBars.forEach( icon => {
 					<p className="sidebar__logo--Subtitle">Veículos Especiais</p>
 				</div>
 
-				<MenuOutlinedIcon className="sidebar__menu--barIcon"/>
+				<MenuOutlinedIcon className="sidebar__menu--barIcon" onClick={toogleMenuBars}/>
 			</div>
 
 			<div className="sidebar__scrollbar">
@@ -102,7 +145,7 @@ toogleMenuBars.forEach( icon => {
 
 
 						{/* CLIENTES */}
-						<li className="sidebar__menu--listItens">		
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>		
 							<a>
 
 								<PeopleAltOutlinedIcon/>
@@ -132,7 +175,7 @@ toogleMenuBars.forEach( icon => {
 						</li>
 
 						{/* FORNECEDORES */}
-						<li className="sidebar__menu--listItens">		
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>		
 							<a>	
 								<Inventory2OutlinedIcon/>
 								<span className="sidebar__menu--title">Fornecedores</span>
@@ -161,7 +204,7 @@ toogleMenuBars.forEach( icon => {
 						</li>
 
 						{/* FUNCIONARIOS */}
-						<li className="sidebar__menu--listItens">		
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>		
 							<a>	
 
 								<BadgeOutlinedIcon/>
@@ -190,9 +233,8 @@ toogleMenuBars.forEach( icon => {
 							</ul>
 						</li>
 
-
 						{/* VENDAS */}
-						<li className="sidebar__menu--listItens">
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<ShoppingCartOutlinedIcon/>	
 								<span className="sidebar__menu--title">Vendas</span>
@@ -235,7 +277,7 @@ toogleMenuBars.forEach( icon => {
 						</li>
 
 						{/* ORCAMENTO */}
-						<li className="sidebar__menu--listItens">
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<FeedOutlinedIcon/>
 								<span className="sidebar__menu--title">Orçamento</span>
@@ -278,7 +320,7 @@ toogleMenuBars.forEach( icon => {
 						</li>
 
 						{/* FINANCEIRO */}
-						<li className="sidebar__menu--listItens">
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<PaymentsOutlined/>
 								<span className="sidebar__menu--title">Financeiro</span>
@@ -319,9 +361,8 @@ toogleMenuBars.forEach( icon => {
 							</ul>
 						</li>
 
-
 						{/* ALMOXARIFADO */}
-						<li className="sidebar__menu--listItens">
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<WarehouseOutlinedIcon/>
 								<span className="sidebar__menu--title">Almoxarifado</span>
@@ -350,10 +391,8 @@ toogleMenuBars.forEach( icon => {
 
 						</li>
 
-
-
 						{/* PRODUTOS */}
-						<li className="sidebar__menu--listItens">
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<LocalOfferOutlinedIcon/>
 								<span className="sidebar__menu--title">Produtos</span>
@@ -383,7 +422,7 @@ toogleMenuBars.forEach( icon => {
 						</li>
 
 						{/* NOTA FISCAL */}
-						<li className="sidebar__menu--listItens">
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<ReceiptLongOutlinedIcon/>
 								<span className="sidebar__menu--title">Nota Fiscal</span>
@@ -426,9 +465,8 @@ toogleMenuBars.forEach( icon => {
 
 						</li>
 
-
-						{/* NOTA FISCAL */}
-						<li className="sidebar__menu--listItens">
+						{/* CALENDARIO */}
+						<li className="sidebar__menu--listItens" onClick={openTabMenuItem}>
 							<a>
 								<CalendarMonthOutlinedIcon/>
 								<span className="sidebar__menu--title">Calendário</span>

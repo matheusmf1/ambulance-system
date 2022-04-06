@@ -54,7 +54,7 @@ export default class QuoteSalesList extends Component {
     const docSnap2 = await getDocs( queryResult2 );
     
     const transformationProposal = collection( db, `users/${auth.currentUser.uid}/orcamento_venda_transformationProposal` )
-    const queryResult3 = query( transformationProposal, where("mainService", "==", `${this.session}`), orderBy("id") );
+    const queryResult3 = query( transformationProposal, where("mainService", "==", `${this.session}`) );
     const docSnap3 = await getDocs( queryResult3 );
     
     this.docSnaps.push( docSnap1, docSnap2, docSnap3 );
