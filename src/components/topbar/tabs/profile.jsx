@@ -23,6 +23,7 @@ export default function Profile( { logout } ) {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = ( item ) => {
 
     if ( item.link ) {
@@ -61,6 +62,7 @@ export default function Profile( { logout } ) {
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
+        transitionDuration={0.5}
         onClose={handleClose}>
 
         {dropDownData.map((item, i) => (
