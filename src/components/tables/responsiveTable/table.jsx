@@ -1,42 +1,56 @@
-import { React, useState, useMemo, memo } from "react";
-
+import React, { useState, useMemo, memo } from "react";
 import { useTable } from "react-table";
-
 import './table.css';
 
 const TableInputNumber = (props) => {
-  // console.log("TableInputNumber", props);
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
   return <input className="form__input--table" type="number" value={cell.value} onChange={onChange} />;
 };
 
 const TableInputText = props => {
-  // console.log("TableInputText", props);
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
   return <input className="form__input--table" type="text" value={cell.value} onChange={onChange} />;
 };
 
 const TableText = props => {
-  // console.log("TableText", props);
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
   return <h5 onChange={onChange} className="tableOS__subTotal">R$ {cell.value}</h5>;
 };
 
+const TableSelect = ( props, data ) => {
+
+  const { row, cell, updateDataSelect } = props;
+  const onChange = e => {
+
+    let selectedData = data.filter( item => item['id'] === e.target.value )[0];
+    updateDataSelect(row.index, selectedData);
+  } 
+
+  return(
+    <select className="form__input" value={cell.value} onChange={onChange} required>
+      <option value="choose">Escolha o produto</option>
+      {
+        data.map( (data, key) => {
+          return (<option value={data['id']} key={key}>{data['id']} - {data['product_name']}</option>);
+        })
+      }
+    </select>
+  );
+};
+
 const ReactTable = memo( props => {
 
-  // console.log("ReactTable Props", props);
-
-  const { tableData, setTableData, setValorTotal } = props;
+  const { tableData, setTableData, setValorTotal, productsData } = props;
   const { initialData, somaTotalRow, somaTotalTextAndItens } = tableData;
 
   const tableColumns = tableData.columns;
   tableColumns.forEach( item => {
 
     if ( item['Header'] === "SubTotal" ) {
-      item[ 'accessor' ] = row => row.valorUnitario * row.quantidade
+      item[ 'accessor' ] = row => (row.valorUnitario * row.quantidade).toFixed(2)
       item['Cell'] = TableText;
     }
 
@@ -48,6 +62,9 @@ const ReactTable = memo( props => {
     }
     else if ( item['Cell'] === "TableText" ) {
       item['Cell'] = TableText;
+    }
+    else if ( item['Cell'] === "TableSelect" ) {
+      item['Cell'] = ( e ) => TableSelect( e, productsData );
     }
 
   });
@@ -102,27 +119,36 @@ const ReactTable = memo( props => {
 
   };
 
+  const updateDataSelect = (rowIndex, data ) => {
+
+    let oldData = tableData['initialData']
+
+    let newData = oldData.map( (row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...oldData[rowIndex], "codigo": data['id'], "nome": data['product_name'], "valorUnitario": data['product_value']
+        };
+      }
+      return row;
+    })
+
+    setTableData( {...tableData, "initialData": newData } )
+  };
   
   let data = tableData['initialData']
-  const table = useTable({ columns, data, updateData });
+  const table = useTable({ columns, data, updateData, updateDataSelect });
   
   const { headerGroups, rows, prepareRow } = table;
 
-  // const totalPerRow = ( rows, itemPerRow ) => rows.reduce( (sum, row) => (parseFloat(sum) + parseFloat(row.values[ itemPerRow ])).toFixed(2), 0);
   const totalPerRow = ( rows, itemPerRow ) => rows.reduce( (sum, row) =>  (parseFloat(sum) + parseFloat(row.values[ itemPerRow ])), 0);
   
-  
   let somaTotalRowData = {}
-  somaTotalRow.map( itemPerRow => somaTotalRowData[ itemPerRow ] = totalPerRow( rows, itemPerRow ) )
-  // somaTotalRow.map( itemPerRow => somaTotalRowData[ itemPerRow ] = totalPerRow( rows, itemPerRow ).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) )
-  // somaTotalRow.map( itemPerRow => somaTotalRowData[ itemPerRow ] = totalPerRow( rows, itemPerRow ).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) )
-  
-  setValorTotal( somaTotalRowData['subTotal'] )
+  somaTotalRow.map( itemPerRow => somaTotalRowData[ itemPerRow ] = totalPerRow( rows, itemPerRow ) );
+  setValorTotal( somaTotalRowData['subTotal'] );
 
 
   return (
     <>
-      
       <table className="tableOS">
 
         <thead>
@@ -179,17 +205,16 @@ const ReactTable = memo( props => {
 
 export const TableOS = ( props ) => {
 
-  const { tableData, setTableData, setValorTotal } = props
+  const { tableData, setTableData, setValorTotal, productsData } = props;
   
   return(
-    
     <>
       <ReactTable
         tableData={tableData}
         setTableData={setTableData}
         setValorTotal={setValorTotal}
+        productsData={productsData}
       />
-    </>    
-    
+    </> 
   );
 }
