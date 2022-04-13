@@ -391,32 +391,32 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" value={transformationProposalData['companyName']} onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={transformationProposalData['companyName']} onChange={handleInformationChange('companyName')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CNPJ/CPF*</label>
-                <InputCpfCnpj defaultValue={transformationProposalData['cpf']} onChange={handleInformationChange('cpf')} required={true}/>
+                <InputCpfCnpj defaultValue={transformationProposalData['cpf']} onChange={handleInformationChange('cpf')} disabled={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                <InputCep defaultValue={transformationProposalData['cep']} onChange={checkCep}/>
+                <InputCep defaultValue={transformationProposalData['cep']} onChange={checkCep} disabled={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" value={transformationProposalData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={transformationProposalData['address']} onChange={handleInformationChange('address')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" value={transformationProposalData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={transformationProposalData['city']} onChange={handleInformationChange('city')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" value={transformationProposalData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={transformationProposalData['state']} onChange={handleInformationChange('state')} disabled>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -449,12 +449,12 @@ export default function NewTransformationProposal( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" value={transformationProposalData['email']} onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={transformationProposalData['email']} onChange={handleInformationChange('email')} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={transformationProposalData['telephone']} onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={transformationProposalData['telephone']} onChange={handleInformationChange('telephone')} disabled={true}/>
               </div>
             </div>
 
