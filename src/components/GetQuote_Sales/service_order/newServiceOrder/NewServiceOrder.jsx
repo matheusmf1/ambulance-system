@@ -11,6 +11,8 @@ import { useHistory } from "react-router-dom";
 import { ServiceOrder } from "../../../../data/ServiceOrder";
 import { db, auth } from '../../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { Inventory } from "../../../../data/Inventory";
+import LoadingSpinner from '../../../LoadingSpinner';
 
 export default function NewServiceOrder( props ) {
 
@@ -18,6 +20,7 @@ export default function NewServiceOrder( props ) {
   const [valorTotalServico, setValorTotalServico] = useState(0);
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ customerData, setCustomerData ] = useState( [] );
+  const [ inventoryData, setInventoryData ] = useState( null );
   const [ isLoading, setIsLoading ] = useState( false );
   const { session } = props;
   const history = useHistory();
@@ -88,7 +91,7 @@ export default function NewServiceOrder( props ) {
       {
         Header: "Código",
         accessor: "codigo",
-        Cell: 'TableInputText',
+        Cell: 'TableSelect',
         colSpan: 1,
       },
   
@@ -242,14 +245,22 @@ export default function NewServiceOrder( props ) {
 
   });
 
-  useEffect( async () => {
+  const fetchDataFirebase = async () => {
 
     const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
     const queryResult = query( dataCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 
     setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
-  }, []);
+
+    const dataCollectionProductsRef = collection( db, `users/${auth.currentUser.uid}/inventory` );
+    const queryProductsResult = query( dataCollectionProductsRef, orderBy("id") );
+    const docProductsSnap = await getDocs( queryProductsResult );
+
+    setInventoryData( docProductsSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }
+
+  useEffect( () => fetchDataFirebase(), []);
 
   const defineStatusFieldOptions = ( session ) => {
     
@@ -370,8 +381,7 @@ export default function NewServiceOrder( props ) {
 
     else if ( id === 'clientNumber' ) {
 
-      let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0]
-      console.log( customerData2 )
+      let customerData2 = customerData.filter( ( data ) => data['id'] === parseInt( e.target.value ) )[0];
 
       setServiceOrderData( { ...serviceOrderData, 
         "clientNumber": e.target.value,
@@ -389,6 +399,20 @@ export default function NewServiceOrder( props ) {
 
     else {
       setServiceOrderData( { ...serviceOrderData, [id]: e.target.value } )
+    }
+  }
+
+  const renderTable = () => {
+
+    if ( inventoryData ) {
+      return (
+        <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto} productsData={inventoryData}/>
+      );
+    }
+    else {
+      return(
+        <LoadingSpinner/>
+      );
     }
   }
 
@@ -472,29 +496,107 @@ export default function NewServiceOrder( props ) {
 
   }
 
+  // const handleSubmit = async ( e ) => {
+  //   e.preventDefault();
+
+  //   const finalData = unifyData();
+
+  //   if ( serviceOrderData['clientNumber'] === "choose" ) {
+  //     alert( "Informe o código do cliente!" );
+  //   }
+  //   else {
+      // setIsLoading( true );
+      // const serviceOrder = new ServiceOrder( { data: finalData } )
+      // const result = await serviceOrder.addServiceOrderToFirebase();
+
+      // if ( result ) {
+      //   alert( "Ordem de Serviço cadastrada com sucesso" )
+      //   history.push( `/${session}s` );
+      // }
+      // else {
+      //   alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+      //   setIsLoading( false );
+      // }
+  //   }
+
+  // }
+
   const handleSubmit = async ( e ) => {
     e.preventDefault();
-
-    const finalData = unifyData();
 
     if ( serviceOrderData['clientNumber'] === "choose" ) {
       alert( "Informe o código do cliente!" );
     }
     else {
       setIsLoading( true );
-      const serviceOrder = new ServiceOrder( { data: finalData } )
-      const result = await serviceOrder.addServiceOrderToFirebase();
+      const finalData = unifyData();
+      const selectedData = finalData['tableDataProdutos']['initialData'];
 
-      if ( result ) {
-        alert( "Ordem de Serviço cadastrada com sucesso" )
-        history.push( `/${session}s` );
+      if ( finalData['status'] !== "cancelado_naoAprovado" ) {
+
+        const checkInventory = Inventory.checkInventory( inventoryData, selectedData );
+        const missingData = checkInventory.filter( result => result['hasQuantity'] === false );
+        const originalData = checkInventory.map( item => inventoryData.filter( item2 => item2['id'] === item['id'] )[0] );
+  
+        if ( missingData.length > 0 ) {
+          setIsLoading( false );
+          missingData.forEach( item => alert( 
+            `Material ${item['id']} abaixo do nível do estoque. Quantidade atual: ${item['product_quantity']}. Ajuste a quantidade atual para a quantia disponível ou atuailze o estoque do produto.
+            `
+            )
+          );
+        }
+        else {
+  
+          await Inventory.batchUpdateMaterialInventoryQuantity( checkInventory )
+          .then( ( data ) => {
+            
+            const serviceOrder = new ServiceOrder( { data: finalData } );
+                 
+            serviceOrder.addServiceOrderToFirebase()
+            .then( ( result ) => {
+  
+              if ( result ) {
+                alert( "Ordem de Serviço cadastrada com sucesso" )
+                history.push( `/${session}s` );
+              }
+              else {
+                Inventory.batchUpdateMaterialInventoryQuantity( originalData ).then( () => {
+                  console.log( 'Restaurando estoque...' );
+                  alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+                })
+                .catch( error => {
+                  throw new Error( 'Erro ao restaurar estoque devido a erro de criar Ordem de Serviço' );
+                });
+              }
+  
+            })
+          })
+          .catch( error => {
+            console.error( error );
+            alert( 'Erro ao atualizar o estoque, por favor feche a página e tente novamente.' );
+  
+          }).finally( () => {
+            setIsLoading( false );
+          });
+        }
+
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
-        setIsLoading( false );
+        
+        const serviceOrder = new ServiceOrder( { data: finalData } )
+        const result = await serviceOrder.addServiceOrderToFirebase();
+  
+        if ( result ) {
+          alert( "Ordem de Serviço cadastrada com sucesso" )
+          history.push( `/${session}s` );
+        }
+        else {
+          alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+          setIsLoading( false );
+        }
       }
     }
-
   }
 
   return (
@@ -571,33 +673,32 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" value={serviceOrderData['companyName']} onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={serviceOrderData['companyName']} onChange={handleInformationChange('companyName')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CPF/CNPJ*</label>
-                <InputCpfCnpj defaultValue={serviceOrderData['cpf']} onChange={handleInformationChange('cpf')}/>
+                <InputCpfCnpj defaultValue={serviceOrderData['cpf']} onChange={handleInformationChange('cpf')} disabled={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                {/* <InputCep onChange={checkCep}/> */}
-                <InputCep defaultValue={serviceOrderData['cep']} onChange={checkCep}/>
+                <InputCep defaultValue={serviceOrderData['cep']} onChange={checkCep} disabled={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" value={serviceOrderData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={serviceOrderData['address']} onChange={handleInformationChange('address')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" value={serviceOrderData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={serviceOrderData['city']} onChange={handleInformationChange('city')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" value={serviceOrderData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={serviceOrderData['state']} onChange={handleInformationChange('state')} disabled>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -630,12 +731,12 @@ export default function NewServiceOrder( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" value={serviceOrderData['email']} onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={serviceOrderData['email']} onChange={handleInformationChange('email')} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={serviceOrderData['telephone']} onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={serviceOrderData['telephone']} onChange={handleInformationChange('telephone')} disabled={true}/>
               </div>
             </div>
 
@@ -675,7 +776,7 @@ export default function NewServiceOrder( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-              <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
+              { renderTable() }
             </div>
 
             {/* SERVICOS */}
