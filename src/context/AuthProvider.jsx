@@ -11,7 +11,9 @@ import {
   sendEmailVerification,
   updateProfile,
   setPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  browserLocalPersistence,
+  inMemoryPersistence
  } from "firebase/auth";
 
 
@@ -31,7 +33,7 @@ export function AuthProvider( { children } ) {
   }
 
   const login = (email, password) => {
-    return setPersistence( auth, browserSessionPersistence ).then( () => signInWithEmailAndPassword( auth, email, password ) );
+    return setPersistence( auth, browserLocalPersistence ).then( () => signInWithEmailAndPassword( auth, email, password ) );
   }
 
   const logout = () => {

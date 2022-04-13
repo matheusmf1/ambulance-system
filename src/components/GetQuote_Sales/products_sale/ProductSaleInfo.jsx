@@ -7,6 +7,9 @@ import InputPhoneNumber from '../../inputs/input--phoneNumber'
 import InputCep from '../../inputs/input--cep';
 import { useHistory } from "react-router-dom"
 import { ProductSale } from "../../../data/ProductSale";
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import LoadingSpinner from "../../LoadingSpinner";
 
 export default function ProductSaleInfo( props ) {
 
@@ -17,7 +20,8 @@ export default function ProductSaleInfo( props ) {
 
   const [ tableDataProdutos, setTableDataProdutos ] = useState( null );
   const [ hasTableData, setHasTableData ] = useState( false );
-  const [valorTotalProduto, setValorTotalProduto] = useState(0);
+  const [ valorTotalProduto, setValorTotalProduto ] = useState(0);
+  const [ inventoryData, setInventoryData ] = useState( null );
   const [ isLoading, setIsLoading ] = useState( false );
   
   const history = useHistory();
@@ -78,7 +82,7 @@ export default function ProductSaleInfo( props ) {
       console.log( "Feching data from firebase after updating" )
   
       const service = new  ProductSale( { id: id } )
-        const serviceData = await service.getProductSaleFromFirebase();
+      const serviceData = await service.getProductSaleFromFirebase();
 
       if ( serviceData ) {
         setData( serviceData )
@@ -96,6 +100,18 @@ export default function ProductSaleInfo( props ) {
     }
 
   }
+
+  const fetchDataFirebase = async () => {
+
+    const dataCollectionProductsRef = collection( db, `users/${auth.currentUser.uid}/inventory` );
+    const queryProductsResult = query( dataCollectionProductsRef, orderBy("id") );
+    const docProductsSnap = await getDocs( queryProductsResult );
+
+    setInventoryData( docProductsSnap.docs.map( doc => ( {...doc.data()} ) ) );
+
+  }
+
+  useEffect( () => fetchDataFirebase(), []);
   
 
   const checkCep = ( e ) => {
@@ -277,6 +293,9 @@ export default function ProductSaleInfo( props ) {
         item.Cell = "TableText";
         item.accessor = "";
       }
+      else if ( item.Header === "Código" ) {
+        item.Cell = "TableSelect";
+      }
       else if ( item.Cell.name !== undefined ) {
         item.Cell = item.Cell.name;
       }
@@ -289,8 +308,10 @@ export default function ProductSaleInfo( props ) {
   }
 
   const renderTable = () => {
-    if ( hasTableData ) {
-      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
+    if ( hasTableData && inventoryData !== null ) {
+      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto} productsData={inventoryData}/>
+    } else {
+      return( <LoadingSpinner/> );
     }
   }
 

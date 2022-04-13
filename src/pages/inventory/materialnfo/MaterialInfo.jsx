@@ -94,10 +94,10 @@ export default function MaterialInfo( props ) {
 
       if ( data['product_value'] !== "" && isNaN(amount) !== true ) {
         let totalValue = parseFloat( data['product_value'] * parseFloat(amount) ).toFixed(2);
-        setData( { ...data, "product_totalValue": totalValue, "product_quantity": amount } )
+        setData( { ...data, "product_totalValue": totalValue, "product_quantity": amount.toString() } )
       }
       else {
-        setData( { ...data, [id]: amount, "product_totalValue": "" } )
+        setData( { ...data, [id]: amount.toString(), "product_totalValue": "" } )
       }
     }
     

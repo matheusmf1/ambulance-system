@@ -10,6 +10,9 @@ import { useHistory } from "react-router-dom"
 import { ProductSale } from "../../../../data/ProductSale";
 import { db, auth } from '../../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import LoadingSpinner from '../../../LoadingSpinner';
+import { Inventory } from "../../../../data/Inventory";
+
 
 export default function NewProductsSale( props ) {
 
@@ -17,9 +20,9 @@ export default function NewProductsSale( props ) {
   const [ valorTotalProduto, setValorTotalProduto ] = useState(0);
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ customerData, setCustomerData ] = useState( [] );
+  const [ inventoryData, setInventoryData ] = useState( null );
   const [ isLoading, setIsLoading ] = useState( false );
   const history = useHistory();
-  
   
   const [ productSaleData, setProductSaleData ] = useState({
     serviceType: "productsSale",
@@ -78,7 +81,8 @@ export default function NewProductsSale( props ) {
       {
         Header: "Código",
         accessor: "codigo",
-        Cell: 'TableInputText',
+        // Cell: 'TableInputText',
+        Cell: 'TableSelect',
         colSpan: 1,
       },
   
@@ -156,14 +160,22 @@ export default function NewProductsSale( props ) {
 
   });
 
-  useEffect( async () => {
+  const fetchDataFirebase = async () => {
 
     const dataCollectionRef = collection( db, `users/${auth.currentUser.uid}/customers` );
     const queryResult = query( dataCollectionRef, orderBy("id") );
     const docSnap = await getDocs( queryResult );
 
     setCustomerData( docSnap.docs.map( doc => ( {...doc.data()} ) ) );
-  }, []);
+
+    const dataCollectionProductsRef = collection( db, `users/${auth.currentUser.uid}/inventory` );
+    const queryProductsResult = query( dataCollectionProductsRef, orderBy("id") );
+    const docProductsSnap = await getDocs( queryProductsResult );
+
+    setInventoryData( docProductsSnap.docs.map( doc => ( {...doc.data()} ) ) );
+  }
+
+  useEffect( () => fetchDataFirebase(), []);
   
 
   const checkCep = ( e ) => {
@@ -301,6 +313,20 @@ export default function NewProductsSale( props ) {
 
   }
 
+  const renderTable = () => {
+
+    if ( inventoryData ) {
+      return (
+        <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto} productsData={inventoryData}/>
+      );
+    }
+    else {
+      return(
+        <LoadingSpinner/>
+      );
+    }
+  }
+
   const unifyData = () => {
 
     const totalInstallments = parseInt( productSaleData['paymentInfo']['installments'] )
@@ -359,6 +385,9 @@ export default function NewProductsSale( props ) {
         item.Cell = "TableText";
         item.accessor = "";
       }
+      else if ( item.Header === "Código" ) {
+        item.Cell = "TableSelect";
+      }
       else if ( item.Cell.name !== undefined ) {
         item.Cell = item.Cell.name;
       }
@@ -380,23 +409,80 @@ export default function NewProductsSale( props ) {
     else {
       setIsLoading( true );
       const finalData = unifyData();
-      const productSale = new ProductSale( { data: finalData } )
-      const result = await productSale.addProductSaleToFirebase();
+      
+      const selectedData = finalData['tableDataProdutos']['initialData'];
 
-      if ( result ) {
-        alert( "Venda de Produto cadastrada com sucesso" );
-        history.push( `/${session}s` );
+      if ( finalData['status'] !== "cancelado_naoAprovado" ) {
+
+        const checkInventory = Inventory.checkInventory( inventoryData, selectedData );
+        const missingData = checkInventory.filter( result => result['hasQuantity'] === false );
+        const originalData = checkInventory.map( item => inventoryData.filter( item2 => item2['id'] === item['id'] )[0] );
+  
+        if ( missingData.length > 0 ) {
+          setIsLoading( false );
+          missingData.forEach( item => alert( 
+            `Material ${item['id']} abaixo do nível do estoque. Quantidade atual: ${item['product_quantity']}. Ajuste a quantidade atual para a quantia disponível ou atuailze o estoque do produto.
+            `
+            )
+          );
+        }
+        else {
+  
+          await Inventory.batchUpdateMaterialInventoryQuantity( checkInventory )
+          .then( ( data ) => {
+
+            const productSale = new ProductSale( { data: finalData } );
+            
+            productSale.addProductSaleToFirebase()
+            .then( ( result ) => {
+  
+              if ( result ) {
+                alert( "Venda de Produto cadastrada com sucesso" );
+                history.push( `/${session}s` );
+              }
+              else {
+                Inventory.batchUpdateMaterialInventoryQuantity( originalData ).then( () => {
+                  console.log( 'Restaurando estoque...' );
+                  alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+                })
+                .catch( error => {
+                  throw new Error( 'Erro ao restaurar estoque devido a erro de criar Venda de Produto' );
+                });
+              }
+  
+            })
+          })
+          .catch( error => {
+            console.error( error );
+            alert( 'Erro ao atualizar o estoque, por favor feche a página e tente novamente.' );
+  
+          }).finally( () => {
+            setIsLoading( false );
+          });
+        }
+
       }
       else {
-        alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
-        setIsLoading( false );
-      }  
+
+        const finalData = unifyData();
+        const productSale = new ProductSale( { data: finalData } )
+        const result = await productSale.addProductSaleToFirebase();
+
+        if ( result ) {
+          alert( "Venda de Produto cadastrada com sucesso." );
+          history.push( `/${session}s` );
+        }
+        else {
+          alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
+          setIsLoading( false );
+        }
+
+      }
     }
     
   }
 
   return (
-  
     <main className="form__container">
       
       <h4 className="os__container--title">Nova Venda de Produto</h4>
@@ -410,7 +496,6 @@ export default function NewProductsSale( props ) {
           <div className="os__header--content">
 
             <h6>Rescue Transformação de veículos especiais Eireli</h6>
-
             <h6 className="info">CNPJ: 33.972.355/0001-00</h6>
             <h6 className="info">Rua Machado, 55 Vila Sorocabana</h6>
             <h6 className="info">Guarulhos/SP - CEP: 07025-210</h6>
@@ -469,33 +554,32 @@ export default function NewProductsSale( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Empresa*</label>
-                <input className="form__input" type="text" placeholder="Nome da empresa" value={productSaleData['companyName']} onChange={handleInformationChange('companyName')} required/>
+                <input className="form__input" type="text" placeholder="Nome da empresa" value={productSaleData['companyName']} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CPF/CNPJ*</label>
-                <InputCpfCnpj defaultValue={productSaleData['cpf']} onChange={handleInformationChange('cpf')}/>
+                <InputCpfCnpj defaultValue={productSaleData['cpf']} disabled={true}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">CEP*</label>
-                {/* <InputCep onChange={checkCep}/> */}
                 <InputCep defaultValue={productSaleData['cep']} onChange={checkCep}/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Endereço*</label>
-                <input className="form__input" type="text" placeholder="Informe o endereço" value={productSaleData['address']} onChange={handleInformationChange('address')} required/>
+                <input className="form__input" type="text" placeholder="Informe o endereço" value={productSaleData['address']} onChange={handleInformationChange('address')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Cidade*</label>
-                <input className="form__input" type="text" placeholder="Informe a Cidade" value={productSaleData['city']} onChange={handleInformationChange('city')} required/>
+                <input className="form__input" type="text" placeholder="Informe a Cidade" value={productSaleData['city']} onChange={handleInformationChange('city')} required disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Estado*</label>
-                <select name="estados-brasil" className="form__input" value={productSaleData['state']} onChange={handleInformationChange('state')}>
+                <select name="estados-brasil" className="form__input" value={productSaleData['state']} onChange={handleInformationChange('state')} disabled>
                     <option value="AC">Acre</option>
                     <option value="AL">Alagoas</option>
                     <option value="AP">Amapá</option>
@@ -528,12 +612,12 @@ export default function NewProductsSale( props ) {
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Email*</label>
-                <input className="form__input" type="email" placeholder="Endereço de email" value={productSaleData['email']} onChange={handleInformationChange('email')}/>
+                <input className="form__input" type="email" placeholder="Endereço de email" value={productSaleData['email']} onChange={handleInformationChange('email')} disabled/>
               </div>
 
               <div className="form__input--halfWidth">
                 <label className="form__input--label">Telefone*</label>
-                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={productSaleData['telephone']} onChange={handleInformationChange('telephone')}/>
+                <InputPhoneNumber placeholder="Informe o número de telefone" mask="(99) 9999-9999" defaultValue={productSaleData['telephone']} onChange={handleInformationChange('telephone')} disabled/>
               </div>
             
             </div>
@@ -541,7 +625,7 @@ export default function NewProductsSale( props ) {
             {/* PRODUTOS */}
             <div className="osForm__content--container">
               <h6 className="os__content--title">Produtos</h6>
-              <TableOS tableData={tableDataProdutos} setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
+              { renderTable() }
             </div>
 
 
@@ -633,5 +717,5 @@ export default function NewProductsSale( props ) {
       </div>
 
     </main>
-    )
-  }
+    );
+}

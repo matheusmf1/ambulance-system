@@ -70,7 +70,8 @@ export const TableAlertInventoryQuantity = ( props ) => {
     let {id} = rowData
     
     return <td key={i}>
-      <a href={`${link}/${id}`} target="_blank" rel="noreferrer" className="link">
+      {/* <a href={`${link}/${id}`} target="_blank" rel="noreferrer" className="link"> */}
+      <a href={`${link}/${id}`} className="link">
         <button className="userListEdit" onClick={ () => { localStorage.setItem( "materialInfo", JSON.stringify(rowData) ) }}>
           Editar
         </button>
