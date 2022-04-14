@@ -463,7 +463,6 @@ export default function NewProductsSale( props ) {
 
       }
       else {
-
         const finalData = unifyData();
         const productSale = new ProductSale( { data: finalData } )
         const result = await productSale.addProductSaleToFirebase();
@@ -717,5 +716,5 @@ export default function NewProductsSale( props ) {
       </div>
 
     </main>
-    );
+  );
 }

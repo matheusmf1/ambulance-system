@@ -10,6 +10,7 @@ import { ProductSale } from "../../../data/ProductSale";
 import { db, auth } from '../../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import LoadingSpinner from "../../LoadingSpinner";
+import { Inventory } from "../../../data/Inventory";
 
 export default function ProductSaleInfo( props ) {
 
@@ -23,6 +24,8 @@ export default function ProductSaleInfo( props ) {
   const [ valorTotalProduto, setValorTotalProduto ] = useState(0);
   const [ inventoryData, setInventoryData ] = useState( null );
   const [ isLoading, setIsLoading ] = useState( false );
+  const [ originalSelectedData, setOriginalSelectedData ] = useState( [] );
+  const [ status, setStatus ] = useState( false );
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -54,13 +57,15 @@ export default function ProductSaleInfo( props ) {
         const serviceData = await service.getProductSaleFromFirebase();
 
         if ( serviceData ) {
-          setData( serviceData )
+          setData( serviceData );
           setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
           const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
           setValuesInstallmentData( firstInstallment );
 
           setTableDataProdutos( serviceData['tableDataProdutos'] );
-          setHasTableData( true )
+          setOriginalSelectedData( serviceData['tableDataProdutos']['initialData'] );
+          setHasTableData( true );
+          setStatus( serviceData['status'] );
         }
         else {
           alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -69,13 +74,15 @@ export default function ProductSaleInfo( props ) {
  
       }
       else {
-        setData( serviceData )
+        setData( serviceData );
         setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
         const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
         setValuesInstallmentData( firstInstallment );
 
         setTableDataProdutos( serviceData['tableDataProdutos'] );
-        setHasTableData( true )
+        setOriginalSelectedData( serviceData['tableDataProdutos']['initialData'] );
+        setHasTableData( true );
+        setStatus( serviceData['status'] );
       }
     } 
     else {
@@ -85,13 +92,15 @@ export default function ProductSaleInfo( props ) {
       const serviceData = await service.getProductSaleFromFirebase();
 
       if ( serviceData ) {
-        setData( serviceData )
+        setData( serviceData );
         setHasInstallment( serviceData['paymentInfo']['installments'] === "1"? false : true );
         const firstInstallment = serviceData['paymentInfo']['installmentsData'].filter( data => data['installment'] === "1")[0];
         setValuesInstallmentData( firstInstallment );
 
         setTableDataProdutos( serviceData['tableDataProdutos'] );
-        setHasTableData( true )
+        setOriginalSelectedData( serviceData['tableDataProdutos']['initialData'] );
+        setHasTableData( true );
+        setStatus( serviceData['status'] );
       }
       else {
         alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -235,6 +244,66 @@ export default function ProductSaleInfo( props ) {
 
   }
 
+  const checkDifferentInventoryTableData = ( newSelectedData, newStatus ) => {
+
+    if ( status !== "cancelado_naoAprovado" && originalSelectedData !== newSelectedData ) {
+
+      console.log( 'TableData different' )
+
+      let inventoryDataToUpdate = newSelectedData.map( item => {
+
+        let intersection = originalSelectedData.filter( item2 => item['item'] === item2['item'] )[0];
+
+        if ( intersection ) {
+
+          if ( item === intersection ) {
+            return false
+          }
+
+          else {
+
+            let newQuantity = item['quantidade'];
+            let originalQuantity = intersection['quantidade'];
+
+            if ( newQuantity !== originalQuantity ) {
+
+              let result = newQuantity - originalQuantity;
+              return { ...item, "quantidade": `${result}`};
+
+              // if ( result > 0 ) {
+              //   console.log('quantidade maior, atualizar somente: ', result )
+              // }
+              // else {
+              //   console.log('quantidade manor, adicionar ao estoque: ', result )
+              // }
+
+              // return { ...item, "quantidade": `${result}`};
+            }
+
+            return item;
+          }
+
+        }
+        else {
+          // console.log( 'Nova linha: ', item );
+          return item
+        }
+
+      });
+
+      return inventoryDataToUpdate.filter( data => data !== false );
+
+    }
+    else if ( status === "cancelado_naoAprovado" && newStatus !== "cancelado_naoAprovado" ) {
+      console.log( 'Same tableData than original and Status has changed from cancel to: ', newStatus );
+      return newSelectedData;
+    }
+    else {
+      return [];
+    }
+
+  }
+
   const unifyData = () => {
 
     const totalInstallments = parseInt( data['paymentInfo']['installments'] )
@@ -320,21 +389,85 @@ export default function ProductSaleInfo( props ) {
     setIsLoading( true );
 
     const finalData = unifyData();
-    const productSale = new ProductSale( { data: finalData, id: idRef } )
-    const result = await productSale.updateProductSaleOnFirebase();
 
-    if ( result ) {
-      alert( "Venda de Produto atualizada com sucesso" )
-      history.push( `/${sessionName}s` );
+    const newSelectedData = finalData['tableDataProdutos']['initialData'];
+    const inventoryUpdateData = checkDifferentInventoryTableData( newSelectedData, finalData['status'] );
+
+    if ( finalData['status'] !== "cancelado_naoAprovado" && inventoryUpdateData.length > 0 ) {
+    
+      console.log('opaaa')
+      console.log( inventoryUpdateData );
+
+      const checkInventory = Inventory.checkInventory( inventoryData, inventoryUpdateData );
+      const missingData = checkInventory.filter( result => result['hasQuantity'] === false );
+
+      const originalData = checkInventory.map( item => inventoryData.filter( item2 => item2['id'] === item['id'] )[0] );
+
+      if ( missingData.length > 0 ) {
+        setIsLoading( false );
+        missingData.forEach( item => alert( 
+          `Material ${item['id']} abaixo do nível do estoque. Quantidade atual: ${item['product_quantity']}. Ajuste a quantidade atual para a quantia disponível ou atuailze o estoque do produto.
+          `
+          )
+        );
+      }
+      else {
+
+        console.log( 'tudo certo' );
+        console.log( checkInventory );
+
+        await Inventory.batchUpdateMaterialInventoryQuantity( checkInventory )
+        .then( ( data ) => {
+
+          const productSale = new ProductSale( { data: finalData, id: idRef } );
+          
+          productSale.updateProductSaleOnFirebase()
+          .then( ( result ) => {
+
+            if ( result ) {
+              alert( "Venda de Produto atualizada com sucesso" )
+              history.push( `/${sessionName}s` );
+            }
+            else {
+              Inventory.batchUpdateMaterialInventoryQuantity( originalData ).then( () => {
+                console.log( 'Restaurando estoque...' );
+                alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." );
+              })
+              .catch( error => {
+                throw new Error( 'Erro ao restaurar estoque devido a erro de criar Atualizar Produto' );
+              });
+            }
+
+          })
+        })
+        .catch( error => {
+          console.error( error );
+          alert( 'Erro ao atualizar o estoque, por favor feche a página e tente novamente.' );
+
+        }).finally( () => {
+          setIsLoading( false );
+        });
+      }
     }
     else {
-      alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." );
-      setIsLoading( false );
+
+      console.log( 'Update ProductSale' );
+      
+      const productSale = new ProductSale( { data: finalData, id: idRef } );
+      const result = await productSale.updateProductSaleOnFirebase();
+
+      if ( result ) {
+        alert( "Venda de Produto atualizada com sucesso" );
+        history.push( `/${sessionName}s` );
+      }
+      else {
+        alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
+      }
     }
   }
 
-  return (
-  
+  return ( 
     <main className="form__container">
       
       <h4 className="os__container--title">Nova Venda de Produto</h4>
@@ -561,5 +694,5 @@ export default function ProductSaleInfo( props ) {
       </div>
 
     </main>
-    )
-  }
+  );
+}

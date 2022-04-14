@@ -69,15 +69,15 @@ export class Inventory {
     }
   }
 
-  static checkInventory = ( inventoryData, selectedData ) => {
+  static checkInventory = ( inventoryData, selectedData ) => { 
 
     return selectedData.map( selectedItem => {
 
       let inventoryDataItem = inventoryData.filter( inventoryItem => inventoryItem['id'] === selectedItem['codigo'] )[0];
 
       if ( inventoryDataItem ) {
-
-        let inventoryQuantity = parseInt( inventoryDataItem['product_quantity'] ) - parseInt( selectedItem['quantidade'] );
+        
+        let inventoryQuantity = parseInt( inventoryDataItem['product_quantity'] ) - parseInt( selectedItem['quantidade'] );        
 
         if ( inventoryQuantity > 0 ) {
           let newTotalValue = (parseFloat( inventoryQuantity ) * parseFloat( inventoryDataItem['product_value'] )).toFixed(2);

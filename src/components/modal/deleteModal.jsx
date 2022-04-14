@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { DeleteOutline } from "@material-ui/icons";
 
-export default function DeleteModal( { id, deleteFunction, collection, setCollection, serviceType } ) {
+export default function DeleteModal( { id, deleteFunction, collection, setCollection, serviceType, text } ) {
 
   const [ isOpenModal, setIsOpenModal  ] = useState( false );
 
@@ -60,8 +60,8 @@ export default function DeleteModal( { id, deleteFunction, collection, setCollec
 
         <DialogContent className="modal__description">
           <Typography gutterBottom>
-            Excluindo esse item, apagará todas as suas informações.
-            Deseja continuar?
+            { text ? "Excluindo esse item, apagará todas as suas informações. Os materiais do estoque não serão restaurados. Deseja continuar?" : 
+            "Excluindo esse item, apagará todas as suas informações. Deseja continuar?" }
           </Typography>
         </DialogContent>
 

@@ -105,13 +105,14 @@ export const TableQuoteSales = ( props ) => {
     }
 
     return <td key={i}>
-      <a href={ sessionLink( rowData[ 'serviceType' ], id ) } target="_blank" rel="noreferrer" className="link">
+      {/* <a href={ sessionLink( rowData[ 'serviceType' ], id ) } target="_blank" rel="noreferrer" className="link"> */}
+      <a href={ sessionLink( rowData[ 'serviceType' ], id ) } className="link">
         <button className="userListEdit" onClick={ () => { localStorage.setItem( localStorageName(), JSON.stringify(rowData) ) }}>
           Visualizar
         </button>
       </a>
 
-      <DeleteModal id={id} serviceType={rowData['serviceType']} deleteFunction={handleDelete} collection={collection2} setCollection={setCollection2} />
+      <DeleteModal id={id} serviceType={rowData['serviceType']} deleteFunction={handleDelete} collection={collection2} setCollection={setCollection2} text={true}/>
 
     </td>;  
   }
