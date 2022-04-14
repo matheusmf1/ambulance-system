@@ -425,7 +425,8 @@ export default function ProductSaleInfo( props ) {
           .then( ( result ) => {
 
             if ( result ) {
-              alert( "Venda de Produto atualizada com sucesso" )
+              alert( "Venda de Produto atualizada com sucesso" );
+              localStorage.removeItem( 'quoteSalesInfo' );
               history.push( `/${sessionName}s` );
             }
             else {
@@ -458,6 +459,7 @@ export default function ProductSaleInfo( props ) {
 
       if ( result ) {
         alert( "Venda de Produto atualizada com sucesso" );
+        localStorage.removeItem( 'quoteSalesInfo' );
         history.push( `/${sessionName}s` );
       }
       else {

@@ -6,6 +6,10 @@ import InputPhoneNumber from '../../inputs/input--phoneNumber';
 import InputCep from '../../inputs/input--cep';
 import { useHistory } from "react-router-dom"
 import { ServiceOrder } from "../../../data/ServiceOrder";
+import { db, auth } from '../../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { Inventory } from "../../../data/Inventory";
+import LoadingSpinner from "../../LoadingSpinner";
 
 export default function ServiceOrderInfo( props ) {
 
@@ -21,6 +25,9 @@ export default function ServiceOrderInfo( props ) {
   const [valorTotalProduto, setValorTotalProduto] = useState(0);
   const [valorTotalServico, setValorTotalServico] = useState(0);
   const [ isLoading, setIsLoading ] = useState( false );
+  const [ inventoryData, setInventoryData ] = useState( null );
+  const [ originalSelectedData, setOriginalSelectedData ] = useState( [] );
+  const [ status, setStatus ] = useState( false );
   
   const history = useHistory();
   const pathName = props.match.url;
@@ -41,7 +48,6 @@ export default function ServiceOrderInfo( props ) {
 
     setIdRef( id )
     let serviceData = JSON.parse( localStorage.getItem( 'quoteSalesInfo' ) );
-    console.log( serviceData );
 
     if ( serviceData ) {
 
@@ -61,7 +67,9 @@ export default function ServiceOrderInfo( props ) {
           setTableDataProdutos( serviceData['tableDataProdutos'] );
           setTableDataServicos( serviceData['tableDataServicos'] );
   
-          setHasTableData( true )
+          setHasTableData( true );
+          setOriginalSelectedData( serviceData['tableDataProdutos']['initialData'] );
+          setStatus( serviceData['status'] );
         }
         else {
           alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -78,7 +86,9 @@ export default function ServiceOrderInfo( props ) {
         setTableDataProdutos( serviceData['tableDataProdutos'] );
         setTableDataServicos( serviceData['tableDataServicos'] );
 
-        setHasTableData( true )
+        setHasTableData( true );
+        setOriginalSelectedData( serviceData['tableDataProdutos']['initialData'] );
+        setStatus( serviceData['status'] );
       }
     } 
     else {
@@ -96,7 +106,9 @@ export default function ServiceOrderInfo( props ) {
         setTableDataProdutos( serviceData['tableDataProdutos'] );
         setTableDataServicos( serviceData['tableDataServicos'] );
 
-        setHasTableData( true )
+        setHasTableData( true );
+        setOriginalSelectedData( serviceData['tableDataProdutos']['initialData'] );
+        setStatus( serviceData['status'] );
       }
       else {
         alert( "Desculpe, houve algum erro ao carregar as informações, tente novamente." )
@@ -105,6 +117,18 @@ export default function ServiceOrderInfo( props ) {
     }
 
   }
+
+  const fetchDataFirebase = async () => {
+
+    const dataCollectionProductsRef = collection( db, `users/${auth.currentUser.uid}/inventory` );
+    const queryProductsResult = query( dataCollectionProductsRef, orderBy("id") );
+    const docProductsSnap = await getDocs( queryProductsResult );
+
+    setInventoryData( docProductsSnap.docs.map( doc => ( {...doc.data()} ) ) );
+
+  }
+
+  useEffect( () => fetchDataFirebase(), []);
 
   const checkCep = ( e ) => {
 
@@ -227,6 +251,55 @@ export default function ServiceOrderInfo( props ) {
     }
   }
 
+  const checkDifferentInventoryTableData = ( newSelectedData, newStatus ) => {
+
+    if ( status !== "cancelado_naoAprovado" && originalSelectedData !== newSelectedData ) {
+
+      console.log( 'TableData different' )
+
+      let inventoryDataToUpdate = newSelectedData.map( item => {
+
+        let intersection = originalSelectedData.filter( item2 => item['item'] === item2['item'] )[0];
+
+        if ( intersection ) {
+
+          if ( item === intersection ) {
+            return false;
+          }
+
+          else {
+
+            let newQuantity = item['quantidade'];
+            let originalQuantity = intersection['quantidade'];
+
+            if ( newQuantity !== originalQuantity ) {
+              let result = newQuantity - originalQuantity;
+              return { ...item, "quantidade": `${result}`};
+            }
+
+            return item;
+          }
+
+        }
+        else {
+          return item;
+        }
+
+      });
+
+      return inventoryDataToUpdate.filter( data => data !== false );
+
+    }
+    else if ( status === "cancelado_naoAprovado" && newStatus !== "cancelado_naoAprovado" ) {
+      console.log( 'Same tableData than original and Status has changed from cancel to: ', newStatus );
+      return newSelectedData;
+    }
+    else {
+      return [];
+    }
+
+  }
+
   const unifyData = () => {
 
     const totalInstallments = parseInt( data['paymentInfo']['installments'] )
@@ -279,17 +352,6 @@ export default function ServiceOrderInfo( props ) {
 
     data['paymentInfo'] = paymentInfo;
 
-    tableDataProdutos['columns'].forEach( item => {
-
-      if ( item.Header === "SubTotal" ) {
-        item.Cell = "TableText";
-        item.accessor = "";
-      }
-      else if ( item.Cell.name !== undefined ) {
-        item.Cell = item.Cell.name;
-      }
-    })
-
     tableDataServicos['columns'].forEach( item => {
       if ( item.Header === "SubTotal" ) {
         item.Cell = "TableText";
@@ -298,7 +360,21 @@ export default function ServiceOrderInfo( props ) {
       else if ( item.Cell.name !== undefined ) {
         item.Cell = item.Cell.name;
       }
-    })
+    });
+
+    tableDataProdutos['columns'].forEach( item => {
+
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Header === "Código" ) {
+        item.Cell = "TableSelect";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    });
     
     data['tableDataProdutos'] = tableDataProdutos;
     data['tableDataServicos'] = tableDataServicos;
@@ -307,11 +383,11 @@ export default function ServiceOrderInfo( props ) {
   }
 
   const renderTable1 = () => {
-
-    if ( hasTableData ) {
-      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto}/>
+    if ( hasTableData && inventoryData !== null ) {
+      return <TableOS tableData={ tableDataProdutos } setTableData={setTableDataProdutos} setValorTotal={setValorTotalProduto} productsData={inventoryData}/>
+    } else {
+      return( <LoadingSpinner/> );
     }
-
   }
 
   const renderTable2 = () => {
@@ -328,22 +404,85 @@ export default function ServiceOrderInfo( props ) {
 
     const finalData = unifyData();
 
-    const serviceOrder = new ServiceOrder( { data: finalData, id: idRef } );
-    const result = await serviceOrder.updateServiceOrderOnFirebase();
+    const newSelectedData = finalData['tableDataProdutos']['initialData'];
+    const inventoryUpdateData = checkDifferentInventoryTableData( newSelectedData, finalData['status'] );
 
-    if ( result ) {
-      alert( "Ordem de Serviço cadastrada com sucesso" )
-      localStorage.removeItem( 'quoteSalesInfo' );
-      history.push( `/${sessionName}s` );
+    if ( finalData['status'] !== "cancelado_naoAprovado" && inventoryUpdateData.length > 0 ) {
+    
+      console.log('opaaa')
+      console.log( inventoryUpdateData );
+
+      const checkInventory = Inventory.checkInventory( inventoryData, inventoryUpdateData );
+      const missingData = checkInventory.filter( result => result['hasQuantity'] === false );
+
+      const originalData = checkInventory.map( item => inventoryData.filter( item2 => item2['id'] === item['id'] )[0] );
+
+      if ( missingData.length > 0 ) {
+        setIsLoading( false );
+        missingData.forEach( item => alert( 
+          `Material ${item['id']} abaixo do nível do estoque. Quantidade atual: ${item['product_quantity']}. Ajuste a quantidade atual para a quantia disponível ou atuailze o estoque do produto.`
+          )
+        );
+      }
+      else {
+
+        console.log( 'tudo certo' );
+        console.log( checkInventory );
+
+        await Inventory.batchUpdateMaterialInventoryQuantity( checkInventory )
+        .then( ( data ) => {
+
+          const serviceOrder = new ServiceOrder( { data: finalData, id: idRef } );
+          
+          serviceOrder.updateServiceOrderOnFirebase()
+          .then( ( result ) => {
+
+            if ( result ) {
+              alert( "Ordem de Serviço cadastrada com sucesso" )
+              localStorage.removeItem( 'quoteSalesInfo' );
+              history.push( `/${sessionName}s` );
+            }
+            else {
+              Inventory.batchUpdateMaterialInventoryQuantity( originalData ).then( () => {
+                console.log( 'Restaurando estoque...' );
+                alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." );
+              })
+              .catch( error => {
+                throw new Error( 'Erro ao restaurar estoque devido a erro de atualizar Ordem de Serviço' );
+              });
+            }
+
+          })
+        })
+        .catch( error => {
+          console.error( error );
+          alert( 'Erro ao atualizar o estoque, por favor feche a página e tente novamente.' );
+
+        }).finally( () => {
+          setIsLoading( false );
+        });
+      }
     }
     else {
-      alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
-      setIsLoading( false );
+
+      console.log( 'Update ProductSale' );
+      
+      const serviceOrder = new ServiceOrder( { data: finalData, id: idRef } );
+      const result = await serviceOrder.updateServiceOrderOnFirebase();
+
+      if ( result ) {
+        alert( "Ordem de Serviço cadastrada com sucesso" );
+        localStorage.removeItem( 'quoteSalesInfo' );
+        history.push( `/${sessionName}s` );
+      }
+      else {
+        alert( "Algo deu errado ao atualizar as informações, por favor verifique todas as informações." );
+        setIsLoading( false );
+      }
     }
   }
 
   return (
-  
     <main className="form__container">
       
       <h4 className="os__container--title">Nova Ordem de Serviço</h4>
@@ -608,5 +747,5 @@ export default function ServiceOrderInfo( props ) {
       </div>
 
     </main>
-    )
+  );
 }

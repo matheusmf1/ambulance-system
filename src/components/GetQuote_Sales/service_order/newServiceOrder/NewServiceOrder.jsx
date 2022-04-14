@@ -468,17 +468,6 @@ export default function NewServiceOrder( props ) {
 
     serviceOrderData['paymentInfo'] = paymentInfo
 
-    tableDataProdutos['columns'].forEach( item => {
-
-      if ( item.Header === "SubTotal" ) {
-        item.Cell = "TableText";
-        item.accessor = "";
-      }
-      else if ( item.Cell.name !== undefined ) {
-        item.Cell = item.Cell.name;
-      }
-    })
-
     tableDataServicos['columns'].forEach( item => {
       if ( item.Header === "SubTotal" ) {
         item.Cell = "TableText";
@@ -488,6 +477,20 @@ export default function NewServiceOrder( props ) {
         item.Cell = item.Cell.name;
       }
     })
+
+    tableDataProdutos['columns'].forEach( item => {
+
+      if ( item.Header === "SubTotal" ) {
+        item.Cell = "TableText";
+        item.accessor = "";
+      }
+      else if ( item.Header === "Código" ) {
+        item.Cell = "TableSelect";
+      }
+      else if ( item.Cell.name !== undefined ) {
+        item.Cell = item.Cell.name;
+      }
+    });
     
     serviceOrderData['tableDataProdutos'] = tableDataProdutos;
     serviceOrderData['tableDataServicos'] = tableDataServicos;
@@ -495,31 +498,6 @@ export default function NewServiceOrder( props ) {
     return serviceOrderData
 
   }
-
-  // const handleSubmit = async ( e ) => {
-  //   e.preventDefault();
-
-  //   const finalData = unifyData();
-
-  //   if ( serviceOrderData['clientNumber'] === "choose" ) {
-  //     alert( "Informe o código do cliente!" );
-  //   }
-  //   else {
-      // setIsLoading( true );
-      // const serviceOrder = new ServiceOrder( { data: finalData } )
-      // const result = await serviceOrder.addServiceOrderToFirebase();
-
-      // if ( result ) {
-      //   alert( "Ordem de Serviço cadastrada com sucesso" )
-      //   history.push( `/${session}s` );
-      // }
-      // else {
-      //   alert( "Algo deu errado ao salvar as informações, por favor verifique todas as informações." );
-      //   setIsLoading( false );
-      // }
-  //   }
-
-  // }
 
   const handleSubmit = async ( e ) => {
     e.preventDefault();
